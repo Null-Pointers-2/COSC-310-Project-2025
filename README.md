@@ -1,2 +1,25 @@
 # COSC-310-Project-2025
-## Graeme's modification
+
+=======
+
+Software Engineering Science Project
+
+## Team Members
+
+- Evan
+- Graeme
+- Patrick
+- Patrik
+
+- ## Installation
+Instructions on how to set up the project locally:
+
+- bash
+git clone https://github.com/username/COSC-310-Project-2025/edit/main \
+cd ..
+
+Usage /
+
+---
+
+License /

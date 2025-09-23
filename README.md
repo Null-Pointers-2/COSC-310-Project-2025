@@ -1,7 +1,5 @@
 # COSC-310-Project-2025
 
-=======
-
 Software Engineering Science Project
 
 ## Team Members
@@ -21,10 +19,6 @@ cd ..
 Usage /
 
 ---
-
-<<<<<<< HEAD
-License /
-=======
 License /
 
 <Git branch best practices>

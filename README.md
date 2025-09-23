@@ -22,4 +22,10 @@ Usage /
 
 ---
 
+<<<<<<< HEAD
 License /
+=======
+License /
+
+<Git branch best practices>
+

@@ -10,10 +10,10 @@ Software Engineering Science Project
 - Patrik
 
 - ## Installation
-Instructions on how to set up the project locally:
+Instructions on how to set up the project locally with ssh:
 
 - bash
-git clone https://github.com/username/COSC-310-Project-2025/edit/main \
+git clone git@github.com:PatrickRinn/COSC-310-Project-2025.git \
 cd ..
 
 Usage /

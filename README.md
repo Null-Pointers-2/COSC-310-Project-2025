@@ -6,9 +6,9 @@ Software Engineering Science Project
 
 ## Team Members
 
-- Evan
+- Evan 90923020
 - Graeme
-- Patrick - 13943287
+- Patrick 13943287
 - Patrik
 
 - ## Installation

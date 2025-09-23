@@ -8,7 +8,7 @@ Software Engineering Science Project
 
 - Evan 90923020
 - Graeme
-- Patrick
+- Patrick 13943287
 - Patrik
 
 - ## Installation

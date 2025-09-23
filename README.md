@@ -1,6 +1,25 @@
 # COSC-310-Project-2025
 
+=======
 
-Group Members
+Software Engineering Science Project
 
-Patrick Rinn - 13943287s
+## Team Members
+
+- Evan
+- Graeme
+- Patrick - 13943287
+- Patrik
+
+- ## Installation
+Instructions on how to set up the project locally:
+
+- bash
+git clone https://github.com/username/COSC-310-Project-2025/edit/main \
+cd ..
+
+Usage /
+
+---
+
+License /

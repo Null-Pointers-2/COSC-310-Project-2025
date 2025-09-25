@@ -1,6 +1,6 @@
-# COSC-310-Project-2025
+# Best Dataset System for Movies
 
-Software Engineering Science Project
+Software Engineering Project
 
 ## Team Members
 
@@ -16,10 +16,10 @@ Instructions on how to set up the project locally with ssh:
 git clone git@github.com:PatrickRinn/COSC-310-Project-2025.git \
 cd ..
 
-Usage /
+## Usage
 
 ---
-License /
+## License
 
 <Git branch best practices>
 

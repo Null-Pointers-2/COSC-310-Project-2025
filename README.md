@@ -9,7 +9,7 @@ Software Engineering Science Project
 - Patrick 
 - Patrik
 
-- ## Installation
+## Installation
 Instructions on how to set up the project locally with ssh:
 
 - bash

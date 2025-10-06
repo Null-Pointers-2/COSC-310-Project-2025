@@ -1,6 +1,6 @@
 # Scrum Meeting - Sprint Planning
 
-**Date:** 2025-09-25
+**Date:** 2025-09-25  
 **Time:** 09:30 - 11:00 AM  
 **Meeting Type:** Sprint Planning  
 **Sprint:** 1

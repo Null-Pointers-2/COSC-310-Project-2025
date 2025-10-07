@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "title": "Hockey Sticks",
+    "category": "sports",
+    "tags": [
+      "hockey",
+      "equipment"
+    ]
+  },
+  {
+    "id": "2",
+    "title": "Soccer Balls",
+    "category": "sports",
+    "tags": [
+      "soccer",
+      "equipment"
+    ]
+  },
+  {
+    "id": "3",
+    "title": "Parka Jackets",
+    "category": "winter gear",
+    "tags": [
+      "Winter",
+      "clothing"
+    ]
+  },
+  {
+    "id": "c509591c-2b11-4287-acc4-2cb813a6dcbf",
+    "title": "TUTORIAL",
+    "category": "IFAWDFA",
+    "tags": [
+      "gaefg"
+    ]
+  }
+]

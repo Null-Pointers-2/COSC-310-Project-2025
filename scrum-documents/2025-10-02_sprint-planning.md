@@ -1,0 +1,58 @@
+# Scrum Meeting - Sprint Planning
+
+**Date:** 2025-09-25  
+**Time:** 09:30 - 11:00 AM  
+**Meeting Type:** Sprint Planning  
+**Sprint:** 1
+
+---
+
+## Attendees
+
+**Present:**
+- [x] Evan Bowness
+- [x] Graeme Beniston Bradford
+- [x] Patrick Rinn
+- [x] Patrik Balazsy
+
+---
+
+## Discussion Points
+
+### What was completed since last meeting?
+- Identified functional and non-functional requirements
+- Discussed project limitations and possibilities for API access
+
+### What will be worked on today/next?
+- Create user stories and epics
+- Finish first deliverable for software requirements and documentation
+
+### Blockers/Impediments
+- **Issue:** Lack of free/public movie poster APIs
+  - **Impact:** Everyone
+  - **Status:** In Progress
+
+---
+
+## Action Items
+
+| Action Item | Owner | Due Date | Status |
+|-------------|-------|----------|--------|
+| M1 - Software Requirements Specification | Everyone | 2025-10-03 | In Progress |
+
+---
+
+## Notes
+
+N/A
+
+---
+
+## Follow-up Items
+
+N/A
+
+---
+
+**Next Meeting:** 2025-10-02 at 09:30  
+**Scribe:** Evan Bowness

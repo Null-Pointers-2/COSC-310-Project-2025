@@ -1,12 +1,33 @@
 import uuid
+import math
 from typing import List, Dict, Any
 from fastapi import HTTPException
-from schemas.item import Item, ItemCreate, ItemUpdate
+from schemas.item import Item, ItemCreate, ItemUpdate, Movie, MoviePage
 from repositories.items_repo import load_all, save_all
+from repositories.movies_repo import get_movie_by_id as get_movie_by_id_repo, get_paginated_movies
 
 
 def list_items() -> List[Item]:
     return [Item(**it) for it in load_all()]
+
+def list_movies(page: int, page_size: int) -> MoviePage:
+    movies_data, total = get_paginated_movies(page, page_size)
+    total_pages = math.ceil(total / page_size)
+
+    return MoviePage(
+        page=page,
+        page_size=page_size,
+        total_movies=total,
+        total_pages=total_pages,
+        movies=[Movie(**movie) for movie in movies_data]
+    )
+
+def get_movie_by_id(movie_id: int) -> Movie:
+    movie = get_movie_by_id_repo(movie_id)
+    if not movie:
+        raise HTTPException(status_code=404, detail=f"Movie with ID {movie_id} not found")
+    return Movie(**movie)
+
 
 def create_item(payload: ItemCreate) -> Item:
     items = load_all()

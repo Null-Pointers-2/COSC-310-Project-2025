@@ -217,3 +217,8 @@ __marimo__/
 
 # Mac bullshit
 .DS_Store
+
+# Large movie dataset files
+movies/*.zip
+movies/rating.csv
+movies/genome_scores.csv

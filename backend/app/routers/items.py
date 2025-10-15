@@ -1,9 +1,21 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Query
 from typing import List
-from schemas.item import Item, ItemCreate, ItemUpdate
-from services.items_service import list_items, create_item, delete_item, update_item
+from schemas.item import Item, ItemCreate, ItemUpdate, Movie, MoviePage
+from services.items_service import list_items, create_item, delete_item, update_item, list_movies, get_movie_by_id
 
 router = APIRouter(prefix="/items", tags=["items"])
+movieRouter = APIRouter(prefix="/movies", tags=["movies"])
+
+@movieRouter.get("", response_model=MoviePage)
+def get_movies(
+    page: int = Query(1, ge=1, description="Page number starting from 1"),
+    page_size: int = Query(30, ge=1, le=100, description="Number of movies per page")
+):
+    return list_movies(page, page_size)
+
+@movieRouter.get("/{movie_id}", response_model=Movie)
+def get_movie(movie_id: int):
+    return get_movie_by_id(movie_id)
 
 @router.get("", response_model=List[Item])
 def get_items():

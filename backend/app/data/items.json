@@ -25,5 +25,14 @@
       "Winter",
       "clothing"
     ]
+  },
+  {
+    "id": "0b32ac8b-0d90-43f9-807f-bfaaa62085ec",
+    "title": "Baseball Bat",
+    "category": "sports",
+    "tags": [
+      "baseball",
+      "equipment"
+    ]
   }
 ]

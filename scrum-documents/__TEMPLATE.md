@@ -3,7 +3,7 @@
 **Date:** YYYY-MM-DD  
 **Time:** HH:MM - HH:MM  
 **Meeting Type:** Daily Standup | Sprint Planning | Sprint Review | Sprint Retrospective  
-**Sprint:** [Sprint Number/Name]
+**Sprint:** [Sprint Name]
 
 ---
 
@@ -40,12 +40,6 @@
 |-------------|-------|----------|--------|
 | Task description | @username | YYYY-MM-DD | Open |
 | Task description | @username | YYYY-MM-DD | In Progress |
-
----
-
-## Notes
-
-Additional context, decisions made, or important discussions that don't fit above categories.
 
 ---
 

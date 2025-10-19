@@ -1,25 +1,32 @@
 # Best Dataset System for Movies
 
-Software Engineering Project
+A Software Engineering Project for COSC 310 (2025)
 
 ## Team Members
 
-- Evan 
-- Graeme
-- Patrick 
-- Patrik
+- Evan Bowness
+- Graeme Bradford
+- Patrick Rinn
+- Patrik Balazsy
 
 ## Installation
-Instructions on how to set up the project locally with ssh:
+To set up the project locally using **SSH**, run the following commands in your terminal:
 
-- bash
-git clone git@github.com:PatrickRinn/COSC-310-Project-2025.git \
-cd ..
+```bash
+# Clone the repository
+git clone git@github.com:PatrickRinn/COSC-310-Project-2025.git
+
+# Move into the project directory
+cd COSC-310-Project-2025
+```
 
 ## Usage
+After installation, you can run or explore the system as follows:
+```
+# Command to start or test the application
+python main.py
+```
+**TODO: Update these sections with Docker build instructions.**
 
----
 ## License
-
-<Git branch best practices>
-
+This project is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html).

@@ -26,7 +26,6 @@ mdurl==0.1.2
 numpy==1.26.2
 packaging==25.0
 pandas==2.3.3
-passlib==1.7.4
 pluggy==1.6.0
 pwdlib==0.2.1
 pyasn1==0.6.1

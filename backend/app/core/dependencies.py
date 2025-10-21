@@ -12,6 +12,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 users_repo = UsersRepository()
 penalties_repo = PenaltiesRepository()
 
+def decode_token(token: str):
+    """Decode and validate a JWT token."""
+    # TODO: Decode JWT and return TokenData
+    pass
+
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
     """
     Dependency to get the current authenticated user from JWT token.
@@ -29,7 +34,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
     # TODO: Decode JWT token
     # TODO: Get user from repository
     pass
-
 
 
 async def get_current_active_user(

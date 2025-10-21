@@ -39,11 +39,5 @@ class Settings(BaseSettings):
     # Rate Limiting
     MAX_RATINGS_PER_HOUR: int = 50
     MAX_RATINGS_PER_DAY: int = 250
-    
-    # CORS
-    CORS_ORIGINS: list = [
-        "http://localhost:3000",
-        "http://frontend:3000",
-    ]
 
 settings = Settings()

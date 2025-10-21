@@ -13,29 +13,29 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # Backend Testing Job
   backend-tests:
-    if: github.event_name == 'pull_request'
     name: Backend Tests
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+      with:
+        persist-credentials: true
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: ${{ env.PYTHON_VERSION }}
         cache: 'pip'
         cache-dependency-path: backend/requirements.txt
-    
+
     - name: Install dependencies
       working-directory: ./backend
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
+
     - name: Create test data files
       working-directory: ./backend
       run: |
@@ -44,49 +44,35 @@ jobs:
         echo "{}" > app/data/recommendations.json
         echo "[]" > app/data/penalties.json
         echo "[]" > app/data/watchlist.json
-        # Create test users.csv if doesn't exist
         if [ ! -f data/users.csv ]; then
-          echo "id,username,email,password,role,created_at" > data/users.csv
+          echo "id,username,email,hashed_password,role,created_at" > data/users.csv
         fi
-    
-    - name: Run unit tests
+
+    - name: Run all tests
       working-directory: ./backend
       run: |
-        pytest tests/unit -v --cov=app --cov-report=xml --cov-report=term || true
-      continue-on-error: true
-    
-    - name: Run integration tests
+        pytest tests/unit -v --cov=app --cov-report=xml --cov-report=term
+        pytest tests/integration -v --cov=app --cov-append --cov-report=xml --cov-report=term
+        pytest tests/e2e -v --cov=app --cov-append --cov-report=xml --cov-report=term
+
+    - name: Copy coverage reports
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       working-directory: ./backend
       run: |
-        pytest tests/integration -v --cov=app --cov-append --cov-report=xml --cov-report=term || true
-      continue-on-error: true
-    
-    - name: Run E2E tests
-      working-directory: ./backend
+        mkdir -p ../testing-documents/coverage
+        cp -r htmlcov ../testing-documents/coverage/htmlcov
+        cp coverage.xml ../testing-documents/coverage/coverage.xml
+
+    - name: Commit coverage reports
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      working-directory: ./testing-documents
       run: |
-        pytest tests/e2e -v --cov=app --cov-append --cov-report=xml --cov-report=term || true
-      continue-on-error: true
-    
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v4
-      if: always()
-      with:
-        file: ./backend/coverage.xml
-        flags: backend
-        name: backend-coverage
-        fail_ci_if_error: false
-      continue-on-error: true
-    
-    - name: Archive test results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: backend-test-results
-        path: |
-          backend/htmlcov/
-          backend/coverage.xml
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add coverage/
+        git commit -m "Add backend coverage reports [ci skip]" || echo "No changes to commit"
+        git push origin main
   
-  # Frontend Testing Job
   frontend-tests:
     if: github.event_name == 'pull_request'
     name: Frontend Tests
@@ -116,7 +102,6 @@ jobs:
       working-directory: ./frontend
       run: npm run build
   
-  # Code Quality Job
   code-quality:
     if: github.event_name == 'pull_request'
     name: Code Quality
@@ -150,7 +135,6 @@ jobs:
       run: isort --check-only app
       continue-on-error: true
 
-  # Build and Push Docker Images (only on push to main)
   docker-publish:
     name: Build & Push Docker Images
     runs-on: ubuntu-latest

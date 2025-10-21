@@ -1,2 +1,2 @@
-Graeme, Admin,
-George, User, 
+id,username,email,hashed_password,role,created_at
+037fc98b-e4f0-4649-9bc5-6912b75b3d49,evanb,evan@bowness.ca,"$argon2id$v=19$m=65536,t=3,p=4$E3iIMUxDBecIl3LvgrhGVQ$C6TBF7I/vB51JpBsnwAO4fS/dLdY4L5tdTJ28vnBE7U",user,2025-10-21T18:40:47.390092+00:00

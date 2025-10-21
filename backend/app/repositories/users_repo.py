@@ -3,10 +3,13 @@ import csv
 import json
 from typing import List, Optional, Dict
 from pathlib import Path
+from uuid import uuid4
 
 class UsersRepository:
     """Handle user data stored in CSV."""
     
+    HEADERS = ["id", "username", "email", "hashed_password", "role", "created_at"]
+
     def __init__(self, users_file: str = "data/users.csv"):
         """Initialize with path to users CSV file."""
         self.users_file = Path(users_file)
@@ -14,33 +17,37 @@ class UsersRepository:
     
     def _ensure_file_exists(self):
         """Create users file with headers if it doesn't exist."""
-        # TODO: Implement
-        pass
-    
+        if not self.users_file.exists():
+            self.users_file.parent.mkdir(parents=True, exist_ok=True)
+            with self.users_file.open("w", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=self.HEADERS)
+                writer.writeheader()
+
     def get_all(self) -> List[Dict]:
         """Get all users."""
-        # TODO: Read from CSV and return list of dicts
-        pass
+        with self.users_file.open("r", newline="") as f:
+            reader = csv.DictReader(f)
+            return list(reader)
     
     def get_by_id(self, user_id: str) -> Optional[Dict]:
         """Get user by ID."""
-        # TODO: Implement
-        pass
-    
+        return next((u for u in self.get_all() if u["id"] == user_id), None)
+
     def get_by_username(self, username: str) -> Optional[Dict]:
         """Get user by username."""
-        # TODO: Implement
-        pass
+        return next((u for u in self.get_all() if u["username"] == username), None)
     
     def get_by_email(self, email: str) -> Optional[Dict]:
         """Get user by email."""
-        # TODO: Implement
-        pass
+        return next((u for u in self.get_all() if u["email"] == email), None)
     
     def create(self, user_data: Dict) -> Dict:
         """Create a new user."""
-        # TODO: Append to CSV file
-        pass
+        user_data["id"] = str(uuid4())
+        with self.users_file.open("a", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=self.HEADERS)
+            writer.writerow(user_data)
+        return user_data
     
     def update(self, user_id: str, user_data: Dict) -> Optional[Dict]:
         """Update user information."""

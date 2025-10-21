@@ -36,7 +36,6 @@ def authenticate_user(username: str, password: str):
         return False
     return user
 
-
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     """Create a JWT access token."""
     to_encode = data.copy()
@@ -75,12 +74,13 @@ def register_user(username: str, email: str, password: str, role: str = "user") 
     hashed_password = get_password_hash(password)
 
     # Create user in repository
-    new_user = users_repo.create_user(
-        username=username,
-        email=email,
-        hashed_password=hashed_password,
-        role=role,
-        created_at=datetime.now(timezone.utc)
-    )
+    user_data = {
+        "username": username,
+        "email": email,
+        "hashed_password": hashed_password,
+        "role": role,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
 
+    new_user = users_repo.create(user_data)
     

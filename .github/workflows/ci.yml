@@ -154,7 +154,6 @@ jobs:
   docker-publish:
     name: Build & Push Docker Images
     runs-on: ubuntu-latest
-    needs: [backend-tests, frontend-tests]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: read

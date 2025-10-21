@@ -9,24 +9,93 @@ A Software Engineering Project for COSC 310 (2025)
 - Patrick Rinn
 - Patrik Balazsy
 
-## Installation
-To set up the project locally using **SSH**, run the following commands in your terminal:
+## Local Setup
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/Null-Pointers-2/COSC-310-Project-2025.git
+cd COSC-310-Project-2025/backend
+````
+
+### 2. Create a virtual environment
 
 ```bash
-# Clone the repository
-git clone git@github.com:PatrickRinn/COSC-310-Project-2025.git
-
-# Move into the project directory
-cd COSC-310-Project-2025
+python -m venv venv
+venv\Scripts\activate.bat  # On Windows
+# OR
+source venv/bin/activate   # On macOS/Linux
 ```
 
-## Usage
-After installation, you can run or explore the system as follows:
+### 3. Install dependencies
+
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
 ```
-# Command to start or test the application
-python main.py
+
+---
+
+## Running the Server
+
+```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
-**TODO: Update these sections with Docker build instructions.**
+
+Then visit:
+
+* API Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* Health Check: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
+
+---
+
+## Running Tests (Pytest)
+
+To run tests under `backend/tests/`, run:
+
+```bash
+# In backend/ directory with venv activated
+pytest tests/ -v
+
+# Or run specific test types
+pytest tests/unit -v
+pytest tests/integration -v
+
+# With coverage
+pytest tests/ -v --cov=app --cov-report=html
+```
+
+---
+
+## Docker Setup
+
+### Build the Docker image
+
+```bash
+# From project root:
+docker compose build
+```
+
+### Run the container
+
+```bash
+# Start all services
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Or view specific service logs
+docker compose logs -f backend
+docker compose logs -f frontend
+```
+
+Then access the API at:
+[http://localhost:8000](http://localhost:8000/health)
+
+Or the frontend at:
+[http://localhost:3000](http://localhost:3000)
+
+---
 
 ## License
 This project is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html).

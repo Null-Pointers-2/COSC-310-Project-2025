@@ -54,14 +54,10 @@ To run tests under `backend/tests/`, run:
 
 ```bash
 # In backend/ directory with venv activated
-pytest tests/ -v
-
-# Or run specific test types
-pytest tests/unit -v
-pytest tests/integration -v
+python -m pytest
 
 # With coverage
-pytest tests/ -v --cov=app --cov-report=html
+python -m pytest -v --cov=app --cov-report=html
 ```
 
 ---

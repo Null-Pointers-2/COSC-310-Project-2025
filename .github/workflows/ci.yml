@@ -51,9 +51,7 @@ jobs:
     - name: Run all tests
       working-directory: ./backend
       run: |
-        pytest tests/unit -v --cov=app --cov-report=xml --cov-report=term
-        pytest tests/integration -v --cov=app --cov-append --cov-report=xml --cov-report=term
-        pytest tests/e2e -v --cov=app --cov-append --cov-report=xml --cov-report=term
+        python -m pytest -v --cov=app --cov-report=html
 
     - name: Copy coverage reports
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -61,7 +59,6 @@ jobs:
       run: |
         mkdir -p ../testing-documents/coverage
         cp -r htmlcov ../testing-documents/coverage/htmlcov
-        cp coverage.xml ../testing-documents/coverage/coverage.xml
 
     - name: Commit coverage reports
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'

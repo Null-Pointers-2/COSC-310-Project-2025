@@ -12,7 +12,7 @@ from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
 from pydantic import BaseModel
 
-from core.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from app.core.config import settings
 
 users_repo = UsersRepository()
 
@@ -45,10 +45,10 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     else:
         expire = datetime.now(timezone.utc) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
-def decode_token(token: str) -> Optional[TokenData]:
+def decode_token(token: str):
     """Decode and validate a JWT token."""
     # TODO: Decode JWT and return TokenData
     pass
@@ -82,3 +82,5 @@ def register_user(username: str, email: str, password: str, role: str = "user") 
         role=role,
         created_at=datetime.now(timezone.utc)
     )
+
+    

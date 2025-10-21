@@ -52,7 +52,7 @@ jobs:
     - name: Run all tests
       working-directory: ./backend
       run: |
-        python -m pytest -v --cov=app --cov-report=html
+        python -m pytest -v --cov=app --cov-report=html --cov-report=xml
 
     - name: Copy coverage reports
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -68,7 +68,8 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git checkout -- backend/app/data/*.json 2>/dev/null || true
-        git add testing-documents/coverage/
+        
+        git add -f testing-documents/coverage/
         
         if git diff --staged --quiet; then
           echo "No coverage changes to commit"

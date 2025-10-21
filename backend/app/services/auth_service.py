@@ -6,16 +6,14 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 import jwt
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
-from pydantic import BaseModel
 
 from app.core.config import settings
 
 users_repo = UsersRepository()
-
 password_hash = PasswordHash.recommended()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -46,11 +44,6 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
-
-def decode_token(token: str):
-    """Decode and validate a JWT token."""
-    # TODO: Decode JWT and return TokenData
-    pass
 
 def register_user(username: str, email: str, password: str, role: str = "user") -> dict:
     """Register a new user."""
@@ -83,4 +76,3 @@ def register_user(username: str, email: str, password: str, role: str = "user") 
     }
 
     new_user = users_repo.create(user_data)
-    

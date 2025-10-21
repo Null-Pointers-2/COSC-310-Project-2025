@@ -5,7 +5,7 @@ from app.schemas.watchlist import WatchlistItem, WatchlistItemCreate
 from app.core.dependencies import get_current_user
 from app.services import watchlist_service
 
-router = APIRouter()
+router = APIRouter(prefix="/watchlist")
 
 @router.get("", response_model=List[WatchlistItem])
 def get_my_watchlist(current_user: dict = Depends(get_current_user)):

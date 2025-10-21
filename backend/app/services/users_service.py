@@ -11,8 +11,9 @@ penalties_repo = PenaltiesRepository()
 
 def get_user_by_id(user_id: str) -> Optional[dict]:
     """Get user by ID."""
-    # TODO: Implement
-    pass
+    user_dict = users_repo.get_by_id(user_id)
+    if not user_dict:
+        raise ValueError("User not found")
 
 def get_user_profile(user_id: str) -> UserProfile:
     """Get user profile with statistics."""

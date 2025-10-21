@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     API_DESCRIPTION: str = "Backend API for personalized movie recommendations"
     
     # Security
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "note-to-self-change-this-into-dot-env-or-something")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     RECOMMENDATIONS_FILE: str = str(DATA_DIR / "recommendations.json")
     PENALTIES_FILE: str = str(DATA_DIR / "penalties.json")
     WATCHLIST_FILE: str = str(DATA_DIR / "watchlist.json")
-    SIMILARITY_MATRIX_FILE: str = str(DATA_DIR / "similarity_matrix.pkl")
+    SIMILARITY_MATRIX_FILE: str = str(DATA_DIR / "similarity_matrix.pkl") # TODO: doesn't actually exist yet
     
     # Movie Data Files
     MOVIES_CSV: str = str(MOVIES_DIR / "movie.csv")
@@ -37,19 +37,13 @@ class Settings(BaseSettings):
     LINKS_CSV: str = str(MOVIES_DIR / "link.csv")
     TAGS_CSV: str = str(MOVIES_DIR / "tag.csv")
     
-    # Recommendation Settings
-    RECOMMENDATION_CACHE_HOURS: int = 24
-    DEFAULT_RECOMMENDATIONS_COUNT: int = 10
-    MAX_RECOMMENDATIONS_COUNT: int = 50
-    SIMILARITY_THRESHOLD: float = 0.5
-    
     # Pagination
     DEFAULT_PAGE_SIZE: int = 30
     MAX_PAGE_SIZE: int = 100
     
-    # Rate Limiting (for penalty detection)
+    # Rate Limiting
     MAX_RATINGS_PER_HOUR: int = 50
-    MAX_RATINGS_PER_DAY: int = 200
+    MAX_RATINGS_PER_DAY: int = 250
     
     # CORS
     CORS_ORIGINS: list = [
@@ -64,6 +58,3 @@ class Settings(BaseSettings):
 
 # Create settings instance
 settings = Settings()
-
-# Ensure data directories exist
-settings.DATA_DIR.mkdir(parents=True, exist_ok=True)

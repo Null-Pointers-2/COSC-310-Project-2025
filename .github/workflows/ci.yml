@@ -54,12 +54,9 @@ jobs:
       run: |
         python -m pytest -v --cov=app --cov-report=html --cov-report=xml
 
-    - name: Copy coverage reports
+    - name: Add timestamp to coverage
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
-        mkdir -p testing-documents/coverage
-        rm -rf testing-documents/coverage/htmlcov
-        cp -r backend/htmlcov testing-documents/coverage/htmlcov
         date > testing-documents/coverage/last-updated.txt
 
     - name: Commit coverage reports

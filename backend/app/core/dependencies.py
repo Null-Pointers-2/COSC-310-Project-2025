@@ -11,10 +11,6 @@ from app.repositories.penalties_repo import PenaltiesRepository
 # OAuth2 scheme for token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-# Configuration (move to config.py later)
-SECRET_KEY = "your-secret-key-here"  # TODO: Use environment variable
-ALGORITHM = "HS256"
-
 users_repo = UsersRepository()
 penalties_repo = PenaltiesRepository()
 
@@ -39,17 +35,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
     
     try:
         # TODO: Decode JWT token
-        # payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        # user_id: str = payload.get("sub")
-        # if user_id is None:
-        #     raise credentials_exception
-        
         # TODO: Get user from repository
-        # user = users_repo.get_by_id(user_id)
-        # if user is None:
-        #     raise credentials_exception
-        
-        # return user
         pass
     except JWTError:
         raise credentials_exception
@@ -71,11 +57,6 @@ async def get_current_active_user(
         HTTPException: If user has blocking penalties
     """
     # TODO: Check for active penalties
-    # active_penalties = penalties_repo.get_active_by_user(current_user["id"])
-    # if active_penalties:
-    #     # Determine if any penalties are blocking
-    #     # For example, if penalty prevents rating, throw exception
-    #     pass
     
     return current_user
 
@@ -96,11 +77,6 @@ async def get_current_admin_user(
         HTTPException: If user is not admin
     """
     # TODO: Check if user has admin role
-    # if current_user.get("role") != "admin":
-    #     raise HTTPException(
-    #         status_code=status.HTTP_403_FORBIDDEN,
-    #         detail="Admin access required"
-    #     )
     
     return current_user
 
@@ -116,9 +92,6 @@ def check_rating_permission(user_id: str) -> bool:
         True if user can rate, False otherwise
     """
     # TODO: Check for active penalties that block rating
-    # active_penalties = penalties_repo.get_active_by_user(user_id)
-    # blocking_penalties = [p for p in active_penalties if p.get("blocks_rating")]
-    # return len(blocking_penalties) == 0
     pass
 
 

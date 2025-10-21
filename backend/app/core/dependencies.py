@@ -1,0 +1,136 @@
+"""
+FastAPI dependencies for authentication and authorization.
+"""
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from typing import Optional
+from app.repositories.users_repo import UsersRepository
+from app.repositories.penalties_repo import PenaltiesRepository
+
+# OAuth2 scheme for token authentication
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
+# Configuration (move to config.py later)
+SECRET_KEY = "your-secret-key-here"  # TODO: Use environment variable
+ALGORITHM = "HS256"
+
+users_repo = UsersRepository()
+penalties_repo = PenaltiesRepository()
+
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
+    """
+    Dependency to get the current authenticated user from JWT token.
+    
+    Args:
+        token: JWT token from Authorization header
+        
+    Returns:
+        User dictionary
+        
+    Raises:
+        HTTPException: If token is invalid or user not found
+    """
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    
+    try:
+        # TODO: Decode JWT token
+        # payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        # user_id: str = payload.get("sub")
+        # if user_id is None:
+        #     raise credentials_exception
+        
+        # TODO: Get user from repository
+        # user = users_repo.get_by_id(user_id)
+        # if user is None:
+        #     raise credentials_exception
+        
+        # return user
+        pass
+    except JWTError:
+        raise credentials_exception
+
+
+async def get_current_active_user(
+    current_user: dict = Depends(get_current_user)
+) -> dict:
+    """
+    Dependency to get current user and check if they have active penalties.
+    
+    Args:
+        current_user: User from get_current_user dependency
+        
+    Returns:
+        User dictionary if no blocking penalties
+        
+    Raises:
+        HTTPException: If user has blocking penalties
+    """
+    # TODO: Check for active penalties
+    # active_penalties = penalties_repo.get_active_by_user(current_user["id"])
+    # if active_penalties:
+    #     # Determine if any penalties are blocking
+    #     # For example, if penalty prevents rating, throw exception
+    #     pass
+    
+    return current_user
+
+
+async def get_current_admin_user(
+    current_user: dict = Depends(get_current_user)
+) -> dict:
+    """
+    Dependency to verify current user has admin role.
+    
+    Args:
+        current_user: User from get_current_user dependency
+        
+    Returns:
+        User dictionary if admin
+        
+    Raises:
+        HTTPException: If user is not admin
+    """
+    # TODO: Check if user has admin role
+    # if current_user.get("role") != "admin":
+    #     raise HTTPException(
+    #         status_code=status.HTTP_403_FORBIDDEN,
+    #         detail="Admin access required"
+    #     )
+    
+    return current_user
+
+
+def check_rating_permission(user_id: str) -> bool:
+    """
+    Check if user has permission to create ratings.
+    
+    Args:
+        user_id: User ID to check
+        
+    Returns:
+        True if user can rate, False otherwise
+    """
+    # TODO: Check for active penalties that block rating
+    # active_penalties = penalties_repo.get_active_by_user(user_id)
+    # blocking_penalties = [p for p in active_penalties if p.get("blocks_rating")]
+    # return len(blocking_penalties) == 0
+    pass
+
+
+def check_export_permission(user_id: str) -> bool:
+    """
+    Check if user has permission to export data.
+    
+    Args:
+        user_id: User ID to check
+        
+    Returns:
+        True if user can export, False otherwise
+    """
+    # TODO: Check for active penalties that block exports
+    pass

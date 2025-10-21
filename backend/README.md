@@ -18,15 +18,15 @@ It provides REST APIs for movie data, item management, and user interaction.
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/movie-recommendations.git
-cd movie-recommendations/backend
+git clone https://github.com/Null-Pointers-2/COSC-310-Project-2025.git
+cd COSC-310-Project-2025/backend
 ````
 
 ### 2. Create a virtual environment
 
 ```bash
 python -m venv venv
-venv\Scripts\activate      # On Windows
+venv\Scripts\activate.bat  # On Windows
 # OR
 source venv/bin/activate   # On macOS/Linux
 ```
@@ -34,7 +34,7 @@ source venv/bin/activate   # On macOS/Linux
 ### 3. Install dependencies
 
 ```bash
-pip install --upgrade pip
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
@@ -43,7 +43,7 @@ pip install -r requirements.txt
 ## Running the Server
 
 ```bash
-python -m app.main
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Then visit:
@@ -58,13 +58,15 @@ Then visit:
 To run tests under `backend/tests/`, run:
 
 ```bash
-pytest -v
-```
+# In backend/ directory with venv activated
+pytest tests/ -v
 
-To include coverage reporting:
+# Or run specific test types
+pytest tests/unit -v
+pytest tests/integration -v
 
-```bash
-pytest --cov=app --cov-report=term-missing
+# With coverage
+pytest tests/ -v --cov=app --cov-report=html
 ```
 
 ---
@@ -74,17 +76,29 @@ pytest --cov=app --cov-report=term-missing
 ### Build the Docker image
 
 ```bash
-docker build -t movie-backend .
+# From project root:
+docker compose build
 ```
 
 ### Run the container
 
 ```bash
-docker run -d -p 8000:8000 movie-backend
+# Start all services
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Or view specific service logs
+docker compose logs -f backend
+docker compose logs -f frontend
 ```
 
 Then access the API at:
-[http://localhost:8000](http://localhost:8000)
+[http://localhost:8000](http://localhost:8000/health)
+
+Or the frontend at:
+[http://localhost:3000](http://localhost:3000)
 
 ---
 
@@ -96,9 +110,9 @@ This project is licensed under the [GPLv3](../LICENSE).
 
 ## Authors
 
-*    Evan Bowness
-*    Graeme Bradford
-*    Patrick Rinn
-*    Patrik Balazsy
+* Evan Bowness
+* Graeme Bradford
+* Patrick Rinn
+* Patrik Balazsy
 
 ---

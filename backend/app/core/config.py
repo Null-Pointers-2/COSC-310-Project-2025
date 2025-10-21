@@ -8,11 +8,6 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """Application settings."""
     
-    # API Settings
-    API_TITLE: str = "Movie Recommendations API"
-    API_VERSION: str = "1.0.0"
-    API_DESCRIPTION: str = "Backend API for personalized movie recommendations"
-    
     # Security
     SECRET_KEY: str = os.getenv("SECRET_KEY", "note-to-self-change-this-into-dot-env-or-something")
     ALGORITHM: str = "HS256"
@@ -54,7 +49,6 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
-
 
 # Create settings instance
 settings = Settings()

@@ -3,8 +3,6 @@ FastAPI dependencies for authentication and authorization.
 """
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
-from typing import Optional
 from app.repositories.users_repo import UsersRepository
 from app.repositories.penalties_repo import PenaltiesRepository
 
@@ -27,18 +25,11 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
     Raises:
         HTTPException: If token is invalid or user not found
     """
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    
-    try:
-        # TODO: Decode JWT token
-        # TODO: Get user from repository
-        pass
-    except JWTError:
-        raise credentials_exception
+
+    # TODO: Decode JWT token
+    # TODO: Get user from repository
+    pass
+
 
 
 async def get_current_active_user(

@@ -1,7 +1,6 @@
 """Authentication and authorization service."""
 from datetime import datetime, timedelta
 from typing import Optional
-from jose import JWTError, jwt
 from passlib.context import CryptContext
 from app.repositories.users_repo import UsersRepository
 from app.schemas.auth import TokenData

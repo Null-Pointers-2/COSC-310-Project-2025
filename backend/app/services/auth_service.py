@@ -6,7 +6,6 @@ from passlib.context import CryptContext
 from app.repositories.users_repo import UsersRepository
 from app.schemas.auth import TokenData
 
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 users_repo = UsersRepository()
 

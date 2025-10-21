@@ -1,29 +1,16 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import auth, users, movies, ratings, recommendations, watchlist, admin, export
 
 app = FastAPI(
     title="Movie Recommendations API",
-    description="Backend API for personalized movie recommendations using cosine similarity",
+    description="Backend API for personalized movie recommendations",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
 
-# CORS configuration for frontend
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://frontend:3000"
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Health check endpoint (required for Docker)
+# Health check endpoint
 @app.get("/health", tags=["Health"])
 async def health_check():
     """
@@ -50,7 +37,7 @@ async def root():
         "health": "/health"
     }
 
-# Include routers
+# Routers
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/users", tags=["Users"])
 app.include_router(movies.router, prefix="/movies", tags=["Movies"])
@@ -67,10 +54,10 @@ async def startup_event():
     Execute on application startup.
     Initialize data files, load ML models, etc.
     """
-    # TODO: Initialize repositories (create files if they don't exist)
-    # TODO: Load/precompute similarity matrix for recommendations
+    # TODO: Initialize repositories 
+    # TODO: Load/precompute similarity matrix for recommendations (still not sure how this will work...)
     # TODO: Validate data files
-    print("🚀 Application starting up...")
+    print("Application starting up...")
 
 # Shutdown event
 @app.on_event("shutdown")

@@ -1,16 +1,13 @@
 """Authentication and authorization service."""
 from app.repositories.users_repo import UsersRepository
-from app.schemas.auth import TokenData
-
+from typing import Optional
+from app.core.dependencies import decode_token
 from datetime import datetime, timedelta, timezone
-from typing import Annotated
-
 import jwt
-from fastapi import FastAPI, HTTPException, status
+from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
-
 from app.core.config import settings
 
 users_repo = UsersRepository()
@@ -30,7 +27,7 @@ def authenticate_user(username: str, password: str):
     user = users_repo.get_by_username(username)
     if not user:
         return False
-    if not verify_password(password, user.hashed_password):
+    if not verify_password(password, user["hashed_password"]):
         return False
     return user
 
@@ -45,25 +42,29 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
+def get_user_from_token(token: str) -> Optional[dict]:
+    """Get user information from a JWT token."""
+    try:
+        token_data = decode_token(token)
+        user = users_repo.get_by_username(token_data["username"])
+        if not user:
+            return None
+        return user
+    except HTTPException:
+        return None
+
 def register_user(username: str, email: str, password: str, role: str = "user") -> dict:
     """Register a new user."""
     # Check if user already exists
     existing_user = users_repo.get_by_username(username)
     if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already registered"
-        )
+        raise ValueError("Username already registered")
 
-    # Check if email is already registered 
+    # Check if email is already registered
     existing_email = users_repo.get_by_email(email)
     if existing_email:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
-        )
+        raise ValueError("Email already registered")
     
-    # Hash the password
     hashed_password = get_password_hash(password)
 
     # Create user in repository
@@ -74,5 +75,5 @@ def register_user(username: str, email: str, password: str, role: str = "user") 
         "role": role,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
-
     new_user = users_repo.create(user_data)
+    return new_user

@@ -37,18 +37,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Create test data files
-      working-directory: ./backend
-      run: |
-        mkdir -p app/data data
-        echo "[]" > app/data/ratings.json
-        echo "{}" > app/data/recommendations.json
-        echo "[]" > app/data/penalties.json
-        echo "[]" > app/data/watchlist.json
-        if [ ! -f data/users.csv ]; then
-          echo "id,username,email,hashed_password,role,created_at" > data/users.csv
-        fi
-
     - name: Run all tests
       working-directory: ./backend
       run: |
@@ -106,39 +94,6 @@ jobs:
     - name: Build frontend
       working-directory: ./frontend
       run: npm run build
-  
-  code-quality:
-    if: github.event_name == 'pull_request'
-    name: Code Quality
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-    
-    - name: Install linting tools
-      run: |
-        pip install flake8 black isort mypy
-    
-    - name: Run flake8
-      working-directory: ./backend
-      run: flake8 app --max-line-length=120 --extend-ignore=E203,W503
-      continue-on-error: true
-    
-    - name: Run black (check only)
-      working-directory: ./backend
-      run: black --check app
-      continue-on-error: true
-    
-    - name: Run isort (check only)
-      working-directory: ./backend
-      run: isort --check-only app
-      continue-on-error: true
 
   docker-publish:
     name: Build & Push Docker Images
@@ -151,18 +106,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
-    - name: Create required files
-      run: |
-        mkdir -p backend/app/data backend/data
-        echo "[]" > backend/app/data/ratings.json
-        echo "{}" > backend/app/data/recommendations.json
-        echo "[]" > backend/app/data/penalties.json
-        echo "[]" > backend/app/data/watchlist.json
-        if [ ! -f backend/data/users.csv ]; then
-          echo "id,username,email,password,role,created_at" > backend/data/users.csv
-          echo "1,admin,admin@test.com,\$2b\$12\$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYuL0WkZk3G,admin,2025-01-01T00:00:00" >> backend/data/users.csv
-        fi
     
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3

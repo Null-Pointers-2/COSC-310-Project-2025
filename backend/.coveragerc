@@ -6,6 +6,8 @@ omit =
     */__pycache__/*
     */venv/*
     */env/*
+    */__init__.py
+    */schemas/*.py   
 
 [report]
 precision = 2

@@ -24,7 +24,7 @@ class UserUpdate(BaseModel):
 
 class User(UserBase):
     """Complete user schema (without password)."""
-    id: int
+    id: str
     role: str  # "admin" or "user"
     created_at: datetime
     

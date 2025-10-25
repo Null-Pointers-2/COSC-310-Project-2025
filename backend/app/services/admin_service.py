@@ -5,7 +5,6 @@ from app.repositories.users_repo import UsersRepository
 from app.repositories.penalties_repo import PenaltiesRepository
 from app.repositories.ratings_repo import RatingsRepository
 from app.schemas.penalty import Penalty, PenaltyCreate
-import uuid
 
 users_repo = UsersRepository()
 penalties_repo = PenaltiesRepository()

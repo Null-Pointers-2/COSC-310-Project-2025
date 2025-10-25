@@ -2,7 +2,7 @@
 from typing import List, Optional
 from app.repositories.movies_repo import MoviesRepository
 from app.repositories.ratings_repo import RatingsRepository
-from app.schemas.movie import Movie, MovieDetail, MoviePage
+from app.schemas.movie import Movie, MoviePage
 
 movies_repo = MoviesRepository()
 ratings_repo = RatingsRepository()
@@ -12,10 +12,25 @@ def get_movies(page: int = 1, page_size: int = 30) -> MoviePage:
     # TODO: Calculate offset, get movies, return MoviePage
     pass
 
-def get_movie_by_id(movie_id: str) -> Optional[MovieDetail]:
-    """Get movie details with ratings."""
-    # TODO: Get movie, calculate average rating
-    pass
+def get_movie_by_id(movie_id: str) -> Optional[Movie]:
+    """Get movie details."""
+    try:
+        movie_id = int(movie_id)
+    except ValueError:
+        return None
+    
+    movie_data = movies_repo.get_by_id(movie_id)
+    if not movie_data:
+        return None
+    
+    return Movie(
+        movieId=str(movie_data['movieId']),
+        title=movie_data['title'],
+        genres=movie_data['genres'], 
+        average_rating=0, # TODO: Calculate rating average from user ratings
+        imdb_id=None,
+        tmdb_id=None
+    )
 
 def search_movies(query: str, limit: int = 20) -> List[Movie]:
     """Search movies by title."""

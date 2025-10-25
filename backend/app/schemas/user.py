@@ -20,7 +20,6 @@ class UserLogin(BaseModel):
 class UserUpdate(BaseModel):
     """Schema for updating user profile."""
     email: Optional[EmailStr] = None
-    # Other updateable fields
 
 class User(UserBase):
     """Complete user schema (without password)."""

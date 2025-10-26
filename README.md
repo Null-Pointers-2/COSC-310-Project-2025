@@ -2,7 +2,7 @@
 
 [![Coverage Docs](https://img.shields.io/badge/docs-coverage-blue)](https://github.com/Null-Pointers-2/COSC-310-Project-2025/tree/coverage)
 [![Build Status](https://github.com/Null-Pointers-2/COSC-310-Project-2025/actions/workflows/ci.yml/badge.svg)](https://github.com/Null-Pointers-2/COSC-310-Project-2025/actions)
-[![Python Version](https://img.shields.io/badge/python-3.11-blue)](https://www.python.org/)
+[![Python Version](https://img.shields.io/badge/python-3.13-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
 A Software Engineering Project for COSC 310 (2025)

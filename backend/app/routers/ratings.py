@@ -5,7 +5,7 @@ from app.schemas.rating import Rating, RatingCreate, RatingUpdate
 from app.core.dependencies import get_current_user, get_current_admin_user
 from app.services import ratings_service
 
-router = APIRouter(preifx="/ratings", tags=["Ratings"])
+router = APIRouter(prefix="/ratings", tags=["Ratings"])
 
 @router.post("", response_model=Rating, status_code=status.HTTP_201_CREATED)
 def create_rating(

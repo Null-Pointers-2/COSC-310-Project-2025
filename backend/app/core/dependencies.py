@@ -10,12 +10,10 @@ from app.repositories.users_repo import UsersRepository
 from app.repositories.penalties_repo import PenaltiesRepository
 from app.core.config import settings
 
-# OAuth2 scheme for token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 users_repo = UsersRepository()
 penalties_repo = PenaltiesRepository()
-
 
 def decode_token(token: str) -> dict:
     """

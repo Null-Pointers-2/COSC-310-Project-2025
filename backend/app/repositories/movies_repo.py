@@ -44,6 +44,9 @@ class MoviesRepository:
         if match.empty:
             return None
         return match.iloc[0].to_dict()
+        # Modified to also return average movie rating
+        movie["average_rating"] = self.get_average_rating(movie_id)
+        return movie
 
     def get_all(self, limit: int = 100, offset: int = 0) -> List[Dict[str, Any]]:
         """Get all movies with pagination."""
@@ -83,9 +86,64 @@ class MoviesRepository:
             if genre
         )
         return sorted(all_genres)
+    
+    # Uncomment the below method to add tags when genome_scores csv is added
 
-    def get_movie_tags(self, movie_id: int) -> List[Dict[str, Any]]:
-        """Get genome tags for a movie (placeholder for now)."""
-        # TODO: Implement once genome_scores.csv and genome_tags.csv are loaded
-        pass
+    """def get_movie_tags(self, movie_id: int) -> List[Dict[str, Any]]:
+        # DONE: Implement once genome_scores.csv and genome_tags.csv are loaded
+        scores_path = self.movies_dir / "genone-scores.csv"
+        tags_path = self.movies_dir / "genone-tags.csv"
 
+        if not scores_path.exists() or not tags_path.exists():
+            return []
+        
+        if self.genome_scores_df is None:
+            self.genome_scores_df = pd.read_csv(scores_path, encoding="utf-8")
+        if self.genome_tags_df is None:
+            self.genome_tags_df = pd.read_csv(tags_path, encoding="utf-8")
+
+        # Filter scores
+        movies_scores = self.genome_scores_df[self.genome_scores_df["movieId"] == movie_id]
+        if movies_scores.empty:
+            return []
+        
+        merged = pd.merge(
+            movies_scores,
+            self.genome_tags_df,
+            on="tagId",
+            how="inner"
+        )
+    
+
+        merged = merged.sort_values(by="relevance", ascending=False)
+
+        return merged[["tag", "relevance"]].to_dict(orient="records")
+    """
+    def get_average_rating(self, movie_id: int, ratings_path: Optional[Path] = None) -> Optional[float]:
+        # DONE: Calculate average rating (the get by id method will also auto show the avg rating now)
+        
+        ratings_path = ratings_path or Path("app/data/ratings.json")
+        if not ratings_path.exists():
+            return None
+        
+        import json
+        from statistics import mean
+
+        try:
+            with open(ratings_path, "r", encoding="utf-8") as f:
+                ratings = json.load(f)
+        except json.JSONDecodeError:
+            return None
+        
+        # Retrieve ratings for a given moive
+        movie_ratings = [
+            float(r["rating"])
+            for r in ratings
+            if str(r.get("movie_id")) == str(movie_id)
+        ]
+
+        if not movie_ratings:
+            return None
+        
+        # Rounded the average rating to 2 decimal spots
+        return round(mean(movie_ratings), 2)

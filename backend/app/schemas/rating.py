@@ -5,7 +5,7 @@ from datetime import datetime
 
 class RatingBase(BaseModel):
     """Base rating schema."""
-    movie_id: str = Field(..., description="Movie ID")
+    movie_id: int = Field(..., description="Movie ID")
     rating: float = Field(..., ge=0.5, le=5.0, description="Rating from 0.5 to 5.0")
 
 class RatingCreate(RatingBase):
@@ -18,7 +18,7 @@ class RatingUpdate(BaseModel):
 
 class Rating(RatingBase):
     """Complete rating schema."""
-    id: str
+    id: int
     user_id: str
     timestamp: datetime
     

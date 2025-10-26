@@ -17,9 +17,9 @@ def search_movies(query: str = Query(..., min_length=1), limit: int = Query(20, 
     return movies_service.search_movies(query=query, limit=limit)
 
 @router.get("/filter", response_model=List[Movie])
-def filter_movies(genre: Optional[str] = None, year: Optional[int] = None, limit: int = Query(20, ge=1, le=100)):
-    """Filter movies by genre and/or year."""
-    return movies_service.filter_movies(genre=genre, year=year, limit=limit)
+def filter_movies(genre: Optional[str] = None, limit: int = Query(20, ge=1, le=100)):
+    """Filter movies by genre."""
+    return movies_service.filter_movies(genre=genre, limit=limit)
 
 @router.get("/genres", response_model=List[str])
 def get_genres():

@@ -50,8 +50,8 @@ def search_movies(query: str, limit: int = 20) -> List[Movie]:
         m["average_rating"] = movies_repo.get_average_rating(m["movieId"])
     return [Movie(**m) for m in results]
 
-def filter_movies(genre: Optional[str] = None, year: Optional[int] = None, limit: int = 20) -> List[Movie]:
-    """Filter movies by genre and/or year."""
+def filter_movies(genre: Optional[str] = None, limit: int = 20) -> List[Movie]:
+    """Filter movies by genre."""
     if genre:
         results = movies_repo.filter_by_genre(genre=genre, limit=limit)
     else:

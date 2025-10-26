@@ -11,6 +11,7 @@ class MoviesRepository:
     def __init__(self, movies_dir: str = "movies"):
         self.movies_dir = Path(movies_dir)
         self.movies_df: Optional[pd.DataFrame] = None
+        self.links_df: Optional[pd.DataFrame] = None
         self.genome_scores_df: Optional[pd.DataFrame] = None
         self.genome_tags_df: Optional[pd.DataFrame] = None
         self._load_data()
@@ -18,13 +19,27 @@ class MoviesRepository:
     def _load_data(self):
         """Load movie data into pandas DataFrames."""
         movie_path = self.movies_dir / "movie.csv"
+        links_path = self.movies_dir / "link.csv"
+        
         if not movie_path.exists():
             self.movies_df = pd.DataFrame(columns=["movieId", "title", "genres"])
             return
+        
         self.movies_df = pd.read_csv(movie_path, encoding="utf-8")
         self.movies_df["genres"] = (
             self.movies_df["genres"].fillna("").str.split("|")
         )
+        
+        if links_path.exists():
+            self.links_df = pd.read_csv(links_path, encoding="utf-8")
+            self.movies_df = pd.merge(
+                self.movies_df,
+                self.links_df,
+                on="movieId",
+                how="left"
+            )
+            self.movies_df["imdbId"] = self.movies_df["imdbId"].astype("Int64")
+            self.movies_df["tmdbId"] = self.movies_df["tmdbId"].astype("Int64")
 
     def get_paginated_movies(self, page: int, page_size: int) -> tuple[List[Dict[str, Any]], int]:
         """Get paginated list of movies and total count."""
@@ -86,7 +101,7 @@ class MoviesRepository:
         )
         return sorted(all_genres)
     
-    #TODO: Uncomment the below method to add tags when genome_scores csv is added
+    # TODO: Uncomment the below method to add tags when genome_scores csv is added
     """def get_movie_tags(self, movie_id: int) -> List[Dict[str, Any]]:
         scores_path = self.movies_dir / "genome-scores.csv"
         tags_path = self.movies_dir / "genome-tags.csv"

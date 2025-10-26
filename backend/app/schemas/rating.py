@@ -10,7 +10,7 @@ class RatingBase(BaseModel):
 
 class RatingCreate(RatingBase):
     """Schema for creating a new rating."""
-    pass
+    user_id: str = Field(..., description="User ID who created the rating")
 
 class RatingUpdate(BaseModel):
     """Schema for updating a rating."""

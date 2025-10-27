@@ -1,3 +1,4 @@
+"""Unit tests for users repository."""
 import pytest
 from app.repositories.users_repo import UsersRepository
 
@@ -30,3 +31,5 @@ def test_create_and_get_user(temp_users_repo):
     user_by_id = users_temp.get_by_id(user_id)
     assert user_by_id is not None
     assert user_by_id["username"] == "bob"
+
+#TODO: Write more user repo unit tests

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from app.routers import watchlist  # import your router
+from app.routers import watchlist
 
 app = FastAPI()
 app.include_router(watchlist.router)
@@ -26,3 +26,5 @@ def test_add_to_watchlist():
     # data = response.json()
     # assert data["movie_id"] == 1
     # assert data["user_id"] == "user123"
+
+# TODO: Write more watchlist service unit tests

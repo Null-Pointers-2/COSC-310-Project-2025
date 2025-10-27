@@ -56,12 +56,15 @@ jobs:
         git fetch origin coverage || true
         git checkout -B coverage origin/coverage || git checkout -b coverage
 
+        rm -rf testing-documents
         mkdir -p testing-documents
-        cp -r ./backend/testing-documents/* testing-documents/ || true
+        cp -r ../testing-documents/* testing-documents/ || true
 
         date > testing-documents/coverage/last-updated.txt
 
-        git add -f testing-documents
+        git add -f testing-documents/**/*
+        git status
+
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else

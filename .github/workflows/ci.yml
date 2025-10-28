@@ -47,7 +47,7 @@ jobs:
       run: |
         date > testing-documents/coverage/last-updated.txt
 
-    - name: Commit coverage reports
+    - name: Commit and push coverage reports
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         set -e
@@ -55,19 +55,21 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
+        mkdir -p /tmp/coverage-temp
+        cp -r testing-documents/coverage/* /tmp/coverage-temp/
+
         git fetch origin coverage || true
         git checkout -B coverage origin/coverage || git checkout -b coverage
 
         rm -rf testing-documents/coverage/*
         mkdir -p testing-documents/coverage
 
-        cp -r ../testing-documents/coverage/* testing-documents/coverage/ || true
+        cp -r /tmp/coverage-temp/* testing-documents/coverage/
 
         date > testing-documents/coverage/last-updated.txt
 
         git add -f testing-documents/**/*
         git status
-
         git commit -m "Update coverage reports [ci skip]" || echo "No commit needed"
         git push origin coverage --force
   

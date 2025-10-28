@@ -1,10 +1,10 @@
 """Recommendation schemas."""
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 
 class RecommendationItem(BaseModel):
     """Single recommendation item."""
-    movie_id: str
+    movie_id: int
     similarity_score: float
 
 class RecommendationList(BaseModel):

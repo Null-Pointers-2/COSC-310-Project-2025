@@ -52,15 +52,21 @@ jobs:
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout -- backend/app/data/*.json 2>/dev/null || true
-        
-        git add -f testing-documents/coverage/
-        
+
+        git fetch origin coverage || true
+        git checkout -B coverage origin/coverage || git checkout -b coverage
+
+        mkdir -p testing-documents/coverage
+        date > testing-documents/coverage/last-updated.txt
+
+        git add -f testing-documents/**/*
+        git status
+
         if git diff --staged --quiet; then
-          echo "No coverage changes to commit"
+          echo "No changes to commit"
         else
-          git commit -m "Update backend coverage reports [ci skip]"
-          git push origin main
+          git commit -m "Update coverage reports [ci skip]"
+          git push origin coverage
         fi
   
   frontend-tests:

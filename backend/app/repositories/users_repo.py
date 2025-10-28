@@ -56,7 +56,6 @@ class UsersRepository:
         
         for i, user in enumerate(users):
             if user["id"] == user_id:
-                # Merge the update data with existing user data
                 users[i].update(user_data)
                 users[i]["id"] = user_id
                 updated = True
@@ -65,7 +64,6 @@ class UsersRepository:
         if not updated:
             return None
         
-        # Write all users back to file
         with self.users_file.open("w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=self.HEADERS)
             writer.writeheader()
@@ -80,7 +78,7 @@ class UsersRepository:
         users = [u for u in users if u["id"] != user_id]
         
         if len(users) == original_count:
-            return False  # User not found
+            return False 
         
         with self.users_file.open("w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=self.HEADERS)

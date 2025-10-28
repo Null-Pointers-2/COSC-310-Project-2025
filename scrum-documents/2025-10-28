@@ -1,0 +1,57 @@
+# Scrum Meeting - Sprint Review
+
+**Date:** 2025-09-25  
+**Time:** 09:30 - 11:30  
+**Sprint:** M3 Planning
+
+---
+
+## Attendees
+
+**Present:**
+- [x] Evan Bowness
+- [x] Graeme Beniston Bradford (Remote)
+- [x] Patrick Rinn
+- [x] Patrik Balazsy
+
+---
+
+## Discussion Points
+
+### What was completed since last meeting?
+- Signficant progress on backend features including the auth service, search, watchlist and rating features
+- Implemented unit tests and worked to fix type errors 
+
+### What will be worked on today/next?
+- Planning tasks for M3, and discussing design goals
+- Reviewing each members progress on issues
+
+### Blockers/Impediments
+- **Issue:** Deciding on admin stats to track
+  - **Impact:** Whoever is working on the admin feature
+  - **Status:** In progress
+
+---
+
+## Action Items
+
+| Action Item | Owner | Due Date | Status |
+|-------------|-------|----------|--------|
+| M3 - Backend implementation | Everyone | 2025-10-28 | In Progress |
+
+---
+
+## Notes
+
+Pytest Mocking can be used to generate mock movie data for testing
+
+---
+
+## Follow-up Items
+
+N/A
+
+---
+
+**Next Meeting:** 2025-10-02 at 09:30  
+**Scribe:** Patrik Balazsy

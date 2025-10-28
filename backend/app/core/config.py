@@ -21,7 +21,8 @@ class Settings(BaseSettings):
     SIMILARITY_MATRIX_FILE: str = str(DATA_DIR / "similarity_matrix.pkl") # TODO: doesn't actually exist yet
     
     # Authentication
-    SECRET_KEY: str = "Rty5xj1vTBBgOD3WY+061cnFeuFVg4MFSbk+MC+sBOb0/0MXNdLScda4t9RmN/VJ" # From jwtsecrets, obviously this should be in a .env for a production project
+    SECRET_KEY: str = "Rty5xj1vTBBgOD3WY+061cnFeuFVg4MFSbk+MC+sBOb0/0MXNdLScda4t9RmN/VJ" # From jwtsecrets.com
+    # TODO: Move SECRET_KEY to environment variables
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 

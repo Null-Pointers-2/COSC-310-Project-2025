@@ -30,10 +30,17 @@ def test_load_movies(setup_movie_data):
     """Test loading movies from CSV."""
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
-
     assert repo.movies_df is not None
     assert len(repo.movies_df) == 3
-    assert list(repo.movies_df.columns) == ["movieId", "title", "genres"]
+    assert list(repo.movies_df.columns) == ["movieId", "title", "genres", "year"]
+
+def test_extract_year():
+    """Test year extraction from movie titles."""
+    repo = MoviesRepository(movies_dir="movies")
+    
+    assert repo._extract_year("Toy Story (1995)") == 1995
+    assert repo._extract_year("More Complicated Movie Title (That Even Has Brackets) (1994)") == 1994
+    assert repo._extract_year("Very Real Movie With No Year: 100 Emoji") is None
 
 def test_get_by_id(setup_movie_data):
     """Test getting a movie by ID."""

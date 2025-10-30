@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, Optional, Dict, Any, cast
 import pandas as pd
 import json
+import re
 from statistics import mean
 
 class MoviesRepository:
@@ -16,19 +17,28 @@ class MoviesRepository:
         self.genome_tags_df: Optional[pd.DataFrame] = None
         self._load_data()
 
+    def _extract_year(self, title: str) -> Optional[int]:
+        """Extract year from movie title."""
+        match = re.search(r'\((\d{4})\)\s*$', title) # Will match year in parentheses at end of title
+        if match:
+            return int(match.group(1))
+        return None
+
     def _load_data(self):
         """Load movie data into pandas DataFrames."""
         movie_path = self.movies_dir / "movie.csv"
         links_path = self.movies_dir / "link.csv"
         
         if not movie_path.exists():
-            self.movies_df = pd.DataFrame(columns=["movieId", "title", "genres"])
+            self.movies_df = pd.DataFrame(columns=["movieId", "title", "genres", "year"])
             return
         
         self.movies_df = pd.read_csv(movie_path, encoding="utf-8")
         self.movies_df["genres"] = (
             self.movies_df["genres"].fillna("").str.split("|")
         )
+        
+        self.movies_df["year"] = self.movies_df["title"].apply(self._extract_year)
         
         if links_path.exists():
             self.links_df = pd.read_csv(links_path, encoding="utf-8")

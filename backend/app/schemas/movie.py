@@ -1,5 +1,5 @@
 """Movie schemas."""
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional, List
 
 class Movie(BaseModel):
@@ -7,6 +7,7 @@ class Movie(BaseModel):
     movieId: int
     title: str
     genres: Optional[List[str]] = None
+    year: Optional[int] = None
     
     imdbId: Optional[int] = None
     tmdbId: Optional[int] = None

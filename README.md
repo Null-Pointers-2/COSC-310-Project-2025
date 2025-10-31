@@ -27,7 +27,6 @@ cd COSC-310-Project-2025/backend
 ```bash
 python -m venv venv
 venv\Scripts\activate.bat  # On Windows
-# OR
 source venv/bin/activate   # On macOS/Linux
 ```
 
@@ -40,6 +39,12 @@ pip install -r requirements.txt
 
 ---
 
+### 4. Create secret key in .env
+
+```bash
+python -c "import secrets; f = open('.env', 'w', encoding='utf-8'); f.write('SECRET_KEY=' + secrets.token_urlsafe(48) + '\n'); f.close()"
+```
+
 ## Running the Server
 
 ```bash
@@ -48,7 +53,8 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 Then visit:
 
-* API Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* Interactive Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* API Docs: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 * Health Check: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
 
 ---
@@ -58,10 +64,10 @@ Then visit:
 To run tests under `backend/tests/`, run:
 
 ```bash
-# In backend/ directory with venv activated
+# In backend/ directory with venv activated:
 python -m pytest
 
-# With coverage
+# With coverage:
 python -m pytest -v --cov=app --cov-report=html
 ```
 

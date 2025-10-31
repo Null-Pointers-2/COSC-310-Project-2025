@@ -234,6 +234,7 @@ class TestGetCurrentUserEndpoint:
     def test_get_me_token_for_deleted_user(self, auth_headers):
         """Test GET /auth/me fails with 401 if user was deleted."""
         user = users_repo.get_by_username("testuser")
+        assert user is not None
         users_repo.delete(user["id"])
         response = client.get("/auth/me", headers=auth_headers)
         assert response.status_code == 401

@@ -3,3 +3,4 @@ backend/.coverage
 /testing-documents/.coverage
 venv/
 /.coverage
+/testing-documents/

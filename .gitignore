@@ -2,3 +2,4 @@
 backend/.coverage
 /testing-documents/.coverage
 venv/
+/.coverage

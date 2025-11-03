@@ -4,7 +4,6 @@ from fastapi import status
 from app.main import app
 from app.core.dependencies import get_current_user, get_current_admin_user
 
-
 mock_user_dict = {
     "user_id": "user123",
     "username": "testuser",
@@ -32,7 +31,6 @@ mock_user_profile = {
 
 
 # Override functions to bypass auth for testings
-
 def override_get_current_user():
     return mock_user_dict
 

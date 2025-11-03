@@ -2,7 +2,6 @@ import pytest
 from app.services import users_service
 from app.schemas.user import UserUpdate
 
-
 mock_user_repo = {
     "user_id": "user123",
     "username": "testuser",
@@ -24,7 +23,6 @@ mock_penalties_from_repo = [
 mock_recommendations_from_repo = [
     {"movie_id": "movie123", "title": "Test Movie"}
 ]
-
 
 def test_get_user_profile_success(mocker):
     mocker.patch("app.services.users_service.users_repo.get_by_id", return_value=mock_user_repo)

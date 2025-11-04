@@ -27,17 +27,14 @@ def get_user_profile(user_id: str) -> UserProfile:
     if not user:
         return None
     
-    # Get user ratings and penalties from other repositories
     user_ratings = ratings_repo.get_by_user(user_id)
     user_penalties = penalties_repo.get_by_user(user_id)
 
-    # Calculate stats
     total_ratings = len(user_ratings)
     average_rating = 0.0
     if total_ratings > 0:
         average_rating = sum(r['rating'] for r in user_ratings) / total_ratings
 
-    # The **user unpacks the user dict
     profile_data = {
         "id": user["user_id"], 
         "username": user["username"],
@@ -58,11 +55,9 @@ def get_user_dashboard(user_id: str) -> UserDashboard:
     if not profile:
         return None
     
-    # Get recent ratings and penalties
     recent_ratings = ratings_repo.get_by_user(user_id, limit=RECENT_MOVIE_VIEW_LIMIT)
     penalties = penalties_repo.get_by_user(user_id)
     
-    # Get recommendations
     recommendations = recommendations_repo.get_for_user(user_id, limit=RECOMMENDED_MOVIE_VIEW_LIMIT)
     
     dashboard_data = {
@@ -76,8 +71,6 @@ def get_user_dashboard(user_id: str) -> UserDashboard:
 
 def update_user(user_id: str, update_data: dict) -> dict:
     """Update user information."""
-    # Convert Pydantic model to dict
-    # Only provided fields can be updated
     update_dict = update_data.model_dump(exclude_unset=True)
     
     if not update_dict:

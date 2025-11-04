@@ -21,10 +21,9 @@ def get_user_watchlist(user_id: str) -> List[WatchlistItem]:
         if movie:
             items.append(
                 WatchlistItem(
-                    id=movie_id,
                     user_id=user_id,
                     movie_id=movie_id,
-                    added_at=datetime.now(),
+                #   added_at=datetime.now(), TODO: add datetime compatibility later
                 )
             )
     return items
@@ -44,10 +43,9 @@ def add_to_watchlist(user_id: str, item: WatchlistItemCreate) -> WatchlistItem:
     watchlist_repo.add(user_id, movie_id)
 
     return WatchlistItem(
-        id=movie_id,
         user_id=user_id,
         movie_id=movie_id,
-        added_at=datetime.now(),
+     #  added_at=datetime.now(), TODO: add datetime compatibility later
     )
 
 

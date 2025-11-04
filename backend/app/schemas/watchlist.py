@@ -8,7 +8,6 @@ class WatchlistItemCreate(BaseModel):
 
 class WatchlistItem(BaseModel):
     """Watchlist item."""
-    id: int
     user_id: str
     movie_id: int
-    added_at: datetime
+  # added_at: datetime TODO: add datetime compatibility

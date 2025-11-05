@@ -26,8 +26,8 @@ class MoviesRepository:
 
     def _load_data(self):
         """Load movie data into pandas DataFrames."""
-        movie_path = self.movies_dir / "movie.csv"
-        links_path = self.movies_dir / "link.csv"
+        movie_path = self.movies_dir / "movies.csv"
+        links_path = self.movies_dir / "links.csv"
         
         if not movie_path.exists():
             self.movies_df = pd.DataFrame(columns=["movieId", "title", "genres", "year"])

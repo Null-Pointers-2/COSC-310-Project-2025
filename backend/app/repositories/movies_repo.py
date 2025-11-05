@@ -9,7 +9,7 @@ from statistics import mean
 class MoviesRepository:
     """Handle movie data from MovieLens CSV files."""
 
-    def __init__(self, movies_dir: str = "movies"):
+    def __init__(self, movies_dir: str = "data/movies"):
         self.movies_dir = Path(movies_dir)
         self.movies_df: Optional[pd.DataFrame] = None
         self.links_df: Optional[pd.DataFrame] = None

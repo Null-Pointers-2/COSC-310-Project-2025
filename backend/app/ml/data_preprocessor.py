@@ -25,11 +25,7 @@ class MovieDataPreprocessor:
     def preprocess_genres(self, movies_df: pd.DataFrame) -> pd.DataFrame:
         """Preprocess the genres column."""
         movies_df = movies_df.copy()
-        movies_df['genres_processed'] = (
-            movies_df['genres']
-            .fillna('')
-            .str.replace('|', ' ', regex=False)
-        )
+        movies_df['genres_processed'] = (movies_df['genres'].fillna('').str.replace('|', ' ', regex=False))
         movies_df = movies_df[movies_df['genres'] != '(no genres listed)']
         return movies_df
 
@@ -39,26 +35,16 @@ class MovieDataPreprocessor:
         tfidf_matrix = tfidf.fit_transform(movies_df['genres_processed'])
         return tfidf_matrix, tfidf, movies_df
 
-    def save_processed_data(
-        self,
-        movies_df: pd.DataFrame,
-        tfidf_matrix: np.ndarray,
-        tfidf_vectorizer: TfidfVectorizer
-    ):
+    def save_processed_data(self, movies_df: pd.DataFrame, tfidf_matrix: np.ndarray, tfidf_vectorizer: TfidfVectorizer):
         """Save processed data and vectorizer."""
-        movies_df[['movieId', 'title', 'genres', 'genres_processed']].to_csv(
-            self.output_dir / 'movies_clean.csv',
-            index=False
-        )
+        movies_df[['movieId', 'title', 'genres', 'genres_processed']].to_csv(self.output_dir / 'movies_clean.csv', index=False)
 
         np.save(self.output_dir / 'tfidf_matrix.npy', tfidf_matrix.toarray())
 
         with open(self.output_dir / 'tfidf_vectorizer.pkl', 'wb') as f:
             pickle.dump(tfidf_vectorizer, f)
 
-        movie_id_to_idx = pd.Series(
-            movies_df.index, index=movies_df['movieId']
-        ).to_dict()
+        movie_id_to_idx = pd.Series(movies_df.index, index=movies_df['movieId']).to_dict()
 
         with open(self.output_dir / 'movie_id_to_idx.pkl', 'wb') as f:
             pickle.dump(movie_id_to_idx, f)
@@ -69,7 +55,3 @@ class MovieDataPreprocessor:
         movies_df = self.preprocess_genres(movies_df)
         tfidf_matrix, tfidf_vectorizer, movies_df = self.create_tfidf_matrix(movies_df)
         self.save_processed_data(movies_df, tfidf_matrix, tfidf_vectorizer)
-
-if __name__ == "__main__":
-    preprocessor = MovieDataPreprocessor()
-    preprocessor.run_preprocessing()

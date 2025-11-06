@@ -12,7 +12,7 @@ def get_my_watchlist(current_user: dict = Depends(get_current_user)):
     """Get current user's watchlist."""
     watchlist = watchlist_service.get_user_watchlist(user_id = current_user["id"])
     if watchlist is None:
-        raise HTTPException(status_code=404, detail=f"Watchlist with ID {current_user["id"]} not found")
+        raise HTTPException(status_code=404, detail=f"Watchlist with ID {current_user['id']} not found")
     return watchlist
     
 

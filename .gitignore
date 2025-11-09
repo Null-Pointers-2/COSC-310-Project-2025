@@ -4,3 +4,4 @@ backend/.coverage
 venv/
 /.coverage
 /testing-documents/
+backend/data/movies/genome-scores.csv

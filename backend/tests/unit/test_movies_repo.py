@@ -8,7 +8,7 @@ def setup_movie_data(tmp_path):
     """Setup mock movie CSV and ratings JSON."""
     movie_dir = tmp_path / "movies"
     movie_dir.mkdir()
-    movie_csv = movie_dir / "movie.csv"
+    movie_csv = movie_dir / "movies.csv"
     movie_csv.write_text(
         "movieId,title,genres\n"
         "1,The Matrix (1999),Action|Sci-Fi\n"
@@ -34,10 +34,11 @@ def test_load_movies(setup_movie_data):
     assert len(repo.movies_df) == 3
     assert list(repo.movies_df.columns) == ["movieId", "title", "genres", "year"]
 
-def test_extract_year():
+def test_extract_year(setup_movie_data):
     """Test year extraction from movie titles."""
-    repo = MoviesRepository(movies_dir="movies")
-    
+    movie_dir, _ = setup_movie_data
+    repo = MoviesRepository(movies_dir=movie_dir)
+
     assert repo._extract_year("Toy Story (1995)") == 1995
     assert repo._extract_year("More Complicated Movie Title (That Even Has Brackets) (1994)") == 1994
     assert repo._extract_year("Very Real Movie With No Year: 100 Emoji") is None

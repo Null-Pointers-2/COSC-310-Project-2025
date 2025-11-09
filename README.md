@@ -38,13 +38,25 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
----
+### 4. Download the genome-scores.csv dataset
 
-### 4. Create secret key in .env
+The dataset file (genome-scores.csv, ~400 MB) is stored as a GitHub release asset.
+Download it into the correct directory before running the backend:
+
+```bash
+curl -L -o data/movies/genome-scores.csv \
+  https://github.com/Null-Pointers-2/COSC-310-Project-2025/releases/latest/download/genome-scores.csv
+```
+
+If you’re on Windows and don’t have curl, you can just download it manually from the [Releases page](https://github.com/Null-Pointers-2/COSC-310-Project-2025/releases) and place it in backend/data/movies/.
+
+### 5. Create secret key in .env
 
 ```bash
 python -c "import secrets; f = open('.env', 'w', encoding='utf-8'); f.write('SECRET_KEY=' + secrets.token_urlsafe(48) + '\n'); f.close()"
 ```
+
+---
 
 ## Running the Server
 

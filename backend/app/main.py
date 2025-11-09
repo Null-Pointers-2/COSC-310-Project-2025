@@ -1,6 +1,52 @@
 from fastapi import FastAPI
 
 from app.routers import auth, users, movies, ratings, recommendations, watchlist, admin, export
+from app.repositories.users_repository import UsersRepository
+from app.repositories.movies_repository import MoviesRepository
+from app.repositories.ratings_repository import RatingsRepository
+from app.repositories.watchlist_repository import WatchlistRepository
+from app.repositories.recommendations_repository import RecommendationsRepository
+from app.repositories.penalties_repository import PenaltiesRepository
+from argon2 import PasswordHasher
+
+
+class SingletonResources:
+    """
+    Singleton container for shared application resources.
+    Initialized once at startup and shared across the application.
+    """
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        if SingletonResources._initialized:
+            return
+
+        # Initialize all repositories once
+        print("Initializing singleton resources...")
+        self.users_repo = UsersRepository()
+        self.movies_repo = MoviesRepository()
+        self.ratings_repo = RatingsRepository()
+        self.watchlist_repo = WatchlistRepository()
+        self.recommendations_repo = RecommendationsRepository()
+        self.penalties_repo = PenaltiesRepository()
+
+        # Security
+        self.password_hasher = PasswordHasher.recommended()
+
+        SingletonResources._initialized = True
+        print("Singleton resources initialized successfully")
+
+    def cleanup(self):
+        """Cleanup resources on shutdown."""
+        print("Cleaning up singleton resources...")
+        # Add any cleanup logic here if needed
+        print("Singleton resources cleaned up")
 
 app = FastAPI(
     title="Movie Recommendations API",
@@ -47,25 +93,33 @@ app.include_router(watchlist.router, prefix="/watchlist", tags=["Watchlist"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
 app.include_router(export.router, prefix="/export", tags=["Export"])
 
+# Initialize singleton instance
+resources = None
+
 # Startup event
 @app.on_event("startup")
 async def startup_event():
     """
     Execute on application startup.
-    Initialize data files, load ML models, etc.
+    Initialize singleton resources and load data.
     """
-    # TODO: Initialize repositories 
+    global resources
+    print("Application starting up...")
+    resources = SingletonResources()
+    app.state.resources = resources
     # TODO: Load/precompute similarity matrix for recommendations (still not sure how this will work...)
     # TODO: Validate data files
-    print("Application starting up...")
+    print("Application startup complete")
 
 # Shutdown event
 @app.on_event("shutdown")
 async def shutdown_event():
     """
     Execute on application shutdown.
-    Cleanup, save state, etc.
+    Cleanup resources and save state.
     """
-    # TODO: Save any cached data
-    # TODO: Cleanup resources
+    global resources
     print("Application shutting down...")
+    if resources:
+        resources.cleanup()
+    print("Application shutdown complete")

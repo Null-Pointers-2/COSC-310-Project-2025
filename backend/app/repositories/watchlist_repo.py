@@ -9,15 +9,16 @@ class WatchlistRepository:
     def __init__(self, watchlist_file: str = "app/data/watchlist.json"):
         """Initialize with path to watchlist JSON file."""
         self.watchlist_file = Path(watchlist_file)
-        self._ensure_file_exists()
+        self._ensure_file_exists()   
     
     def _ensure_file_exists(self):
         """Create watchlist file if it doesn't exist."""
-        if not self.watchlist_file.exists():
-            self.watchlist_file.parent.mkdir(parents=True, exist_ok=True)
-            self.watchlist_file.write_text("{}")
-            return False
-        return True
+        try:
+            if not self.watchlist_file.exists():
+                self.watchlist_file.parent.mkdir(parents=True, exist_ok=True)
+                self.watchlist_file.write_text("{}")
+        except OSError as e:
+            raise Exception(f"Failed to initialize watchlist file: {e}") from e
     
     def _read(self) -> Dict[str, List[int]]:
         """Read all watchlist items."""
@@ -29,8 +30,11 @@ class WatchlistRepository:
     
     def _write(self, data: Dict[str, List[int]]):
         """Write all watchlist items to file."""
-        with self.watchlist_file.open("w") as f:
-            json.dump(data, f, indent=4)
+        try:
+            with self.watchlist_file.open("w") as f:
+                json.dump(data, f, indent=4)
+        except OSError as e:
+            raise Exception(f"Failed to write watchlist file: {e}") from e
     
     def get_by_user(self, user_id: str) -> List[int]:
         """Get user's watchlist."""

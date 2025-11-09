@@ -1,19 +1,18 @@
 """
 FastAPI dependencies for authentication and authorization.
 """
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timezone
 import jwt
 from jwt.exceptions import InvalidTokenError
-from app.repositories.users_repo import UsersRepository
-from app.repositories.penalties_repo import PenaltiesRepository
 from app.core.config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-users_repo = UsersRepository()
-penalties_repo = PenaltiesRepository()
+def get_resources(request: Request):
+    """Get singleton resources from app state."""
+    return request.app.state.resources
 
 def decode_token(token: str) -> dict:
     """

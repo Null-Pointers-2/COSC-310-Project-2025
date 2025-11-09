@@ -1,13 +1,14 @@
 from fastapi import FastAPI
 
 from app.routers import auth, users, movies, ratings, recommendations, watchlist, admin, export
-from app.repositories.users_repository import UsersRepository
-from app.repositories.movies_repository import MoviesRepository
-from app.repositories.ratings_repository import RatingsRepository
-from app.repositories.watchlist_repository import WatchlistRepository
-from app.repositories.recommendations_repository import RecommendationsRepository
-from app.repositories.penalties_repository import PenaltiesRepository
+from app.repositories.users_repo import UsersRepository
+from app.repositories.movies_repo import MoviesRepository
+from app.repositories.ratings_repo import RatingsRepository
+from app.repositories.watchlist_repo import WatchlistRepository
+from app.repositories.recommendations_repo import RecommendationsRepository
+from app.repositories.penalties_repo import PenaltiesRepository
 from argon2 import PasswordHasher
+import threading
 
 
 class SingletonResources:
@@ -17,30 +18,37 @@ class SingletonResources:
     """
     _instance = None
     _initialized = False
+    _lock = threading.Lock()
 
     def __new__(cls):
+        # Thread-safe singleton instance creation
         if cls._instance is None:
-            cls._instance = super().__new__(cls)
+            with cls._lock:
+                # Double-checked locking pattern
+                if cls._instance is None:
+                    cls._instance = super().__new__(cls)
         return cls._instance
 
     def __init__(self):
-        if SingletonResources._initialized:
-            return
+        # Thread-safe initialization
+        with SingletonResources._lock:
+            if SingletonResources._initialized:
+                return
 
-        # Initialize all repositories once
-        print("Initializing singleton resources...")
-        self.users_repo = UsersRepository()
-        self.movies_repo = MoviesRepository()
-        self.ratings_repo = RatingsRepository()
-        self.watchlist_repo = WatchlistRepository()
-        self.recommendations_repo = RecommendationsRepository()
-        self.penalties_repo = PenaltiesRepository()
+            # Initialize all repositories once
+            print("Initializing singleton resources...")
+            self.users_repo = UsersRepository()
+            self.movies_repo = MoviesRepository()
+            self.ratings_repo = RatingsRepository()
+            self.watchlist_repo = WatchlistRepository()
+            self.recommendations_repo = RecommendationsRepository()
+            self.penalties_repo = PenaltiesRepository()
 
-        # Security
-        self.password_hasher = PasswordHasher.recommended()
+            # Security
+            self.password_hasher = PasswordHasher.recommended()
 
-        SingletonResources._initialized = True
-        print("Singleton resources initialized successfully")
+            SingletonResources._initialized = True
+            print("Singleton resources initialized successfully")
 
     def cleanup(self):
         """Cleanup resources on shutdown."""
@@ -93,9 +101,6 @@ app.include_router(watchlist.router, prefix="/watchlist", tags=["Watchlist"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
 app.include_router(export.router, prefix="/export", tags=["Export"])
 
-# Initialize singleton instance
-resources = None
-
 # Startup event
 @app.on_event("startup")
 async def startup_event():
@@ -103,10 +108,8 @@ async def startup_event():
     Execute on application startup.
     Initialize singleton resources and load data.
     """
-    global resources
     print("Application starting up...")
-    resources = SingletonResources()
-    app.state.resources = resources
+    app.state.resources = SingletonResources()
     # TODO: Load/precompute similarity matrix for recommendations (still not sure how this will work...)
     # TODO: Validate data files
     print("Application startup complete")
@@ -118,8 +121,7 @@ async def shutdown_event():
     Execute on application shutdown.
     Cleanup resources and save state.
     """
-    global resources
     print("Application shutting down...")
-    if resources:
-        resources.cleanup()
+    if hasattr(app.state, 'resources') and app.state.resources:
+        app.state.resources.cleanup()
     print("Application shutdown complete")

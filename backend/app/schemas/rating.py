@@ -9,8 +9,8 @@ class RatingBase(BaseModel):
     rating: float = Field(..., ge=0.5, le=5.0, description="Rating from 0.5 to 5.0")
 
 class RatingCreate(RatingBase):
-    """Schema for creating a new rating."""
-    user_id: str = Field(..., description="User ID who created the rating")
+    """Schema for creating a new rating (user_id comes from auth token)."""
+    pass
 
 class RatingUpdate(BaseModel):
     """Schema for updating a rating."""

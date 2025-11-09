@@ -1,9 +1,8 @@
 """
 Application configuration settings.
 """
-import os
 from pathlib import Path
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     """Application settings."""
@@ -21,7 +20,7 @@ class Settings(BaseSettings):
     SIMILARITY_MATRIX_FILE: str = str(DATA_DIR / "similarity_matrix.pkl") # TODO: doesn't actually exist yet
     
     # Authentication
-    SECRET_KEY: str = "Rty5xj1vTBBgOD3WY+061cnFeuFVg4MFSbk+MC+sBOb0/0MXNdLScda4t9RmN/VJ" # From jwtsecrets, obviously this should be in a .env for a production project
+    SECRET_KEY: str 
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
@@ -41,4 +40,10 @@ class Settings(BaseSettings):
     MAX_RATINGS_PER_HOUR: int = 50
     MAX_RATINGS_PER_DAY: int = 250
 
-settings = Settings()
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True
+    )
+
+settings = Settings()  # type: ignore[call-arg]

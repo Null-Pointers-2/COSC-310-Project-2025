@@ -55,19 +55,16 @@ def get_user_from_token(token: str) -> Optional[dict]:
 
 def register_user(username: str, email: str, password: str, role: str = "user") -> dict:
     """Register a new user."""
-    # Check if user already exists
     existing_user = users_repo.get_by_username(username)
     if existing_user:
         raise ValueError("Username already registered")
 
-    # Check if email is already registered
     existing_email = users_repo.get_by_email(email)
     if existing_email:
         raise ValueError("Email already registered")
     
     hashed_password = get_password_hash(password)
 
-    # Create user in repository
     user_data = {
         "username": username,
         "email": email,

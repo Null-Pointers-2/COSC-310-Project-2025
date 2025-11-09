@@ -10,14 +10,24 @@ router = APIRouter()
 @router.get("/me", response_model=UserProfile)
 def get_my_profile(current_user: dict = Depends(get_current_user)):
     """Get current user's profile."""
-    # TODO: Call users_service.get_user_profile()
-    pass
+    user_id = current_user["user_id"]
+    profile = users_service.get_user_profile(user_id=user_id)
+    if not profile:
+        raise HTTPException(
+            status_code=404, detail="User profile not found"
+        )
+    return profile
 
 @router.get("/me/dashboard", response_model=UserDashboard)
 def get_my_dashboard(current_user: dict = Depends(get_current_user)):
     """Get current user's dashboard."""
-    # TODO: Call users_service.get_user_dashboard()
-    pass
+    user_id = current_user["user_id"]
+    dashboard = users_service.get_user_dashboard(user_id=user_id)
+    if not dashboard:
+        raise HTTPException(
+            status_code=404, detail="User dashboard not found"
+        )
+    return dashboard
 
 @router.put("/me", response_model=User)
 def update_my_profile(
@@ -25,14 +35,21 @@ def update_my_profile(
     current_user: dict = Depends(get_current_user)
 ):
     """Update current user's profile."""
-    # TODO: Call users_service.update_user()
-    pass
+    user_id = current_user["user_id"]
+    updated_user = users_service.update_user(
+        user_id=user_id, update_data=update_data
+    )
+    if not updated_user:
+        raise HTTPException(
+            status_code=404, detail="User not found for update"
+        )
+    return updated_user
 
 @router.get("", response_model=List[User])
 def get_all_users(current_user: dict = Depends(get_current_admin_user)):
     """Get all users (admin only)."""
-    # TODO: Call users_service.get_all_users()
-    pass
+    users = users_service.get_all_users()
+    return users
 
 @router.get("/{user_id}", response_model=UserProfile)
 def get_user_profile(
@@ -40,5 +57,9 @@ def get_user_profile(
     current_user: dict = Depends(get_current_admin_user)
 ):
     """Get specific user's profile (admin only)."""
-    # TODO: Call users_service.get_user_profile()
-    pass
+    profile = users_service.get_user_profile()
+    if not profile:
+        raise HTTPException(
+            status_code=404, detail="User profile not found"
+        )
+    return profile

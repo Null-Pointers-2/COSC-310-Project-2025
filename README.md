@@ -1,5 +1,11 @@
 # Best Dataset System for Movies
 
+[![Coverage Docs](https://img.shields.io/badge/docs-coverage-blue)](https://github.com/Null-Pointers-2/COSC-310-Project-2025/tree/coverage)
+[![Scrum Docs](https://img.shields.io/badge/docs-scrum-blue)](https://github.com/Null-Pointers-2/COSC-310-Project-2025/tree/scrum-documents)
+[![Build Status](https://github.com/Null-Pointers-2/COSC-310-Project-2025/actions/workflows/ci.yml/badge.svg)](https://github.com/Null-Pointers-2/COSC-310-Project-2025/actions)
+[![Python Version](https://img.shields.io/badge/python-3.13-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+
 A Software Engineering Project for COSC 310 (2025)
 
 ## Team Members
@@ -22,7 +28,6 @@ cd COSC-310-Project-2025/backend
 ```bash
 python -m venv venv
 venv\Scripts\activate.bat  # On Windows
-# OR
 source venv/bin/activate   # On macOS/Linux
 ```
 
@@ -31,6 +36,24 @@ source venv/bin/activate   # On macOS/Linux
 ```bash
 python -m pip install --upgrade pip
 pip install -r requirements.txt
+```
+
+### 4. Download the genome-scores.csv dataset
+
+The dataset file (genome-scores.csv, ~400 MB) is stored as a GitHub release asset.
+Download it into the correct directory before running the backend:
+
+```bash
+curl -L -o data/movies/genome-scores.csv \
+  https://github.com/Null-Pointers-2/COSC-310-Project-2025/releases/latest/download/genome-scores.csv
+```
+
+If you’re on Windows and don’t have curl, you can just download it manually from the [Releases page](https://github.com/Null-Pointers-2/COSC-310-Project-2025/releases) and place it in backend/data/movies/.
+
+### 5. Create secret key in .env
+
+```bash
+python -c "import secrets; f = open('.env', 'w', encoding='utf-8'); f.write('SECRET_KEY=' + secrets.token_urlsafe(48) + '\n'); f.close()"
 ```
 
 ---
@@ -43,7 +66,8 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 Then visit:
 
-* API Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* Interactive Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* API Docs: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 * Health Check: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
 
 ---
@@ -53,10 +77,10 @@ Then visit:
 To run tests under `backend/tests/`, run:
 
 ```bash
-# In backend/ directory with venv activated
+# In backend/ directory with venv activated:
 python -m pytest
 
-# With coverage
+# With coverage:
 python -m pytest -v --cov=app --cov-report=html
 ```
 

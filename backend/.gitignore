@@ -187,21 +187,21 @@ __marimo__/
 .DS_Store
 
 # Mutable user data
-backend/data/users.csv
-backend/data/ratings.json
-backend/data/recommendations.json
-backend/data/penalties.json
-backend/data/watchlist.json
+data/users.csv
+data/ratings.json
+data/recommendations.json
+data/penalties.json
+data/watchlist.json
 
 # ML artifacts
-backend/data/ml/*.pkl
-backend/data/ml/*.npy
-backend/data/ml/*.csv
+data/ml/*.pkl
+data/ml/*.npy
+data/ml/*.csv
 
 # Large static datasets (download separately)
-backend/app/static/movies/genome-scores.csv
+app/static/movies/genome-scores.csv
 
 # Keep directory structure
-!backend/data/.gitkeep
-!backend/data/ml/.gitkeep
-!backend/app/static/movies/.gitkeep
+!data/.gitkeep
+!data/ml/.gitkeep
+!app/static/movies/.gitkeep

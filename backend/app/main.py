@@ -45,7 +45,7 @@ class SingletonResources:
             self.penalties_repo = PenaltiesRepository()
 
             # Security
-            self.password_hasher = PasswordHasher.recommended()
+            self.password_hasher = PasswordHasher()
 
             SingletonResources._initialized = True
             print("Singleton resources initialized successfully")

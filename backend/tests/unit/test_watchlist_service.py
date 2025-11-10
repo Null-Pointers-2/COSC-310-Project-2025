@@ -9,16 +9,14 @@ app.include_router(watchlist.router)
 async def read_main():
     return {"msg": "Hello World"}
 
-client = TestClient(app)
 
-
-def test_read_main():
+def test_read_main(client):
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {"msg": "Hello World"}
 
 
-def test_add_to_watchlist():
+def test_add_to_watchlist(client):
     payload = {"movie_id": 1}
     response = client.post("/watchlist", json=payload)
 

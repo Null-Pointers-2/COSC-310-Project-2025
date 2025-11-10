@@ -2,14 +2,11 @@
 Integration tests for authentication API endpoints.
 """
 import pytest
-from fastapi.testclient import TestClient
 from datetime import datetime, timezone
 import jwt
-from app.main import app
 from app.core.config import settings
 from app.repositories.users_repo import UsersRepository
 
-client = TestClient(app)
 users_repo = UsersRepository()
 
 @pytest.fixture(autouse=True)
@@ -47,8 +44,8 @@ def cleanup_test_users():
 
 class TestRegisterEndpoint:
     """Test POST /auth/register endpoint."""
-    
-    def test_register_success(self):
+
+    def test_register_success(self, client):
         """Test successful user registration returns 201 with user data."""
         response = client.post(
             "/auth/register",
@@ -69,7 +66,7 @@ class TestRegisterEndpoint:
         assert "password" not in data
         assert "hashed_password" not in data
     
-    def test_register_duplicate_username(self):
+    def test_register_duplicate_username(self, client):
         """Test registration fails with 400 for duplicate username."""
         client.post("/auth/register",
             json={
@@ -90,7 +87,7 @@ class TestRegisterEndpoint:
         assert "username" in response.json()["detail"].lower()
         assert "already registered" in response.json()["detail"].lower()
     
-    def test_register_duplicate_email(self):
+    def test_register_duplicate_email(self, client):
         """Test registration fails with 400 for duplicate email."""
         client.post("/auth/register",
             json={
@@ -110,7 +107,7 @@ class TestRegisterEndpoint:
         assert "email" in response.json()["detail"].lower()
         assert "already registered" in response.json()["detail"].lower()
 
-    def test_register_user_stored_in_database(self):
+    def test_register_user_stored_in_database(self, client):
         """Test registered user is actually stored in database."""
         response = client.post("/auth/register",
             json={
@@ -129,7 +126,7 @@ class TestLoginEndpoint:
     """Test POST /auth/login endpoint."""
     
     @pytest.fixture
-    def registered_user(self):
+    def registered_user(self, client):
         """Create a registered user for login tests."""
         response = client.post("/auth/register",
             json={
@@ -140,7 +137,7 @@ class TestLoginEndpoint:
         )
         return response.json()
     
-    def test_login_success(self, registered_user):
+    def test_login_success(self, client, registered_user):
         """Test successful login returns 200 with access token."""
         response = client.post("/auth/login",
             data={
@@ -155,7 +152,7 @@ class TestLoginEndpoint:
         assert isinstance(data["access_token"], str)
         assert len(data["access_token"]) > 0
     
-    def test_login_returns_valid_jwt(self, registered_user):
+    def test_login_returns_valid_jwt(self, client, registered_user):
         """Test login returns a valid JWT token."""
         response = client.post("/auth/login",
             data={
@@ -170,7 +167,7 @@ class TestLoginEndpoint:
         exp_time = datetime.fromtimestamp(decoded["exp"], tz=timezone.utc)
         assert exp_time > datetime.now(timezone.utc)
     
-    def test_login_wrong_password(self, registered_user):
+    def test_login_wrong_password(self, client, registered_user):
         """Test login fails with 401 for incorrect password."""
         response = client.post("/auth/login",
             data={
@@ -181,7 +178,7 @@ class TestLoginEndpoint:
         assert response.status_code == 401
         assert "incorrect" in response.json()["detail"].lower()
     
-    def test_login_nonexistent_user(self):
+    def test_login_nonexistent_user(self, client):
         """Test login fails with 401 for non-existent user."""
         response = client.post("/auth/login",
             data={
@@ -196,7 +193,7 @@ class TestGetCurrentUserEndpoint:
     """Test GET /auth/me endpoint."""
     
     @pytest.fixture
-    def auth_headers(self):
+    def auth_headers(self, client):
         """Create user and return authentication headers."""
         client.post("/auth/register",
             json={
@@ -214,7 +211,7 @@ class TestGetCurrentUserEndpoint:
         token = response.json()["access_token"]
         return {"Authorization": f"Bearer {token}"}
     
-    def test_get_me_success(self, auth_headers):
+    def test_get_me_success(self, client, auth_headers):
         """Test GET /auth/me returns current user with 200."""
         response = client.get("/auth/me", headers=auth_headers)
         assert response.status_code == 200
@@ -226,12 +223,12 @@ class TestGetCurrentUserEndpoint:
         assert "password" not in data
         assert "hashed_password" not in data
     
-    def test_get_me_invalid_token(self):
+    def test_get_me_invalid_token(self, client):
         """Test GET /auth/me fails with 401 for invalid token."""
         response = client.get("/auth/me", headers={"Authorization": "Bearer invalid_token_string"})
         assert response.status_code == 401
 
-    def test_get_me_token_for_deleted_user(self, auth_headers):
+    def test_get_me_token_for_deleted_user(self, client, auth_headers):
         """Test GET /auth/me fails with 401 if user was deleted."""
         user = users_repo.get_by_username("testuser")
         assert user is not None

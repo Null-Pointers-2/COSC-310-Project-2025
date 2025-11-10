@@ -14,16 +14,17 @@ def get_resources(request: Request):
     """Get singleton resources from app state."""
     return request.app.state.resources
 
-def decode_token(token: str) -> dict:
+def decode_token(token: str, users_repo) -> dict:
     """
     Decode and validate a JWT token.
-    
+
     Args:
         token: JWT token string
-    
+        users_repo: Users repository instance
+
     Returns:
         Dictionary with user_id, username, and role
-    
+
     Raises:
         HTTPException: If token is invalid or expired
     """
@@ -36,7 +37,7 @@ def decode_token(token: str) -> dict:
                 detail="Could not validate credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        
+
         user = users_repo.get_by_username(username)
         if not user:
             raise HTTPException(
@@ -44,7 +45,7 @@ def decode_token(token: str) -> dict:
                 detail="User not found",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        
+
         return {
             "user_id": user["id"],
             "username": username,
@@ -58,23 +59,27 @@ def decode_token(token: str) -> dict:
         )
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
+async def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    resources = Depends(get_resources)
+) -> dict:
     """
     Dependency to get the current authenticated user from JWT token.
-    
+
     Args:
         token: JWT token from Authorization header
-    
+        resources: Singleton resources from app state
+
     Returns:
         User dictionary
-    
+
     Raises:
         HTTPException: If token is invalid or user not found
     """
     try:
-        token_data = decode_token(token)
-        user = users_repo.get_by_username(token_data["username"])
-        
+        token_data = decode_token(token, resources.users_repo)
+        user = resources.users_repo.get_by_username(token_data["username"])
+
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -92,22 +97,26 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
         )
 
 
-async def get_current_active_user(current_user: dict = Depends(get_current_user)) -> dict:
+async def get_current_active_user(
+    current_user: dict = Depends(get_current_user),
+    resources = Depends(get_resources)
+) -> dict:
     """
     Dependency to get current user and check if they have active penalties.
-    
+
     Args:
         current_user: User from get_current_user dependency
-    
+        resources: Singleton resources from app state
+
     Returns:
         User dictionary if no blocking penalties
-    
+
     Raises:
         HTTPException: If user has blocking penalties
     """
-    active_penalties = penalties_repo.get_active_by_user(current_user["id"])
+    active_penalties = resources.penalties_repo.get_active_by_user(current_user["id"])
     # TODO: Check if user has blocking penalties
-    
+
     return current_user
 
 

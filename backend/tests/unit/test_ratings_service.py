@@ -18,7 +18,7 @@ def test_create_rating(setup_repos):
     """Test creating a new rating."""
     ratings_repo = setup_repos 
 
-    rating_data = RatingCreate(movie_id=1, rating=4.0, user_id="u1")
+    rating_data = RatingCreate(movie_id=1, rating=4.0)
     result = ratings_service.create_rating("u1", rating_data)
     
     assert result.rating == 4.0
@@ -32,10 +32,10 @@ def test_create_duplicate_rating_fails(setup_repos):
     """Test that creating a duplicate rating raises ValueError."""
     ratings_repo = setup_repos
     
-    rating_data1 = RatingCreate(movie_id=1, rating=4.0, user_id="u1")
+    rating_data1 = RatingCreate(movie_id=1, rating=4.0)
     ratings_service.create_rating("u1", rating_data1)
     
-    rating_data2 = RatingCreate(movie_id=1, rating=5.0, user_id="u1")
+    rating_data2 = RatingCreate(movie_id=1, rating=5.0)
     with pytest.raises(ValueError, match="Rating already exists"):
         ratings_service.create_rating("u1", rating_data2)
     

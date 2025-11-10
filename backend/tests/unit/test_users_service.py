@@ -51,8 +51,7 @@ def test_get_user_dashboard_success(mocker):
     mocker.patch("app.services.users_service.users_repo.get_by_id", return_value=mock_user_repo)
     mocker.patch("app.services.users_service.ratings_repo.get_by_user", return_value=mock_ratings_from_repo)
     mocker.patch("app.services.users_service.penalties_repo.get_by_user", return_value=mock_penalties_from_repo)
-    # TODO: Uncomment after recommendations_repo implementation
-    # mocker.patch("app.services.users_service.recommendations_repo.get_for_user", return_value=mock_recommendations_from_repo)
+    mocker.patch("app.services.users_service.recommendations_repo.get_for_user", return_value=mock_recommendations_from_repo)
     
     dashboard = users_service.get_user_dashboard(user_id="user123")
     

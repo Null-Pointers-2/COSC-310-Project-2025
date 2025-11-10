@@ -56,10 +56,7 @@ def get_user_dashboard(user_id: str) -> Optional[UserDashboard]:
     
     recent_ratings = ratings_repo.get_by_user(user_id, limit=RECENT_MOVIE_VIEW_LIMIT)
     penalties = penalties_repo.get_by_user(user_id)
-    
-    # TODO: Reimplement when recommendations_repo is complete
-    # recommendations = recommendations_repo.get_for_user(user_id, limit=RECOMMENDED_MOVIE_VIEW_LIMIT)
-    recommendations = []  
+    recommendations = recommendations_repo.get_for_user(user_id)
     
     dashboard_data = {
         "user": profile,

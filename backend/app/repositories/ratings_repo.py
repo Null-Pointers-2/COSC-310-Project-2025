@@ -3,6 +3,8 @@ from typing import List, Optional, Dict
 from pathlib import Path
 from datetime import datetime, timezone
 import json
+from app.core.config import settings
+
 
 class RatingsRepository:
     """Handle user ratings stored in JSON."""
@@ -10,7 +12,6 @@ class RatingsRepository:
     def __init__(self, ratings_file: Optional[str] = None):
         """Initialize with path to ratings JSON file."""
         if ratings_file is None:
-            from app.core.config import settings
             ratings_file = settings.RATINGS_FILE
         self.ratings_file = Path(ratings_file)
         self._ensure_file_exists()

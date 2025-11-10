@@ -1,9 +1,9 @@
 """Repository for user data operations."""
 import csv
-import json
 from typing import List, Optional, Dict
 from pathlib import Path
 from uuid import uuid4
+from app.core.config import settings
 
 class UsersRepository:
     """Handle user data stored in CSV."""
@@ -13,7 +13,6 @@ class UsersRepository:
     def __init__(self, users_file: Optional[str] = None):
         """Initialize with path to users CSV file."""
         if users_file is None:
-            from app.core.config import settings
             users_file = settings.USERS_FILE
         self.users_file = Path(users_file)
         self._ensure_file_exists()

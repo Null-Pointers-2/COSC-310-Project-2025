@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, Optional, Dict, Any, cast
 import pandas as pd
 import json
+from app.core.config import settings
 import re
 from statistics import mean
 
@@ -11,7 +12,6 @@ class MoviesRepository:
 
     def __init__(self, movies_dir: Optional[str] = None):
         if movies_dir is None:
-            from app.core.config import settings
             movies_dir = str(settings.STATIC_DIR / "movies")
         self.movies_dir = Path(movies_dir)
         self.movies_df: Optional[pd.DataFrame] = None
@@ -117,7 +117,6 @@ class MoviesRepository:
     def get_average_rating(self, movie_id: int, ratings_path: Optional[Path] = None) -> Optional[float]:
         """Calculate average rating for a movie."""
         if ratings_path is None:
-            from app.core.config import settings
             ratings_path = Path(settings.RATINGS_FILE)
         
         if not ratings_path.exists():

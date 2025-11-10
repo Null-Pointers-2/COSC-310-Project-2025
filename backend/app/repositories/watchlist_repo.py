@@ -2,14 +2,17 @@
 import json
 from typing import List, Optional, Dict
 from pathlib import Path
+from app.core.config import settings
 
 class WatchlistRepository:
     """Handle user watchlists stored in JSON."""
     
-    def __init__(self, watchlist_file: str = "app/data/watchlist.json"):
+    def __init__(self, watchlist_file: Optional[str] = None):
         """Initialize with path to watchlist JSON file."""
+        if watchlist_file is None:
+            watchlist_file = settings.WATCHLIST_FILE
         self.watchlist_file = Path(watchlist_file)
-        self._ensure_file_exists()   
+        self._ensure_file_exists()
     
     def _ensure_file_exists(self):
         """Create watchlist file if it doesn't exist."""

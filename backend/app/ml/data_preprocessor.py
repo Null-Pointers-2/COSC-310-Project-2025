@@ -113,8 +113,7 @@ class MovieDataPreprocessor:
         """Run full preprocessing pipeline."""
         movies_df, genome_scores_df, _ = self.load_data()
         
-        genre_matrix, tfidf_vectorizer, movies_filtered_df = \
-            genre_processor.create_genre_features(movies_df)
+        genre_matrix, tfidf_vectorizer, movies_filtered_df = genre_processor.create_genre_features(movies_df)
         
         genome_matrix = genome_processor.create_genome_features(movies_filtered_df, genome_scores_df)
         

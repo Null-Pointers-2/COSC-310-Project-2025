@@ -9,7 +9,10 @@ from statistics import mean
 class MoviesRepository:
     """Handle movie data from MovieLens CSV files."""
 
-    def __init__(self, movies_dir: str = "data/movies"):
+    def __init__(self, movies_dir: Optional[str] = None):
+        if movies_dir is None:
+            from app.core.config import settings
+            movies_dir = str(settings.STATIC_DIR / "movies")
         self.movies_dir = Path(movies_dir)
         self.movies_df: Optional[pd.DataFrame] = None
         self.links_df: Optional[pd.DataFrame] = None
@@ -19,7 +22,7 @@ class MoviesRepository:
 
     def _extract_year(self, title: str) -> Optional[int]:
         """Extract year from movie title."""
-        match = re.search(r'\((\d{4})\)\s*$', title) # Will match year in parentheses at end of title
+        match = re.search(r'\((\d{4})\)\s*$', title)
         if match:
             return int(match.group(1))
         return None
@@ -110,47 +113,21 @@ class MoviesRepository:
             if genre
         )
         return sorted(all_genres)
-    
-    # TODO: Uncomment the below method to add tags when genome_scores csv is added
-    """def get_movie_tags(self, movie_id: int) -> List[Dict[str, Any]]:
-        scores_path = self.movies_dir / "genome-scores.csv"
-        tags_path = self.movies_dir / "genome-tags.csv"
-
-        if not scores_path.exists() or not tags_path.exists():
-            return []
-        
-        if self.genome_scores_df is None:
-            self.genome_scores_df = pd.read_csv(scores_path, encoding="utf-8")
-        if self.genome_tags_df is None:
-            self.genome_tags_df = pd.read_csv(tags_path, encoding="utf-8")
-
-        movies_scores = self.genome_scores_df[self.genome_scores_df["movieId"] == movie_id]
-        if movies_scores.empty:
-            return []
-        
-        merged = pd.merge(
-            movies_scores,
-            self.genome_tags_df,
-            on="tagId",
-            how="inner"
-        )
-    
-        merged = merged.sort_values(by="relevance", ascending=False)
-
-        return merged[["tag", "relevance"]].to_dict(orient="records")
-    """
 
     def get_average_rating(self, movie_id: int, ratings_path: Optional[Path] = None) -> Optional[float]:
         """Calculate average rating for a movie."""
-        ratings_path = Path(ratings_path) if ratings_path else Path("app/data/ratings.json")
+        if ratings_path is None:
+            from app.core.config import settings
+            ratings_path = Path(settings.RATINGS_FILE)
+        
         if not ratings_path.exists():
-            raise FileNotFoundError(f"Ratings file not found at {ratings_path}")
+            return None
 
         try:
             with open(ratings_path, "r", encoding="utf-8") as f:
                 ratings = json.load(f)
         except json.JSONDecodeError:
-            raise ValueError(f"Ratings file {ratings_path} contains invalid JSON")
+            return None
         
         movie_ratings = [
             float(r["rating"])

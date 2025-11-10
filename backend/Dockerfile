@@ -18,18 +18,15 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Application code and static data
+# Copy application code
 COPY app ./app
-COPY movies ./movies
 
-# Data directory for mutable files
-RUN mkdir -p /app/data && \
-    mkdir -p /app/app/data && \
-    chown -R appuser:appuser /app
+# Copy static data - read-only
+COPY app/static ./app/static
 
-# Initial users.csv template (will be overridden by volume)
-COPY data/users.csv /app/data/users.csv
-RUN chown appuser:appuser /app/data/users.csv
+# Create directories for mutable data (will be mounted as volumes)
+RUN mkdir -p /app/data/ml && \
+    chown -R appuser:appuser /app/data
 
 # Switch to non-root user
 USER appuser

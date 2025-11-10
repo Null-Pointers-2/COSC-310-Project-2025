@@ -9,10 +9,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # Persist mutable user data
-      - ./backend/data/users.csv:/app/data/users.csv
-      # Persist user-specific data (transactions, penalties, etc.)
-      - ./backend/app/data:/app/app/data
+      - ./backend/data:/app/data
     environment:
       - PYTHONUNBUFFERED=1
       - ENV=production
@@ -52,7 +49,3 @@ services:
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  backend-data:
-    driver: local

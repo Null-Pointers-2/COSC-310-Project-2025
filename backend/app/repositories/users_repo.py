@@ -10,8 +10,11 @@ class UsersRepository:
     
     HEADERS = ["id", "username", "email", "hashed_password", "role", "created_at"]
     
-    def __init__(self, users_file: str = "data/users.csv"):
+    def __init__(self, users_file: Optional[str] = None):
         """Initialize with path to users CSV file."""
+        if users_file is None:
+            from app.core.config import settings
+            users_file = settings.USERS_FILE
         self.users_file = Path(users_file)
         self._ensure_file_exists()
     

@@ -21,7 +21,7 @@ def get_user_by_id(user_id: str) -> Optional[dict]:
         return None
     return user_dict
 
-def get_user_profile(user_id: str) -> UserProfile:
+def get_user_profile(user_id: str) -> Optional[UserProfile]:
     """Get user profile with statistics."""
     user = get_user_by_id(user_id)
     if not user:
@@ -36,21 +36,20 @@ def get_user_profile(user_id: str) -> UserProfile:
         average_rating = sum(r['rating'] for r in user_ratings) / total_ratings
 
     profile_data = {
-        "id": user["user_id"], 
+        "id": user["id"], 
         "username": user["username"],
         "email": user["email"],
         "role": user["role"],
         "created_at": user["created_at"], 
         "total_ratings": total_ratings,
         "average_rating": round(average_rating, 2),
-        "active_penalties": len(user_penalties)
+        "active_penalties": len([p for p in user_penalties if p["status"] == "active"])
     }
 
     return UserProfile(**profile_data)
 
-def get_user_dashboard(user_id: str) -> UserDashboard:
+def get_user_dashboard(user_id: str) -> Optional[UserDashboard]:
     """Get user dashboard data."""
-    # TODO: Compile user profile, recent ratings, recommendations, penalties
     profile = get_user_profile(user_id)
     if not profile:
         return None
@@ -58,7 +57,9 @@ def get_user_dashboard(user_id: str) -> UserDashboard:
     recent_ratings = ratings_repo.get_by_user(user_id, limit=RECENT_MOVIE_VIEW_LIMIT)
     penalties = penalties_repo.get_by_user(user_id)
     
-    recommendations = recommendations_repo.get_for_user(user_id, limit=RECOMMENDED_MOVIE_VIEW_LIMIT)
+    # TODO: Reimplement when recommendations_repo is complete
+    # recommendations = recommendations_repo.get_for_user(user_id, limit=RECOMMENDED_MOVIE_VIEW_LIMIT)
+    recommendations = []  
     
     dashboard_data = {
         "user": profile,
@@ -69,7 +70,7 @@ def get_user_dashboard(user_id: str) -> UserDashboard:
 
     return UserDashboard(**dashboard_data)
 
-def update_user(user_id: str, update_data: dict) -> dict:
+def update_user(user_id: str, update_data: dict) -> Optional[dict]:
     """Update user information."""
     update_dict = update_data.model_dump(exclude_unset=True)
     

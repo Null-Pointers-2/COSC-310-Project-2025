@@ -1,68 +1,102 @@
 """Repository for penalty data operations."""
 import json
+import uuid
 from typing import List, Optional, Dict
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 class PenaltiesRepository:
     """Handle penalties stored in JSON."""
-    
+
     def __init__(self, penalties_file: str = "app/data/penalties.json"):
         """Initialize with path to penalties JSON file."""
         self.penalties_file = Path(penalties_file)
         self._ensure_file_exists()
-    
+
     def _ensure_file_exists(self):
         """Create penalties file if it doesn't exist."""
-        # TODO: Create empty JSON array if file doesn't exist
-        pass
-    
+        if not self.penalties_file.exists():
+            self.penalties_file.parent.mkdir(parents=True, exist_ok=True)
+            self.penalties_file.write_text("[]", encoding="utf-8")
+
     def _read(self) -> List[Dict]:
         """Read all penalties from file."""
-        # TODO: Load JSON from file
-        pass
-    
+        try:
+            with open(self.penalties_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            self.penalties_file.write_text("[]", encoding="utf-8")
+            return []
+
     def _write(self, penalties: List[Dict]):
         """Write all penalties to file."""
-        # TODO: Save JSON to file
-        pass
-    
+        with open(self.penalties_file, "w", encoding="utf-8") as f:
+            json.dump(penalties, f, indent=2, ensure_ascii=False)
+
     def get_all(self) -> List[Dict]:
         """Get all penalties."""
-        # TODO: Implement
-        pass
-    
+        return self._read()
+
     def get_by_id(self, penalty_id: str) -> Optional[Dict]:
         """Get penalty by ID."""
-        # TODO: Implement
-        pass
-    
+        penalties = self._read()
+        return next((p for p in penalties if p["id"] == penalty_id), None)
+
     def get_by_user(self, user_id: str) -> List[Dict]:
         """Get all penalties for a user."""
-        # TODO: Filter by user_id
-        pass
-    
+        penalties = self._read()
+        return [p for p in penalties if p["user_id"] == user_id]
+
     def get_active_by_user(self, user_id: str) -> List[Dict]:
         """Get active penalties for a user."""
-        # TODO: Filter by user_id and status="active"
-        pass
-    
+        penalties = self._read()
+        return [p for p in penalties if p["user_id"] == user_id and p["status"] == "active"]
+
     def create(self, penalty_data: Dict) -> Dict:
         """Create a new penalty."""
-        # TODO: Add to penalties list and save
-        pass
-    
+        penalties = self._read()
+        new_penalty = {
+            "id": str(uuid.uuid4()),
+            "user_id": penalty_data["user_id"],
+            "reason": penalty_data["reason"],
+            "description": penalty_data.get("description"),
+            "status": "active",
+            "issued_at": datetime.now(timezone.utc).isoformat(),
+            "resolved_at": None,
+            "issued_by": penalty_data["issued_by"],
+        }
+
+        penalties.append(new_penalty)
+        self._write(penalties)
+        return new_penalty
+
     def update(self, penalty_id: str, penalty_data: Dict) -> Optional[Dict]:
         """Update a penalty."""
-        # TODO: Find and update penalty
-        pass
-    
+        penalties = self._read()
+        for i, p in enumerate(penalties):
+            if p["id"] == penalty_id:
+                updated = {**p, **penalty_data}
+                penalties[i] = updated
+                self._write(penalties)
+                return updated
+        return None
+
     def resolve(self, penalty_id: str) -> bool:
         """Mark a penalty as resolved."""
-        # TODO: Update status to "resolved" and add resolved_at timestamp
-        pass
-    
+        penalties = self._read()
+        for i, p in enumerate(penalties):
+            if p["id"] == penalty_id:
+                penalties[i]["status"] = "resolved"
+                penalties[i]["resolved_at"] = datetime.now(timezone.utc).isoformat()
+                self._write(penalties)
+                return True
+        return False
+
     def delete(self, penalty_id: str) -> bool:
         """Delete a penalty."""
-        # TODO: Remove from list and save
-        pass
+        penalties = self._read()
+        new_penalties = [p for p in penalties if p["id"] != penalty_id]
+        if len(new_penalties) == len(penalties):
+            return False
+        self._write(new_penalties)
+        return True

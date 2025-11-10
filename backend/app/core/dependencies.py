@@ -115,7 +115,13 @@ async def get_current_active_user(
         HTTPException: If user has blocking penalties
     """
     active_penalties = resources.penalties_repo.get_active_by_user(current_user["id"])
-    # TODO: Check if user has blocking penalties
+
+    if active_penalties:
+        penalty_reasons = [p["reason"] for p in active_penalties]
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Account has active penalties: {', '.join(penalty_reasons)}"
+        )
 
     return current_user
 

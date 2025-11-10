@@ -38,24 +38,25 @@ def override_get_current_admin_user():
     return mock_admin_dict
 
 @pytest.fixture
-def client():
-    app.dependency_overrides[get_current_user] = override_get_current_user
-    app.dependency_overrides[get_current_admin_user] = override_get_current_admin_user
+def auth_client(test_app):
+    """Client with auth dependencies overridden."""
+    test_app.dependency_overrides[get_current_user] = override_get_current_user
+    test_app.dependency_overrides[get_current_admin_user] = override_get_current_admin_user
 
-    with TestClient(app) as test_client:
+    with TestClient(test_app) as test_client:
         yield test_client
-    
-    app.dependency_overrides = {}
+
+    test_app.dependency_overrides = {}
 
 
-def test_get_my_profile_success(client, mocker):
-    mocker.patch(
-        "app.services.users_service.get_user_profile",  
-        return_value=mock_user_profile  
+def test_get_my_profile_success(auth_client, monkeypatch):
+    monkeypatch.setattr(
+        "app.services.users_service.get_user_profile",
+        lambda *args, **kwargs: mock_user_profile
     )
 
-    response = client.get("/users/me")
-    
+    response = auth_client.get("/users/me")
+
     assert response.status_code == status.HTTP_200_OK
 
     response_data = response.json()
@@ -64,13 +65,13 @@ def test_get_my_profile_success(client, mocker):
     assert response_data["total_ratings"] == 10
     assert response_data["average_rating"] == 3.5
 
-def test_get_my_profile_not_found(client, mocker):
-    mocker.patch(
+def test_get_my_profile_not_found(auth_client, monkeypatch):
+    monkeypatch.setattr(
         "app.services.users_service.get_user_profile",
-        return_value=None
+        lambda *args, **kwargs: None
     )
 
-    response = client.get("/users/me")
+    response = auth_client.get("/users/me")
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["detail"] == "User profile not found"

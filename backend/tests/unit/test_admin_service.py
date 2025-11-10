@@ -24,7 +24,11 @@ def setup_repos(tmp_path):
     penalties_repo = PenaltiesRepository(penalties_file=str(penalties_file))
     ratings_repo = RatingsRepository(ratings_file=str(ratings_file))
     watchlist_repo = WatchlistRepository(watchlist_file=str(watchlist_file))
+
+    # Create mock movies_repo with movies_df attribute
     movies_repo = Mock()
+    movies_repo.movies_df = Mock()
+    movies_repo.movies_df.__len__ = Mock(return_value=100)  # Mock 100 movies
 
     # Create mock resources object
     resources = Mock()

@@ -166,7 +166,7 @@ class TestSingletonRepositories:
         """Test that password hasher is properly initialized."""
         mock_hasher_class = Mock()
         mock_hasher_instance = Mock()
-        mock_hasher_class.recommended.return_value = mock_hasher_instance
+        mock_hasher_class.return_value = mock_hasher_instance
 
         with patch('app.main.UsersRepository'), \
              patch('app.main.MoviesRepository'), \
@@ -183,6 +183,6 @@ class TestSingletonRepositories:
 
             resources = SingletonResources()
 
-            # Verify PasswordHasher.recommended() was called
-            mock_hasher_class.recommended.assert_called_once()
+            # Verify PasswordHasher() was called
+            mock_hasher_class.assert_called_once()
             assert resources.password_hasher is mock_hasher_instance

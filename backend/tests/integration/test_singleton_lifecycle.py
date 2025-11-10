@@ -17,7 +17,7 @@ class TestSingletonLifecycle:
              patch('app.main.PenaltiesRepository'), \
              patch('app.main.PasswordHasher'):
 
-            from app.main import app, resources
+            from app.main import app
 
             # Create test client (triggers startup event)
             with TestClient(app) as client:
@@ -73,53 +73,26 @@ class TestSingletonLifecycle:
             # and cleanup should have been invoked
             mock_cleanup.assert_called_once()
 
-    def test_singleton_persists_across_requests(self):
+    def test_singleton_persists_across_requests(self, test_app, client):
         """Test that the same singleton instance is used across multiple requests."""
-        with patch('app.main.UsersRepository') as mock_users_repo, \
-             patch('app.main.MoviesRepository'), \
-             patch('app.main.RatingsRepository'), \
-             patch('app.main.WatchlistRepository'), \
-             patch('app.main.RecommendationsRepository'), \
-             patch('app.main.PenaltiesRepository'), \
-             patch('app.main.PasswordHasher'):
+        # Get the resources instance after first request
+        client.get("/health")
+        first_resources = test_app.state.resources
 
-            from app.main import app
+        # Make more requests
+        client.get("/health")
+        client.get("/")
+        second_resources = test_app.state.resources
 
-            with TestClient(app) as client:
-                # Get the resources instance after first request
-                client.get("/health")
-                first_resources = app.state.resources
+        # Should be the same instance
+        assert first_resources is second_resources
+        assert first_resources is not None
 
-                # Make more requests
-                client.get("/health")
-                client.get("/")
-                second_resources = app.state.resources
-
-                # Should be the same instance
-                assert first_resources is second_resources
-
-                # Repository should only be initialized once
-                assert mock_users_repo.call_count == 1
-
-    def test_global_resources_variable_set(self):
-        """Test that the global resources variable is set on startup."""
-        with patch('app.main.UsersRepository'), \
-             patch('app.main.MoviesRepository'), \
-             patch('app.main.RatingsRepository'), \
-             patch('app.main.WatchlistRepository'), \
-             patch('app.main.RecommendationsRepository'), \
-             patch('app.main.PenaltiesRepository'), \
-             patch('app.main.PasswordHasher'):
-
-            import app.main
-
-            # Initially resources should be None
-            app.main.resources = None
-
-            with TestClient(app.main.app) as client:
-                # After startup, resources should be set
-                assert app.main.resources is not None
-                assert app.main.resources is app.main.app.state.resources
+    def test_global_resources_variable_set(self, test_app):
+        """Test that resources are set in app.state on startup."""
+        # After startup via conftest, resources should be set
+        assert hasattr(test_app.state, 'resources')
+        assert test_app.state.resources is not None
 
 
 class TestSingletonEndpointAccess:

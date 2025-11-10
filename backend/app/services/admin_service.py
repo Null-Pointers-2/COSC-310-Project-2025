@@ -25,13 +25,9 @@ def get_all_users_with_stats() -> List[dict]:
     for user in users:
         user_id = user["id"]
 
-        # Count ratings by this user
         rating_count = len([r for r in all_ratings if r["user_id"] == user_id])
-
-        # Count watchlist items
         watchlist_count = len(watchlist_repo.get_by_user(user_id))
 
-        # Get penalties
         user_penalties = [p for p in all_penalties if p["user_id"] == user_id]
         active_penalties = [p for p in user_penalties if p["status"] == "active"]
 
@@ -87,18 +83,13 @@ def get_system_stats() -> dict:
     ratings = ratings_repo.get_all()
     penalties = penalties_repo.get_all()
 
-    # Count total movies (from movies dataframe)
     total_movies = len(movies_repo.movies_df) if movies_repo.movies_df is not None else 0
-
-    # Count active penalties
     active_penalties = [p for p in penalties if p["status"] == "active"]
 
-    # Count watchlist entries across all users
     total_watchlist_items = sum(
         len(watchlist_repo.get_by_user(user["id"])) for user in users
     )
 
-    # Calculate average ratings per user
     avg_ratings_per_user = len(ratings) / len(users) if users else 0
 
     return {

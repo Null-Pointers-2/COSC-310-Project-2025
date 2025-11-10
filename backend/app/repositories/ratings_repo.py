@@ -48,10 +48,17 @@ class RatingsRepository:
         ratings = self._read()
         return next((r for r in ratings if r["id"] == rating_id), None)
     
-    def get_by_user(self, user_id: str) -> List[Dict]:
-        """Get all ratings by a user."""
+    def get_by_user(self, user_id: str, limit: Optional[int] = None) -> List[Dict]:
+        """Get all ratings by a user, optionally limited to most recent N ratings."""
         ratings = self._read()
-        return [r for r in ratings if r["user_id"] == user_id]
+        user_ratings = [r for r in ratings if r["user_id"] == user_id]
+        
+        # Sort by timestamp descending
+        user_ratings.sort(key=lambda r: r["timestamp"], reverse=True)
+        
+        if limit is not None:
+            return user_ratings[:limit]
+        return user_ratings
     
     def get_by_movie(self, movie_id: int) -> List[Dict]:
         """Get all ratings for a movie."""

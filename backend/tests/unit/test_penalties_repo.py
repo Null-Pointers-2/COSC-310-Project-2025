@@ -102,7 +102,6 @@ def test_get_active_by_user(repo):
         "issued_by": "admin1"
     })
 
-    # Resolve one penalty
     repo.resolve(p1["id"])
 
     active = repo.get_active_by_user("user1")
@@ -140,7 +139,7 @@ def test_update_penalty(repo):
     updated = repo.update(created["id"], {"description": "Updated description"})
 
     assert updated["description"] == "Updated description"
-    assert updated["reason"] == "Spam"  # Other fields unchanged
+    assert updated["reason"] == "Spam"  # Other fields should be unchanged
 
 def test_update_nonexistent_returns_none(repo):
     """Test updating non-existent penalty returns None."""
@@ -190,7 +189,6 @@ def test_penalty_persistence(tmp_path):
     """Test that penalties persist across repository instances."""
     test_file = tmp_path / "penalties.json"
 
-    # Create penalty in first instance
     repo1 = PenaltiesRepository(penalties_file=test_file)
     created = repo1.create({
         "user_id": "user1",
@@ -199,7 +197,6 @@ def test_penalty_persistence(tmp_path):
         "issued_by": "admin1"
     })
 
-    # Load in second instance
     repo2 = PenaltiesRepository(penalties_file=test_file)
     fetched = repo2.get_by_id(created["id"])
 

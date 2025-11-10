@@ -31,7 +31,6 @@ def test_ensure_file_created_if_missing(mocker):
     mock_path.write_text.assert_called_once_with("{}", encoding="utf-8")
     mock_path.parent.mkdir.assert_called_once()
 
-
 def test_save_for_user(repo):
     recs = [{"movie_id": 42, "similarity_score": 0.99}]
     repo.save_for_user("alice", recs)
@@ -40,7 +39,6 @@ def test_save_for_user(repo):
     assert "alice" in written
     assert "timestamp" in written["alice"]
     assert written["alice"]["recommendations"][0]["movie_id"] == 42
-
 
 def test_get_for_user(mocker):
     repo = RecommendationsRepository()
@@ -58,12 +56,10 @@ def test_get_for_user(mocker):
     result = repo.get_for_user("bob")
     assert result["recommendations"][0]["movie_id"] == 7
 
-
 def test_get_for_nonexistent_user(mocker):
     repo = RecommendationsRepository()
     mocker.patch.object(repo, "_read", return_value={})
     assert repo.get_for_user("ghost") is None
-
 
 def test_clear_for_user(mocker):
     repo = RecommendationsRepository()
@@ -74,7 +70,6 @@ def test_clear_for_user(mocker):
     result = repo._write.call_args[0][0]
     assert "u1" not in result and "u2" in result
 
-
 def test_is_fresh_true(mocker):
     repo = RecommendationsRepository()
     now = datetime.now(timezone.utc)
@@ -82,7 +77,6 @@ def test_is_fresh_true(mocker):
         repo, "get_for_user", return_value={"timestamp": now.isoformat()}
     )
     assert repo.is_fresh("u", max_age_hours=24)
-
 
 def test_is_fresh_false_for_old(mocker):
     repo = RecommendationsRepository()
@@ -92,18 +86,15 @@ def test_is_fresh_false_for_old(mocker):
     )
     assert not repo.is_fresh("u", max_age_hours=24)
 
-
 def test_is_fresh_false_for_missing_user(mocker):
     repo = RecommendationsRepository()
     mocker.patch.object(repo, "get_for_user", return_value=None)
     assert not repo.is_fresh("u")
 
-
 def test_is_fresh_false_for_invalid_timestamp(mocker):
     repo = RecommendationsRepository()
     mocker.patch.object(repo, "get_for_user", return_value={"timestamp": "nonsense"})
     assert not repo.is_fresh("u")
-
 
 def test_overwrites_existing_user(repo):
     repo._read.return_value = {"x": {"recommendations": []}}
@@ -117,7 +108,6 @@ def test_overwrites_existing_user(repo):
     assert len(written["x"]["recommendations"]) == 2
     assert written["x"]["recommendations"][0]["movie_id"] == 1
 
-
 def test_handles_corrupted_json(mocker):
     repo = RecommendationsRepository()
     mocker.patch.object(repo, "_read", side_effect=Exception("bad json"))
@@ -125,7 +115,6 @@ def test_handles_corrupted_json(mocker):
         repo.get_for_user("x")
     except Exception:
         pytest.fail("get_for_user() raised despite _read() exception")
-
 
 def test_timestamp_format(repo):
     recs = [{"movie_id": 99, "similarity_score": 0.7}]

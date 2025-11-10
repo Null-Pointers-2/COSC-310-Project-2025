@@ -4,12 +4,15 @@ import uuid
 from typing import List, Optional, Dict
 from pathlib import Path
 from datetime import datetime, timezone
+from app.core.config import settings
 
 class PenaltiesRepository:
     """Handle penalties stored in JSON."""
 
-    def __init__(self, penalties_file: str = "app/data/penalties.json"):
+    def __init__(self, penalties_file: Optional[str] = None):
         """Initialize with path to penalties JSON file."""
+        if penalties_file is None:
+            penalties_file = settings.PENALTIES_FILE
         self.penalties_file = Path(penalties_file)
         self._ensure_file_exists()
 

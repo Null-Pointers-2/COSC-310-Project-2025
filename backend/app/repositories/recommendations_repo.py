@@ -39,7 +39,10 @@ class RecommendationsRepository:
     
     def get_for_user(self, user_id: str) -> Optional[Dict]:
         """Get cached recommendations for a user."""
-        data = self._read()
+        try:
+            data = self._read()
+        except Exception:
+            return None
         return data.get(str(user_id))
     
     def save_for_user(self, user_id: str, recommendations: List[Dict]):
@@ -65,7 +68,7 @@ class RecommendationsRepository:
         cached = self.get_for_user(user_id)
         if not cached or "timestamp" not in cached:
             return False
-        
+
         try:
             cached_time = datetime.fromisoformat(cached["timestamp"].replace("Z", "+00:00"))
             age = datetime.now(timezone.utc) - cached_time

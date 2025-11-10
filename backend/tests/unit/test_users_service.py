@@ -59,7 +59,7 @@ def test_get_user_dashboard_success(mocker):
     assert dashboard.user.id == "user123"
     assert len(dashboard.recent_ratings) == 3
     assert len(dashboard.penalties) == 1
-    assert len(dashboard.recommendations) == 0  # TODO: Adjust when recommendations_repo is implemented
+    assert len(dashboard.recommendations) == 1
 
 def test_get_all_users(mocker):
     mock_user_list = [mock_user_repo, mock_user_repo]

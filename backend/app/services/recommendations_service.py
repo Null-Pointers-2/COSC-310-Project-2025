@@ -23,6 +23,7 @@ def get_recommendations(resources, user_id: str, limit: int = 10, force_refresh:
     otherwise generates new recommendations.
     
     Args:
+        resources: Application resources singleton
         user_id: User ID to generate recommendations for
         limit: Maximum number of recommendations to return
         force_refresh: Force regeneration even if cached recommendations exist
@@ -36,7 +37,7 @@ def get_recommendations(resources, user_id: str, limit: int = 10, force_refresh:
             items = [RecommendationItem(**item) for item in cached.get("recommendations", [])[:limit]]
             return RecommendationList(user_id=user_id, recommendations=items)
     
-    recommendations = generate_recommendations(user_id, limit)
+    recommendations = generate_recommendations(resources, user_id, limit)
     resources.recommendations_repo.save_for_user(user_id, [item.model_dump() for item in recommendations])
     
     return RecommendationList(user_id=user_id, recommendations=recommendations)
@@ -47,6 +48,7 @@ def generate_recommendations(resources, user_id: str, limit: int = 10) -> List[R
     Generate new recommendations using cosine similarity.
     
     Args:
+        resources: Application resources singleton
         user_id: User ID to generate recommendations for
         limit: Number of recommendations to generate
         
@@ -58,7 +60,7 @@ def generate_recommendations(resources, user_id: str, limit: int = 10) -> List[R
     user_ratings = resources.ratings_repo.get_by_user(user_id)
     
     if not user_ratings:
-        return _get_fallback_recommendations(limit)
+        return _get_fallback_recommendations(resources, limit)
     
     seed_movies = [r for r in user_ratings if r["rating"] >= 4.0]
     
@@ -79,7 +81,7 @@ def generate_recommendations(resources, user_id: str, limit: int = 10) -> List[R
         if not movie:
             continue
         
-        similar_movies = get_similar_movies(movie_id, limit)
+        similar_movies = get_similar_movies(resources, movie_id, limit)
         
         user_rating_weight = seed_rating["rating"] / 5.0  # Normalize to 0-1
         
@@ -104,6 +106,7 @@ def get_similar_movies(resources, movie_id: int, limit: int = 10) -> List[Recomm
     Get movies similar to a given movie.
     
     Args:
+        resources: Application resources singleton
         movie_id: Movie ID to find similar movies for
         limit: Number of similar movies to return
         
@@ -137,13 +140,14 @@ def get_similar_movies(resources, movie_id: int, limit: int = 10) -> List[Recomm
     return result
 
 
-def _get_fallback_recommendations(limit: int = 10) -> List[RecommendationItem]:
+def _get_fallback_recommendations(resources, limit: int = 10) -> List[RecommendationItem]:
     """
     Get fallback recommendations for users with no ratings.
     
     Returns popular movies or a curated selection.
     
     Args:
+        resources: Application resources singleton
         limit: Number of recommendations to return
         
     Returns:
@@ -161,27 +165,29 @@ def _get_fallback_recommendations(limit: int = 10) -> List[RecommendationItem]:
     ]
 
 
-def refresh_recommendations_for_user(user_id: str, limit: int = 10) -> RecommendationList:
+def refresh_recommendations_for_user(resources, user_id: str, limit: int = 10) -> RecommendationList:
     """
     Force refresh recommendations for a user.
     
     Convenience method that calls get_recommendations with force_refresh=True.
     
     Args:
+        resources: Application resources singleton
         user_id: User ID to refresh recommendations for
         limit: Number of recommendations to generate
         
     Returns:
         RecommendationList with fresh recommendations
     """
-    return get_recommendations(user_id, limit=limit, force_refresh=True)
+    return get_recommendations(resources, user_id, limit=limit, force_refresh=True)
 
 
-def clear_recommendations_cache(user_id: str) -> None:
+def clear_recommendations_cache(resources, user_id: str) -> None:
     """
     Clear cached recommendations for a user.
     
     Args:
+        resources: Application resources singleton
         user_id: User ID to clear cache for
     """
-    recommendations_repo.clear_for_user(user_id)
+    resources.recommendations_repo.clear_for_user(user_id)

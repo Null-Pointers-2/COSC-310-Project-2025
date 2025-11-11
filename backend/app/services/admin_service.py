@@ -100,7 +100,7 @@ def check_user_violations(resources, user_id: str) -> List[str]:
     if not user_ratings:
         return violations
 
-    # Check for spam (more than 50 ratings in last hour)
+    # Spam (more than 50 ratings in last hour)
     now = datetime.now(timezone.utc)
     one_hour_ago = now - timedelta(hours=1)
 
@@ -112,7 +112,7 @@ def check_user_violations(resources, user_id: str) -> List[str]:
     if len(recent_ratings) > 50:
         violations.append(f"Spam detected: {len(recent_ratings)} ratings in last hour")
 
-    # Check for rating bombing (same rating given to many movies in short time)
+    # Rating bombing (same rating given to many movies in short time)
     if len(recent_ratings) > 10:
         rating_values = [r["rating"] for r in recent_ratings]
         most_common_rating = Counter(rating_values).most_common(1)[0]
@@ -121,7 +121,7 @@ def check_user_violations(resources, user_id: str) -> List[str]:
                 f"Potential review bombing: {most_common_rating[1]} ratings of {most_common_rating[0]} in last hour"
             )
 
-    # Check for suspicious patterns (all 0.5s or all 5.0s)
+    # Suspicious patterns (all 0.5s or all 5.0s)
     all_ratings = [r["rating"] for r in user_ratings]
     if len(all_ratings) >= 10:
         if all(r == 0.5 for r in all_ratings):

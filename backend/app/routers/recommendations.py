@@ -16,8 +16,12 @@ def get_my_recommendations(
     resources=Depends(get_resources)
 ):
     """Get personalized recommendations (Transaction 3)."""
-    # TODO: Call recommendations_service.get_recommendations()
-    pass
+    return recommendations_service.get_recommendations(
+        resources, 
+        user_id=current_user["id"], 
+        limit=limit, 
+        force_refresh=force_refresh
+    )
 
 @router.post("/me/refresh", response_model=RecommendationList)
 def refresh_my_recommendations(
@@ -26,5 +30,21 @@ def refresh_my_recommendations(
     resources=Depends(get_resources)
 ):
     """Force refresh recommendations."""
-    # TODO: Call recommendations_service.get_recommendations(force_refresh=True)
-    pass
+    return recommendations_service.refresh_recommendations_for_user(
+        resources,
+        user_id=current_user["id"],
+        limit=limit
+    )
+
+@router.get("/similar/{movie_id}", response_model=List[RecommendationItem])
+def get_similar_movies(
+    movie_id: int,
+    limit: int = Query(10, ge=1, le=50),
+    resources=Depends(get_resources)
+):
+    """Get movies similar to a specific movie."""
+    return recommendations_service.get_similar_movies(
+        resources,
+        movie_id=movie_id,
+        limit=limit
+    )

@@ -54,6 +54,7 @@ def test_get_for_user(mocker):
     )
 
     result = repo.get_for_user("bob")
+    assert result is not None
     assert result["recommendations"][0]["movie_id"] == 7
 
 def test_get_for_nonexistent_user(mocker):
@@ -64,10 +65,10 @@ def test_get_for_nonexistent_user(mocker):
 def test_clear_for_user(mocker):
     repo = RecommendationsRepository()
     mocker.patch.object(repo, "_read", return_value={"u1": {}, "u2": {}})
-    repo._write = mocker.Mock()
+    mock_write = mocker.patch.object(repo, "_write")
 
     repo.clear_for_user("u1")
-    result = repo._write.call_args[0][0]
+    result = mock_write.call_args[0][0] 
     assert "u1" not in result and "u2" in result
 
 def test_is_fresh_true(mocker):

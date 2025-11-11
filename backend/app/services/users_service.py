@@ -1,6 +1,6 @@
 """User management service."""
 from typing import List, Optional
-from app.schemas.user import UserProfile, UserDashboard
+from app.schemas.user import UserProfile, UserDashboard, UserUpdate
 
 RECENT_MOVIE_VIEW_LIMIT = 7
 RECOMMENDED_MOVIE_VIEW_LIMIT = 3
@@ -58,7 +58,7 @@ def get_user_dashboard(user_id: str, resources) -> Optional[UserDashboard]:
 
     return UserDashboard(**dashboard_data)
 
-def update_user(user_id: str, update_data: dict, resources) -> Optional[dict]:
+def update_user(user_id: str, update_data: UserUpdate, resources) -> Optional[dict]:
     """Update user information."""
     update_dict = update_data.model_dump(exclude_unset=True)
 

@@ -1,11 +1,9 @@
-"""Unit tests for movies repository."""
 import pytest
 import json
 from app.repositories.movies_repo import MoviesRepository
 
 @pytest.fixture
 def setup_movie_data(tmp_path):
-    """Setup mock movie CSV and ratings JSON."""
     movie_dir = tmp_path / "movies"
     movie_dir.mkdir()
     movie_csv = movie_dir / "movies.csv"
@@ -27,7 +25,6 @@ def setup_movie_data(tmp_path):
     return movie_dir, ratings_file
 
 def test_load_movies(setup_movie_data):
-    """Test loading movies from CSV."""
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
     assert repo.movies_df is not None
@@ -35,7 +32,6 @@ def test_load_movies(setup_movie_data):
     assert list(repo.movies_df.columns) == ["movieId", "title", "genres", "year"]
 
 def test_extract_year(setup_movie_data):
-    """Test year extraction from movie titles."""
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
@@ -44,7 +40,6 @@ def test_extract_year(setup_movie_data):
     assert repo._extract_year("Very Real Movie With No Year: 100 Emoji") is None
 
 def test_get_by_id(setup_movie_data):
-    """Test getting a movie by ID."""
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
@@ -55,7 +50,6 @@ def test_get_by_id(setup_movie_data):
     assert set(movie["genres"]) == {"Action", "Sci-Fi"}
 
 def test_get_by_id_not_found(setup_movie_data):
-    """Test getting a non-existent movie."""
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
@@ -63,7 +57,6 @@ def test_get_by_id_not_found(setup_movie_data):
     assert movie is None
 
 def test_get_average_rating(setup_movie_data):
-    """Test calculating average rating for a movie."""
     movie_dir, ratings_file = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
@@ -71,7 +64,6 @@ def test_get_average_rating(setup_movie_data):
     assert avg == 4.5
 
 def test_get_average_rating_no_ratings(setup_movie_data):
-    """Test average rating for movie with no ratings."""
     movie_dir, ratings_file = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
@@ -79,7 +71,6 @@ def test_get_average_rating_no_ratings(setup_movie_data):
     assert avg is None
 
 def test_search_movies(setup_movie_data):
-    """Test searching movies by title."""
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
@@ -88,7 +79,6 @@ def test_search_movies(setup_movie_data):
     assert results[0]["title"] == "The Matrix (1999)"
 
 def test_filter_by_genre(setup_movie_data):
-    """Test filtering movies by genre."""
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
@@ -97,7 +87,6 @@ def test_filter_by_genre(setup_movie_data):
     assert all("Action" in movie["genres"] for movie in results)
 
 def test_get_genres(setup_movie_data):
-    """Test getting all unique genres."""
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
@@ -107,7 +96,6 @@ def test_get_genres(setup_movie_data):
     assert genres == sorted(genres)
 
 def test_get_all_with_offset(setup_movie_data):
-    """Test pagination offset."""
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
@@ -117,7 +105,6 @@ def test_get_all_with_offset(setup_movie_data):
     assert results[1]["movieId"] == 3
 
 def test_get_paginated_movies(setup_movie_data):
-    """Test paginated movies method."""
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
@@ -126,7 +113,6 @@ def test_get_paginated_movies(setup_movie_data):
     assert total == 3
 
 def test_genres_split_correctly(setup_movie_data):
-    """Test that genres are split into lists."""
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 

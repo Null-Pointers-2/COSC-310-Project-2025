@@ -1,11 +1,10 @@
-"""Unit tests for RecommendationsRepository."""
+"""Unit tests for recommendations repository."""
 import pytest
 from datetime import datetime, timezone, timedelta
 from app.repositories.recommendations_repo import RecommendationsRepository
 
 @pytest.fixture
 def repo(mocker):
-    """Create a repository with all file I/O mocked."""
     mock_path = mocker.MagicMock()
     mock_path.exists.return_value = True
     mock_path.parent.mkdir = mocker.Mock()
@@ -20,7 +19,6 @@ def repo(mocker):
 
 
 def test_ensure_file_created_if_missing(mocker):
-    """Ensure _ensure_file_exists writes empty JSON when file is missing."""
     mock_path = mocker.MagicMock()
     mock_path.exists.return_value = False
     mock_path.parent.mkdir = mocker.Mock()

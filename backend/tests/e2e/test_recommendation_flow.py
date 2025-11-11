@@ -5,16 +5,11 @@ Tests the entire recommendation pipeline from user registration
 through rating movies to receiving personalized recommendations.
 """
 import pytest
-from fastapi.testclient import TestClient
 
-from app.main import app
-from app.core.config import settings
 from app.repositories.users_repo import UsersRepository
 from app.repositories.ratings_repo import RatingsRepository
 from app.repositories.recommendations_repo import RecommendationsRepository
 from app.repositories.movies_repo import MoviesRepository
-
-client = TestClient(app)
 
 users_repo = UsersRepository()
 ratings_repo = RatingsRepository()
@@ -67,7 +62,7 @@ def cleanup_test_data():
             users_repo.delete(user["id"])
 
 
-def test_complete_recommendation_flow():
+def test_complete_recommendation_flow(client):
     """
     E2E test for complete recommendation flow.
     
@@ -78,6 +73,7 @@ def test_complete_recommendation_flow():
     4. User requests recommendations (gets personalized results)
     """
 
+    # Step 1: Register and authenticate
     register_response = client.post(
         "/auth/register",
         json={
@@ -106,6 +102,7 @@ def test_complete_recommendation_flow():
     assert me_response.status_code == 200
     assert me_response.json()["id"] == user["id"]
    
+    # Step 2: Browse movies
     movies_response = client.get("/movies?page=1&page_size=30")
     assert movies_response.status_code == 200
     movies_data = movies_response.json()
@@ -119,6 +116,7 @@ def test_complete_recommendation_flow():
     movie_detail = movie_detail_response.json()
     assert movie_detail["movieId"] == first_movie["movieId"]
     
+    # Step 3: Rate movies
     rated_movies = []
     high_rated_movies = []
     low_rated_movies = []
@@ -150,6 +148,7 @@ def test_complete_recommendation_flow():
     my_ratings = my_ratings_response.json()
     assert len(my_ratings) == 10
     
+    # Step 4: Get recommendations
     recommendations_response = client.get(
         "/recommendations/me?limit=10",
         headers=headers
@@ -178,6 +177,7 @@ def test_complete_recommendation_flow():
     scores = [rec["similarity_score"] for rec in recommendations]
     assert scores == sorted(scores, reverse=True), "Recommendations should be sorted by score"
     
+    # Test caching
     cached_response = client.get(
         "/recommendations/me?limit=10",
         headers=headers
@@ -187,6 +187,7 @@ def test_complete_recommendation_flow():
     
     assert cached_recommendations == recommendations, "Cached recommendations should be identical"
 
+    # Test refresh after adding more ratings
     additional_movies = movies[10:15]  # Next 5 movies
     additional_rated = []
     
@@ -217,6 +218,7 @@ def test_complete_recommendation_flow():
     overlap_after_refresh = refreshed_movie_ids.intersection(all_rated_ids_set)
     assert len(overlap_after_refresh) == 0, "Refreshed recommendations should exclude all rated movies"
     
+    # Test force refresh
     force_refresh_response = client.get(
         "/recommendations/me?limit=10&force_refresh=true",
         headers=headers
@@ -225,6 +227,7 @@ def test_complete_recommendation_flow():
     force_refreshed = force_refresh_response.json()["recommendations"]
     assert len(force_refreshed) > 0
     
+    # Test similar movies endpoint
     seed_movie_id = high_rated_movies[0]
     seed_movie = next(m for m in movies if m["movieId"] == seed_movie_id)
     
@@ -243,6 +246,7 @@ def test_complete_recommendation_flow():
             assert "similarity_score" in similar
             assert similar["movie_id"] != seed_movie_id, "Similar movies should not include seed movie"
 
+    # Test dashboard integration
     dashboard_response = client.get("/users/me/dashboard", headers=headers)
     if dashboard_response.status_code == 200:
         dashboard = dashboard_response.json()
@@ -251,6 +255,7 @@ def test_complete_recommendation_flow():
         assert "recommendations" in dashboard
         assert dashboard["user"]["id"] == user["id"]
 
+    # Test user profile stats
     profile_response = client.get("/users/me", headers=headers)
     assert profile_response.status_code == 200
     profile = profile_response.json()

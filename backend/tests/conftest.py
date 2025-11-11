@@ -13,8 +13,13 @@ from app.main import app, SingletonResources
 @pytest.fixture(scope="session")
 def test_app():
     """Create a test app with initialized singleton resources."""
+    SingletonResources._instance = None
+    SingletonResources._initialized = False
+    
     app.state.resources = SingletonResources()
+    
     yield app
+    
     if hasattr(app.state, 'resources') and app.state.resources:
         app.state.resources.cleanup()
 

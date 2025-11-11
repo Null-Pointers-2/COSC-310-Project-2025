@@ -6,7 +6,6 @@ from app.schemas.user import UserUpdate
 
 @pytest.fixture
 def mock_resources():
-    """Create mock resources object."""
     resources = Mock()
     resources.users_repo = Mock()
     resources.ratings_repo = Mock()
@@ -16,7 +15,6 @@ def mock_resources():
 
 @pytest.fixture
 def sample_user():
-    """Sample user data."""
     return {
         "id": "user123",
         "username": "testuser",
@@ -27,7 +25,6 @@ def sample_user():
 
 @pytest.fixture
 def sample_ratings():
-    """Sample ratings data."""
     return [
         {"rating": 4.0},
         {"rating": 5.0},
@@ -36,13 +33,11 @@ def sample_ratings():
 
 @pytest.fixture
 def sample_penalties():
-    """Sample penalties data."""
     return [
         {"reason": "Late submission", "status": "active"}
     ]
 
 def test_returns_user_when_found(mock_resources, sample_user):
-    """Should return user when ID exists."""
     mock_resources.users_repo.get_by_id.return_value = sample_user
     
     result = users_service.get_user_by_id("user123", mock_resources)
@@ -51,7 +46,6 @@ def test_returns_user_when_found(mock_resources, sample_user):
     mock_resources.users_repo.get_by_id.assert_called_once_with("user123")
 
 def test_returns_none_when_not_found(mock_resources):
-    """Should return None when user ID doesn't exist."""
     mock_resources.users_repo.get_by_id.return_value = None
     
     result = users_service.get_user_by_id("nonexistent", mock_resources)
@@ -59,7 +53,6 @@ def test_returns_none_when_not_found(mock_resources):
     assert result is None
 
 def test_profile_success(mock_resources, sample_user, sample_ratings, sample_penalties):
-    """Should return user profile with correct statistics."""
     mock_resources.users_repo.get_by_id.return_value = sample_user
     mock_resources.ratings_repo.get_by_user.return_value = sample_ratings
     mock_resources.penalties_repo.get_by_user.return_value = sample_penalties
@@ -74,7 +67,6 @@ def test_profile_success(mock_resources, sample_user, sample_ratings, sample_pen
     assert profile.active_penalties == 1
 
 def test_profile_not_found(mock_resources):
-    """Should return None when user doesn't exist."""
     mock_resources.users_repo.get_by_id.return_value = None
 
     profile = users_service.get_user_profile("nonexistent", mock_resources)
@@ -82,7 +74,6 @@ def test_profile_not_found(mock_resources):
     assert profile is None
 
 def test_profile_with_no_ratings(mock_resources, sample_user):
-    """Should handle user with no ratings."""
     mock_resources.users_repo.get_by_id.return_value = sample_user
     mock_resources.ratings_repo.get_by_user.return_value = []
     mock_resources.penalties_repo.get_by_user.return_value = []
@@ -95,7 +86,6 @@ def test_profile_with_no_ratings(mock_resources, sample_user):
 
 
 def test_dashboard_success(mock_resources, sample_user, sample_ratings, sample_penalties):
-    """Should return complete dashboard data."""
     mock_resources.users_repo.get_by_id.return_value = sample_user
     mock_resources.ratings_repo.get_by_user.return_value = sample_ratings
     mock_resources.penalties_repo.get_by_user.return_value = sample_penalties
@@ -112,7 +102,6 @@ def test_dashboard_success(mock_resources, sample_user, sample_ratings, sample_p
     assert dashboard.recommendations is not None
 
 def test_dashboard_not_found(mock_resources):
-    """Should return None when user doesn't exist."""
     mock_resources.users_repo.get_by_id.return_value = None
 
     dashboard = users_service.get_user_dashboard("nonexistent", mock_resources)
@@ -120,7 +109,6 @@ def test_dashboard_not_found(mock_resources):
     assert dashboard is None
 
 def test_update_with_data(mock_resources, sample_user):
-    """Should update user when data is provided."""
     updated_user = {**sample_user, "email": "new@email.com"}
     mock_resources.users_repo.update.return_value = updated_user
 
@@ -133,7 +121,6 @@ def test_update_with_data(mock_resources, sample_user):
     assert result["email"] == "new@email.com"
 
 def test_update_with_no_data(mock_resources, sample_user):
-    """Should return current user when no update data provided."""
     mock_resources.users_repo.get_by_id.return_value = sample_user
 
     update_data = UserUpdate()
@@ -145,7 +132,6 @@ def test_update_with_no_data(mock_resources, sample_user):
     assert result["username"] == "testuser"
 
 def test_returns_all_users(mock_resources, sample_user):
-    """Should return list of all users."""
     mock_user_list = [sample_user, {**sample_user, "id": "user456", "username": "anotheruser"}]
     mock_resources.users_repo.get_all.return_value = mock_user_list
 

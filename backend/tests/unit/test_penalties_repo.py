@@ -1,17 +1,14 @@
+"""Unit tests for penalties repository."""
 import pytest
 import json
 from app.repositories.penalties_repo import PenaltiesRepository
 
-"""Test penalties repository operations."""
-
 @pytest.fixture
 def repo(tmp_path):
-    """Create a PenaltiesRepository with a temporary file."""
     test_file = tmp_path / "penalties.json"
     return PenaltiesRepository(penalties_file=test_file)
 
 def test_initialization_creates_file(tmp_path):
-    """Test creating file if it doesn't exist."""
     test_file = tmp_path / "penalties.json"
     repo = PenaltiesRepository(penalties_file=test_file)
 
@@ -19,7 +16,6 @@ def test_initialization_creates_file(tmp_path):
     assert json.loads(test_file.read_text()) == []
 
 def test_handles_corrupted_json(tmp_path):
-    """Test resetting file if JSON is corrupted."""
     test_file = tmp_path / "penalties.json"
     test_file.write_text("invalid json")
 
@@ -27,7 +23,6 @@ def test_handles_corrupted_json(tmp_path):
     assert repo.get_all() == []
 
 def test_create_penalty(repo):
-    """Test creating a new penalty."""
     penalty_data = {
         "user_id": "user123",
         "reason": "Spam",
@@ -47,7 +42,6 @@ def test_create_penalty(repo):
     assert created["resolved_at"] is None
 
 def test_get_by_id(repo):
-    """Test getting penalty by ID."""
     created = repo.create({
         "user_id": "user123",
         "reason": "Spam",
@@ -59,11 +53,9 @@ def test_get_by_id(repo):
     assert fetched == created
 
 def test_get_by_id_returns_none(repo):
-    """Test returning None for non-existent ID."""
     assert repo.get_by_id("non-existent-id") is None
 
 def test_get_by_user(repo):
-    """Test getting all penalties for a user."""
     repo.create({
         "user_id": "user1",
         "reason": "Spam",
@@ -88,7 +80,6 @@ def test_get_by_user(repo):
     assert all(p["user_id"] == "user1" for p in user1_penalties)
 
 def test_get_active_by_user(repo):
-    """Test getting only active penalties for a user."""
     p1 = repo.create({
         "user_id": "user1",
         "reason": "Spam",
@@ -110,7 +101,6 @@ def test_get_active_by_user(repo):
     assert active[0]["reason"] == "Harassment"
 
 def test_get_all(repo):
-    """Test getting all penalties."""
     repo.create({
         "user_id": "user1",
         "reason": "Spam",
@@ -128,7 +118,6 @@ def test_get_all(repo):
     assert len(all_penalties) == 2
 
 def test_update_penalty(repo):
-    """Test updating a penalty."""
     created = repo.create({
         "user_id": "user1",
         "reason": "Spam",
@@ -142,12 +131,10 @@ def test_update_penalty(repo):
     assert updated["reason"] == "Spam"  # Other fields should be unchanged
 
 def test_update_nonexistent_returns_none(repo):
-    """Test updating non-existent penalty returns None."""
     result = repo.update("non-existent-id", {"description": "Test"})
     assert result is None
 
 def test_resolve_penalty(repo):
-    """Test resolving a penalty."""
     created = repo.create({
         "user_id": "user1",
         "reason": "Spam",
@@ -163,12 +150,10 @@ def test_resolve_penalty(repo):
     assert resolved["resolved_at"] is not None
 
 def test_resolve_nonexistent_returns_false(repo):
-    """Test resolving non-existent penalty returns False."""
     success = repo.resolve("non-existent-id")
     assert success is False
 
 def test_delete_penalty(repo):
-    """Test deleting a penalty."""
     created = repo.create({
         "user_id": "user1",
         "reason": "Spam",
@@ -181,12 +166,10 @@ def test_delete_penalty(repo):
     assert repo.get_by_id(created["id"]) is None
 
 def test_delete_nonexistent_returns_false(repo):
-    """Test deleting non-existent penalty returns False."""
     success = repo.delete("non-existent-id")
     assert success is False
 
 def test_penalty_persistence(tmp_path):
-    """Test that penalties persist across repository instances."""
     test_file = tmp_path / "penalties.json"
 
     repo1 = PenaltiesRepository(penalties_file=test_file)

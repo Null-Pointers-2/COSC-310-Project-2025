@@ -14,7 +14,6 @@ from app.schemas.penalty import PenaltyCreate
 
 @pytest.fixture
 def setup_repos(tmp_path):
-    """Setup temporary repositories for testing."""
     users_file = tmp_path / "users.csv"
     penalties_file = tmp_path / "penalties.json"
     ratings_file = tmp_path / "ratings.json"
@@ -39,7 +38,6 @@ def setup_repos(tmp_path):
     return resources
 
 def test_get_all_users_with_stats(setup_repos):
-    """Test getting all users with statistics."""
     resources = setup_repos
 
     user1 = resources.users_repo.create({
@@ -85,7 +83,6 @@ def test_get_all_users_with_stats(setup_repos):
     assert user2_stats["stats"]["total_penalties"] == 0
 
 def test_apply_penalty(setup_repos):
-    """Test applying a penalty to a user."""
     resources = setup_repos
 
     user = resources.users_repo.create({
@@ -110,7 +107,6 @@ def test_apply_penalty(setup_repos):
     assert result.issued_by == "admin1"
 
 def test_get_all_penalties(setup_repos):
-    """Test getting all penalties."""
     resources = setup_repos
 
     resources.penalties_repo.create({
@@ -133,7 +129,6 @@ def test_get_all_penalties(setup_repos):
     assert all(hasattr(p, "reason") for p in penalties)
 
 def test_get_user_penalties(setup_repos):
-    """Test getting penalties for a specific user."""
     resources = setup_repos
 
     resources.penalties_repo.create({
@@ -161,7 +156,6 @@ def test_get_user_penalties(setup_repos):
     assert all(p.user_id == "user1" for p in user1_penalties)
 
 def test_resolve_penalty(setup_repos):
-    """Test resolving a penalty."""
     resources = setup_repos
 
     created = resources.penalties_repo.create({
@@ -179,7 +173,6 @@ def test_resolve_penalty(setup_repos):
     assert resolved["status"] == "resolved"
 
 def test_delete_penalty(setup_repos):
-    """Test deleting a penalty."""
     resources = setup_repos
 
     created = resources.penalties_repo.create({
@@ -195,7 +188,6 @@ def test_delete_penalty(setup_repos):
     assert resources.penalties_repo.get_by_id(created["id"]) is None
 
 def test_get_system_stats(setup_repos):
-    """Test getting system-wide statistics."""
     resources = setup_repos
 
     user1 = resources.users_repo.create({
@@ -237,7 +229,6 @@ def test_get_system_stats(setup_repos):
     assert stats["avg_ratings_per_user"] == 1.5
 
 def test_check_user_violations_spam(setup_repos):
-    """Test detecting spam violations (>50 ratings in 1 hour)."""
     resources = setup_repos
 
     user = resources.users_repo.create({
@@ -267,7 +258,6 @@ def test_check_user_violations_spam(setup_repos):
     assert any("Spam detected" in v for v in violations)
 
 def test_check_user_violations_all_same_rating(setup_repos):
-    """Test detecting suspicious patterns (all same extreme ratings)."""
     resources = setup_repos
 
     user = resources.users_repo.create({
@@ -291,7 +281,6 @@ def test_check_user_violations_all_same_rating(setup_repos):
     assert any("Suspicious pattern" in v and "5.0" in v for v in violations)
 
 def test_check_user_violations_no_violations(setup_repos):
-    """Test that normal users have no violations."""
     resources = setup_repos
 
     user = resources.users_repo.create({

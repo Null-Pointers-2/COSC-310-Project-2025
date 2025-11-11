@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from typing import Optional
 from app.routers import auth, users, movies, ratings, recommendations, watchlist, admin, export
 from app.repositories.users_repo import UsersRepository
 from app.repositories.movies_repo import MoviesRepository
@@ -16,9 +17,9 @@ class SingletonResources:
     Singleton container for shared application resources.
     Initialized once at startup and shared across the application.
     """
-    _instance = None
-    _initialized = False
-    _lock = threading.Lock()
+    _instance: Optional["SingletonResources"] = None
+    _initialized: bool = False
+    _lock: threading.Lock = threading.Lock()
 
     def __new__(cls):
         if cls._instance is None:

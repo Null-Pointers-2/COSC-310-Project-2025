@@ -1,4 +1,4 @@
-"""Unit tests for recommendations_service."""
+"""Unit tests for recommendations service."""
 import pytest
 from unittest.mock import MagicMock, Mock
 from app.services import recommendations_service
@@ -13,7 +13,6 @@ def mock_resources():
     resources.recommendations_repo = Mock()
     resources.movies_repo = Mock()
     
-    # Set up default return values
     resources.recommendations_repo.get_for_user = Mock()
     resources.recommendations_repo.is_fresh = Mock()
     resources.recommendations_repo.save_for_user = Mock()
@@ -28,19 +27,16 @@ def mock_resources():
 
 @pytest.fixture
 def mock_recommender(mocker):
-    """Mock the singleton MovieRecommender."""
     mock_recommender_class = mocker.patch("app.services.recommendations_service.MovieRecommender", autospec=True)
     mock_instance = MagicMock()
     mock_recommender_class.return_value = mock_instance
     
-    # Reset the singleton
     mocker.patch.object(recommendations_service, "_recommender", None)
     
     return mock_instance
 
 
 def test_returns_cached_recommendations_when_fresh(mock_resources, mock_recommender):
-    """Should return cached recommendations if cache is fresh."""
     cached_data = {
         "recommendations": [
             {"movie_id": 100, "similarity_score": 0.95},
@@ -60,7 +56,6 @@ def test_returns_cached_recommendations_when_fresh(mock_resources, mock_recommen
     mock_resources.recommendations_repo.is_fresh.assert_called_once()
 
 def test_generates_new_recommendations_when_cache_stale(mocker, mock_resources, mock_recommender):
-    """Should generate new recommendations if cache is stale or missing."""
     mock_resources.recommendations_repo.get_for_user.return_value = None
     mock_resources.ratings_repo.get_by_user.return_value = [
         {"movie_id": 1, "rating": 4.5},
@@ -83,7 +78,6 @@ def test_generates_new_recommendations_when_cache_stale(mocker, mock_resources, 
     mock_resources.recommendations_repo.save_for_user.assert_called_once()
 
 def test_force_refresh_bypasses_cache(mocker, mock_resources):
-    """Should bypass cache when force_refresh=True."""
     mock_generate = mocker.patch(
         "app.services.recommendations_service.generate_recommendations",
         return_value=[RecommendationItem(movie_id=200, similarity_score=0.88)],
@@ -97,7 +91,6 @@ def test_force_refresh_bypasses_cache(mocker, mock_resources):
 
 
 def test_returns_fallback_for_user_with_no_ratings(mock_resources, mock_recommender):
-    """Should return fallback recommendations for new users."""
     mock_resources.ratings_repo.get_by_user.return_value = []
     mock_resources.movies_repo.get_all.return_value = [
         {"movieId": 1, "title": "Movie 1"},
@@ -111,7 +104,6 @@ def test_returns_fallback_for_user_with_no_ratings(mock_resources, mock_recommen
     mock_resources.movies_repo.get_all.assert_called_once_with(limit=10)
 
 def test_uses_high_rated_movies_as_seeds(mocker, mock_resources, mock_recommender):
-    """Should use only ratings >= 4.0 as seeds."""
     mock_resources.ratings_repo.get_by_user.return_value = [
         {"movie_id": 1, "rating": 4.5},
         {"movie_id": 2, "rating": 4.0},
@@ -132,7 +124,6 @@ def test_uses_high_rated_movies_as_seeds(mocker, mock_resources, mock_recommende
     assert 3 not in seed_movie_ids
 
 def test_excludes_already_rated_movies(mocker, mock_resources, mock_recommender):
-    """Should exclude movies the user already rated."""
     mock_resources.ratings_repo.get_by_user.return_value = [
         {"movie_id": 1, "rating": 4.5},
         {"movie_id": 2, "rating": 4.0},
@@ -152,7 +143,6 @@ def test_excludes_already_rated_movies(mocker, mock_resources, mock_recommender)
     assert 2 not in movie_ids and 100 in movie_ids
 
 def test_aggregates_scores_from_multiple_seeds(mocker, mock_resources, mock_recommender):
-    """Should combine scores from multiple seed movies."""
     mock_resources.ratings_repo.get_by_user.return_value = [
         {"movie_id": 1, "rating": 4.0},
         {"movie_id": 2, "rating": 5.0},
@@ -173,7 +163,6 @@ def test_aggregates_scores_from_multiple_seeds(mocker, mock_resources, mock_reco
     assert 0.7 < movie_100.similarity_score < 0.9
 
 def test_returns_similar_movies_for_valid_movie(mocker, mock_resources, mock_recommender):
-    """Should return similar movies using recommender results."""
     mock_resources.movies_repo.get_by_id.return_value = {"movieId": 1, "title": "The Matrix (1999)"}
     mock_recommender.get_recommendations.return_value = [
         ("The Matrix Reloaded (2003)", 0.92),
@@ -187,14 +176,12 @@ def test_returns_similar_movies_for_valid_movie(mocker, mock_resources, mock_rec
     mock_recommender.get_recommendations.assert_called_once()
 
 def test_returns_empty_for_invalid_movie(mock_resources, mock_recommender):
-    """Should return empty list for invalid movie."""
     mock_resources.movies_repo.get_by_id.return_value = None
     result = recommendations_service.get_similar_movies(mock_resources, 9999, limit=5)
     assert result == []
     mock_recommender.get_recommendations.assert_not_called()
 
 def test_recommender_singleton(mocker):
-    """Should only initialize recommender once."""
     mock_recommender_class = mocker.patch("app.services.recommendations_service.MovieRecommender")
     mock_instance = MagicMock()
     mock_recommender_class.return_value = mock_instance
@@ -207,13 +194,10 @@ def test_recommender_singleton(mocker):
     assert mock_recommender_class.call_count == 1
 
 def test_clear_cache_calls_repo(mock_resources):
-    """Should delegate cache clearing to repository."""
     recommendations_service.clear_recommendations_cache(mock_resources, "user123")
     mock_resources.recommendations_repo.clear_for_user.assert_called_once_with("user123")
 
 def test_fallback_respects_limit(mock_resources):
-    """Should respect limit parameter for fallback."""
-
     def get_all_mock(limit=None):
         actual_limit = limit or 0
         return [{"movieId": i, "title": f"Movie {i}"} for i in range(actual_limit)]
@@ -225,7 +209,6 @@ def test_fallback_respects_limit(mock_resources):
     mock_resources.movies_repo.get_all.assert_called_once_with(limit=5)
 
 def test_refresh_calls_get_with_force_refresh(mocker, mock_resources):
-    """Should call get_recommendations with force_refresh=True."""
     mock_get = mocker.patch(
         "app.services.recommendations_service.get_recommendations",
         return_value=Mock(user_id="user123", recommendations=[])

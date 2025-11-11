@@ -1,6 +1,54 @@
 from fastapi import FastAPI
 
 from app.routers import auth, users, movies, ratings, recommendations, watchlist, admin, export
+from app.repositories.users_repo import UsersRepository
+from app.repositories.movies_repo import MoviesRepository
+from app.repositories.ratings_repo import RatingsRepository
+from app.repositories.watchlist_repo import WatchlistRepository
+from app.repositories.recommendations_repo import RecommendationsRepository
+from app.repositories.penalties_repo import PenaltiesRepository
+from argon2 import PasswordHasher
+import threading
+
+
+class SingletonResources:
+    """
+    Singleton container for shared application resources.
+    Initialized once at startup and shared across the application.
+    """
+    _instance = None
+    _initialized = False
+    _lock = threading.Lock()
+
+    def __new__(cls):
+        if cls._instance is None:
+            with cls._lock:
+                if cls._instance is None:
+                    cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        with SingletonResources._lock:
+            if SingletonResources._initialized:
+                return
+
+            print("Initializing singleton resources...")
+            self.users_repo = UsersRepository()
+            self.movies_repo = MoviesRepository()
+            self.ratings_repo = RatingsRepository()
+            self.watchlist_repo = WatchlistRepository()
+            self.recommendations_repo = RecommendationsRepository()
+            self.penalties_repo = PenaltiesRepository()
+
+            self.password_hasher = PasswordHasher()
+
+            SingletonResources._initialized = True
+            print("Singleton resources initialized successfully")
+
+    def cleanup(self):
+        """Cleanup resources on shutdown."""
+        print("Cleaning up singleton resources...")
+        print("Singleton resources cleaned up")
 
 app = FastAPI(
     title="Movie Recommendations API",
@@ -52,20 +100,22 @@ app.include_router(export.router, prefix="/export", tags=["Export"])
 async def startup_event():
     """
     Execute on application startup.
-    Initialize data files, load ML models, etc.
+    Initialize singleton resources and load data.
     """
-    # TODO: Initialize repositories 
+    print("Application starting up...")
+    app.state.resources = SingletonResources()
     # TODO: Load/precompute similarity matrix for recommendations (still not sure how this will work...)
     # TODO: Validate data files
-    print("Application starting up...")
+    print("Application startup complete")
 
 # Shutdown event
 @app.on_event("shutdown")
 async def shutdown_event():
     """
     Execute on application shutdown.
-    Cleanup, save state, etc.
+    Cleanup resources and save state.
     """
-    # TODO: Save any cached data
-    # TODO: Cleanup resources
     print("Application shutting down...")
+    if hasattr(app.state, 'resources') and app.state.resources:
+        app.state.resources.cleanup()
+    print("Application shutdown complete")

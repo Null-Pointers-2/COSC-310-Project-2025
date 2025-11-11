@@ -1,16 +1,9 @@
 """Recommendations service using cosine similarity."""
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional
 from collections import defaultdict
-from app.repositories.ratings_repo import RatingsRepository
-from app.repositories.recommendations_repo import RecommendationsRepository
-from app.repositories.movies_repo import MoviesRepository
 from app.schemas.recommendation import RecommendationList, RecommendationItem
 from app.ml.recommender import MovieRecommender
 from app.core.config import settings
-
-ratings_repo = RatingsRepository()
-recommendations_repo = RecommendationsRepository()
-movies_repo = MoviesRepository()
 
 _recommender: Optional[MovieRecommender] = None
 
@@ -22,7 +15,7 @@ def _get_recommender() -> MovieRecommender:
     return _recommender
 
 
-def get_recommendations(user_id: str, limit: int = 10, force_refresh: bool = False) -> RecommendationList:
+def get_recommendations(resources, user_id: str, limit: int = 10, force_refresh: bool = False) -> RecommendationList:
     """
     Get personalized recommendations for a user.
     
@@ -38,18 +31,18 @@ def get_recommendations(user_id: str, limit: int = 10, force_refresh: bool = Fal
         RecommendationList with personalized recommendations
     """
     if not force_refresh:
-        cached = recommendations_repo.get_for_user(user_id)
-        if cached and recommendations_repo.is_fresh(user_id, max_age_hours=24):
+        cached = resources.recommendations_repo.get_for_user(user_id)
+        if cached and resources.recommendations_repo.is_fresh(user_id, max_age_hours=24):
             items = [RecommendationItem(**item) for item in cached.get("recommendations", [])[:limit]]
             return RecommendationList(user_id=user_id, recommendations=items)
     
     recommendations = generate_recommendations(user_id, limit)
-    recommendations_repo.save_for_user(user_id, [item.model_dump() for item in recommendations])
+    resources.recommendations_repo.save_for_user(user_id, [item.model_dump() for item in recommendations])
     
     return RecommendationList(user_id=user_id, recommendations=recommendations)
 
 
-def generate_recommendations(user_id: str, limit: int = 10) -> List[RecommendationItem]:
+def generate_recommendations(resources, user_id: str, limit: int = 10) -> List[RecommendationItem]:
     """
     Generate new recommendations using cosine similarity.
     
@@ -62,7 +55,7 @@ def generate_recommendations(user_id: str, limit: int = 10) -> List[Recommendati
     """
     recommender = _get_recommender()
     
-    user_ratings = ratings_repo.get_by_user(user_id)
+    user_ratings = resources.ratings_repo.get_by_user(user_id)
     
     if not user_ratings:
         return _get_fallback_recommendations(limit)
@@ -81,7 +74,7 @@ def generate_recommendations(user_id: str, limit: int = 10) -> List[Recommendati
     
     for seed_rating in seed_movies:
         movie_id = seed_rating["movie_id"]
-        movie = movies_repo.get_by_id(movie_id)
+        movie = resources.movies_repo.get_by_id(movie_id)
         
         if not movie:
             continue
@@ -106,7 +99,7 @@ def generate_recommendations(user_id: str, limit: int = 10) -> List[Recommendati
     return final_recommendations[:limit]
 
 
-def get_similar_movies(movie_id: int, limit: int = 10) -> List[RecommendationItem]:
+def get_similar_movies(resources, movie_id: int, limit: int = 10) -> List[RecommendationItem]:
     """
     Get movies similar to a given movie.
     
@@ -119,7 +112,7 @@ def get_similar_movies(movie_id: int, limit: int = 10) -> List[RecommendationIte
     """
     recommender = _get_recommender()
     
-    movie = movies_repo.get_by_id(movie_id)
+    movie = resources.movies_repo.get_by_id(movie_id)
     if not movie:
         return []
     
@@ -132,7 +125,7 @@ def get_similar_movies(movie_id: int, limit: int = 10) -> List[RecommendationIte
     
     result = []
     for title, score in recommendations:
-        matching_movies = movies_repo.search(title, limit=1)
+        matching_movies = resources.movies_repo.search(title, limit=1)
         if matching_movies and matching_movies[0]["title"] == title:
             result.append(
                 RecommendationItem(
@@ -157,7 +150,7 @@ def _get_fallback_recommendations(limit: int = 10) -> List[RecommendationItem]:
         List of RecommendationItem with default similarity scores
     """
     # Get first N movies as fallback
-    movies = movies_repo.get_all(limit=limit)
+    movies = resources.movies_repo.get_all(limit=limit)
     
     return [
         RecommendationItem(

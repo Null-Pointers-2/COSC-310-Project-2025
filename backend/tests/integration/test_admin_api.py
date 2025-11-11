@@ -11,7 +11,6 @@ from app.repositories.users_repo import UsersRepository
 from app.repositories.penalties_repo import PenaltiesRepository
 from app.repositories.ratings_repo import RatingsRepository
 
-client = TestClient(app)
 users_repo = UsersRepository()
 penalties_repo = PenaltiesRepository()
 ratings_repo = RatingsRepository()
@@ -74,7 +73,7 @@ def cleanup_test_data():
             users_repo.delete(user["id"])
 
 @pytest.fixture
-def admin_token():
+def admin_token(client):
     """Create an admin user and return auth token."""
     # Register admin user
     response = client.post(
@@ -100,7 +99,7 @@ def admin_token():
     return token
 
 @pytest.fixture
-def regular_user():
+def regular_user(client):
     """Create a regular user and return user data."""
     response = client.post(
         "/auth/register",
@@ -113,7 +112,7 @@ def regular_user():
     return response.json()
 
 @pytest.fixture
-def regular_user_token():
+def regular_user_token(client):
     """Create a regular user and return auth token."""
     client.post(
         "/auth/register",
@@ -136,7 +135,7 @@ def regular_user_token():
 class TestGetAllUsersEndpoint:
     """Test GET /admin/users endpoint."""
 
-    def test_get_all_users_success(self, admin_token, regular_user):
+    def test_get_all_users_success(self, client, admin_token, regular_user):
         """Test admin can get all users with stats."""
         response = client.get(
             "/admin/users",
@@ -157,7 +156,7 @@ class TestGetAllUsersEndpoint:
         assert "watchlist_count" in user_data["stats"]
         assert "total_penalties" in user_data["stats"]
 
-    def test_get_all_users_forbidden_for_regular_user(self, regular_user_token):
+    def test_get_all_users_forbidden_for_regular_user(self, client, regular_user_token):
         """Test regular users cannot access admin endpoint."""
         response = client.get(
             "/admin/users",
@@ -167,7 +166,7 @@ class TestGetAllUsersEndpoint:
         assert response.status_code == 403
         assert "Admin privileges required" in response.json()["detail"]
 
-    def test_get_all_users_unauthorized_without_token(self):
+    def test_get_all_users_unauthorized_without_token(self, client):
         """Test endpoint requires authentication."""
         response = client.get("/admin/users")
 
@@ -177,7 +176,7 @@ class TestGetAllUsersEndpoint:
 class TestApplyPenaltyEndpoint:
     """Test POST /admin/penalties endpoint."""
 
-    def test_apply_penalty_success(self, admin_token, regular_user):
+    def test_apply_penalty_success(self, client, admin_token, regular_user):
         """Test admin can apply penalty to user."""
         response = client.post(
             "/admin/penalties",
@@ -197,7 +196,7 @@ class TestApplyPenaltyEndpoint:
         assert "id" in data
         assert "issued_at" in data
 
-    def test_apply_penalty_forbidden_for_regular_user(self, regular_user_token):
+    def test_apply_penalty_forbidden_for_regular_user(self, client, regular_user_token):
         """Test regular users cannot apply penalties."""
         # Get the user who owns the token
         user = users_repo.get_by_username("testuser")
@@ -218,7 +217,7 @@ class TestApplyPenaltyEndpoint:
 class TestGetAllPenaltiesEndpoint:
     """Test GET /admin/penalties endpoint."""
 
-    def test_get_all_penalties_success(self, admin_token, regular_user):
+    def test_get_all_penalties_success(self, client, admin_token, regular_user):
         """Test admin can get all penalties."""
         # Create a penalty first
         client.post(
@@ -241,7 +240,7 @@ class TestGetAllPenaltiesEndpoint:
         assert isinstance(data, list)
         assert len(data) >= 1
 
-    def test_get_all_penalties_forbidden_for_regular_user(self, regular_user_token):
+    def test_get_all_penalties_forbidden_for_regular_user(self, client, regular_user_token):
         """Test regular users cannot view all penalties."""
         response = client.get(
             "/admin/penalties",
@@ -254,7 +253,7 @@ class TestGetAllPenaltiesEndpoint:
 class TestGetUserPenaltiesEndpoint:
     """Test GET /admin/penalties/user/{user_id} endpoint."""
 
-    def test_get_user_penalties_success(self, admin_token, regular_user):
+    def test_get_user_penalties_success(self, client, admin_token, regular_user):
         """Test admin can get penalties for specific user."""
         # Create a penalty
         client.post(
@@ -282,7 +281,7 @@ class TestGetUserPenaltiesEndpoint:
 class TestResolvePenaltyEndpoint:
     """Test PUT /admin/penalties/{penalty_id}/resolve endpoint."""
 
-    def test_resolve_penalty_success(self, admin_token, regular_user):
+    def test_resolve_penalty_success(self, client, admin_token, regular_user):
         """Test admin can resolve a penalty."""
         # Create a penalty
         penalty_response = client.post(
@@ -304,7 +303,7 @@ class TestResolvePenaltyEndpoint:
         assert response.status_code == 200
         assert "Penalty resolved successfully" in response.json()["message"]
 
-    def test_resolve_nonexistent_penalty_returns_404(self, admin_token):
+    def test_resolve_nonexistent_penalty_returns_404(self, client, admin_token):
         """Test resolving non-existent penalty returns 404."""
         response = client.put(
             "/admin/penalties/non-existent-id/resolve",
@@ -317,7 +316,7 @@ class TestResolvePenaltyEndpoint:
 class TestDeletePenaltyEndpoint:
     """Test DELETE /admin/penalties/{penalty_id} endpoint."""
 
-    def test_delete_penalty_success(self, admin_token, regular_user):
+    def test_delete_penalty_success(self, client, admin_token, regular_user):
         """Test admin can delete a penalty."""
         # Create a penalty
         penalty_response = client.post(
@@ -338,7 +337,7 @@ class TestDeletePenaltyEndpoint:
 
         assert response.status_code == 204
 
-    def test_delete_nonexistent_penalty_returns_404(self, admin_token):
+    def test_delete_nonexistent_penalty_returns_404(self, client, admin_token):
         """Test deleting non-existent penalty returns 404."""
         response = client.delete(
             "/admin/penalties/non-existent-id",
@@ -351,7 +350,7 @@ class TestDeletePenaltyEndpoint:
 class TestGetSystemStatsEndpoint:
     """Test GET /admin/stats endpoint."""
 
-    def test_get_system_stats_success(self, admin_token, regular_user):
+    def test_get_system_stats_success(self, client, admin_token, regular_user):
         """Test admin can get system statistics."""
         response = client.get(
             "/admin/stats",
@@ -372,7 +371,7 @@ class TestGetSystemStatsEndpoint:
 class TestCheckUserViolationsEndpoint:
     """Test GET /admin/violations/{user_id} endpoint."""
 
-    def test_check_user_violations_success(self, admin_token, regular_user):
+    def test_check_user_violations_success(self, client, admin_token, regular_user):
         """Test admin can check user violations."""
         response = client.get(
             f"/admin/violations/{regular_user['id']}",
@@ -389,7 +388,7 @@ class TestCheckUserViolationsEndpoint:
 class TestPenaltyEnforcement:
     """Test that penalties block user access."""
 
-    def test_penalized_user_blocked_from_access(self, admin_token, regular_user_token):
+    def test_penalized_user_blocked_from_access(self, client, admin_token, regular_user_token):
         """Test that user with active penalty cannot access endpoints."""
         # Get the user who owns the token
         user = users_repo.get_by_username("testuser")
@@ -418,7 +417,7 @@ class TestPenaltyEnforcement:
         assert response.status_code == 403
         assert "active penalties" in response.json()["detail"].lower()
 
-    def test_user_can_access_after_penalty_resolved(self, admin_token, regular_user_token):
+    def test_user_can_access_after_penalty_resolved(self, client, admin_token, regular_user_token):
         """Test that user can access after penalty is resolved."""
         # Get the user who owns the token
         user = users_repo.get_by_username("testuser")

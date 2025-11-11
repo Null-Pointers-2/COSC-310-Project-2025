@@ -2,31 +2,20 @@
 from typing import List, Optional
 from datetime import datetime, timezone, timedelta
 from collections import Counter
-from app.repositories.users_repo import UsersRepository
-from app.repositories.penalties_repo import PenaltiesRepository
-from app.repositories.ratings_repo import RatingsRepository
-from app.repositories.watchlist_repo import WatchlistRepository
-from app.repositories.movies_repo import MoviesRepository
 from app.schemas.penalty import Penalty, PenaltyCreate
 
-users_repo = UsersRepository()
-penalties_repo = PenaltiesRepository()
-ratings_repo = RatingsRepository()
-watchlist_repo = WatchlistRepository()
-movies_repo = MoviesRepository()
-
-def get_all_users_with_stats() -> List[dict]:
+def get_all_users_with_stats(resources) -> List[dict]:
     """Get all users with statistics (admin only)."""
-    users = users_repo.get_all()
-    all_ratings = ratings_repo.get_all()
-    all_penalties = penalties_repo.get_all()
+    users = resources.users_repo.get_all()
+    all_ratings = resources.ratings_repo.get_all()
+    all_penalties = resources.penalties_repo.get_all()
 
     users_with_stats = []
     for user in users:
         user_id = user["id"]
 
         rating_count = len([r for r in all_ratings if r["user_id"] == user_id])
-        watchlist_count = len(watchlist_repo.get_by_user(user_id))
+        watchlist_count = len(resources.watchlist_repo.get_by_user(user_id))
 
         user_penalties = [p for p in all_penalties if p["user_id"] == user_id]
         active_penalties = [p for p in user_penalties if p["status"] == "active"]
@@ -47,7 +36,7 @@ def get_all_users_with_stats() -> List[dict]:
 
     return users_with_stats
 
-def apply_penalty(admin_id: str, penalty_data: PenaltyCreate) -> Penalty:
+def apply_penalty(resources, admin_id: str, penalty_data: PenaltyCreate) -> Penalty:
     """Apply a penalty to a user."""
     penalty_dict = {
         "user_id": penalty_data.user_id,
@@ -56,38 +45,38 @@ def apply_penalty(admin_id: str, penalty_data: PenaltyCreate) -> Penalty:
         "issued_by": admin_id,
     }
 
-    created_penalty = penalties_repo.create(penalty_dict)
+    created_penalty = resources.penalties_repo.create(penalty_dict)
     return Penalty(**created_penalty)
 
-def get_all_penalties() -> List[Penalty]:
+def get_all_penalties(resources) -> List[Penalty]:
     """Get all penalties (admin only)."""
-    penalties = penalties_repo.get_all()
+    penalties = resources.penalties_repo.get_all()
     return [Penalty(**p) for p in penalties]
 
-def get_user_penalties(user_id: str) -> List[Penalty]:
+def get_user_penalties(resources, user_id: str) -> List[Penalty]:
     """Get penalties for a specific user."""
-    penalties = penalties_repo.get_by_user(user_id)
+    penalties = resources.penalties_repo.get_by_user(user_id)
     return [Penalty(**p) for p in penalties]
 
-def resolve_penalty(penalty_id: str) -> bool:
+def resolve_penalty(resources, penalty_id: str) -> bool:
     """Resolve a penalty."""
-    return penalties_repo.resolve(penalty_id)
+    return resources.penalties_repo.resolve(penalty_id)
 
-def delete_penalty(penalty_id: str) -> bool:
+def delete_penalty(resources, penalty_id: str) -> bool:
     """Delete a penalty."""
-    return penalties_repo.delete(penalty_id)
+    return resources.penalties_repo.delete(penalty_id)
 
-def get_system_stats() -> dict:
+def get_system_stats(resources) -> dict:
     """Get system-wide statistics."""
-    users = users_repo.get_all()
-    ratings = ratings_repo.get_all()
-    penalties = penalties_repo.get_all()
+    users = resources.users_repo.get_all()
+    ratings = resources.ratings_repo.get_all()
+    penalties = resources.penalties_repo.get_all()
 
-    total_movies = len(movies_repo.movies_df) if movies_repo.movies_df is not None else 0
+    total_movies = len(resources.movies_repo.movies_df) if resources.movies_repo.movies_df is not None else 0
     active_penalties = [p for p in penalties if p["status"] == "active"]
 
     total_watchlist_items = sum(
-        len(watchlist_repo.get_by_user(user["id"])) for user in users
+        len(resources.watchlist_repo.get_by_user(user["id"])) for user in users
     )
 
     avg_ratings_per_user = len(ratings) / len(users) if users else 0
@@ -102,11 +91,11 @@ def get_system_stats() -> dict:
         "avg_ratings_per_user": round(avg_ratings_per_user, 2),
     }
 
-def check_user_violations(user_id: str) -> List[str]:
+def check_user_violations(resources, user_id: str) -> List[str]:
     """Check if user has any violations."""
     violations = []
 
-    user_ratings = ratings_repo.get_by_user(user_id)
+    user_ratings = resources.ratings_repo.get_by_user(user_id)
 
     if not user_ratings:
         return violations

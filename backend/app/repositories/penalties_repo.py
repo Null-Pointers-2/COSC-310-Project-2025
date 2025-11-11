@@ -1,15 +1,17 @@
 """Repository for penalty data operations."""
+
+from datetime import UTC, datetime
 import json
-import uuid
-from typing import List, Optional, Dict
 from pathlib import Path
-from datetime import datetime, timezone
+import uuid
+
 from app.core.config import settings
+
 
 class PenaltiesRepository:
     """Handle penalties stored in JSON."""
 
-    def __init__(self, penalties_file: Optional[str] = None):
+    def __init__(self, penalties_file: str | None = None):
         """Initialize with path to penalties JSON file."""
         if penalties_file is None:
             penalties_file = settings.PENALTIES_FILE
@@ -22,40 +24,40 @@ class PenaltiesRepository:
             self.penalties_file.parent.mkdir(parents=True, exist_ok=True)
             self.penalties_file.write_text("[]", encoding="utf-8")
 
-    def _read(self) -> List[Dict]:
+    def _read(self) -> list[dict]:
         """Read all penalties from file."""
         try:
-            with open(self.penalties_file, "r", encoding="utf-8") as f:
+            with open(self.penalties_file, encoding="utf-8") as f:
                 return json.load(f)
         except json.JSONDecodeError:
             self.penalties_file.write_text("[]", encoding="utf-8")
             return []
 
-    def _write(self, penalties: List[Dict]):
+    def _write(self, penalties: list[dict]):
         """Write all penalties to file."""
         with open(self.penalties_file, "w", encoding="utf-8") as f:
             json.dump(penalties, f, indent=2, ensure_ascii=False)
 
-    def get_all(self) -> List[Dict]:
+    def get_all(self) -> list[dict]:
         """Get all penalties."""
         return self._read()
 
-    def get_by_id(self, penalty_id: str) -> Optional[Dict]:
+    def get_by_id(self, penalty_id: str) -> dict | None:
         """Get penalty by ID."""
         penalties = self._read()
         return next((p for p in penalties if p["id"] == penalty_id), None)
 
-    def get_by_user(self, user_id: str) -> List[Dict]:
+    def get_by_user(self, user_id: str) -> list[dict]:
         """Get all penalties for a user."""
         penalties = self._read()
         return [p for p in penalties if p["user_id"] == user_id]
 
-    def get_active_by_user(self, user_id: str) -> List[Dict]:
+    def get_active_by_user(self, user_id: str) -> list[dict]:
         """Get active penalties for a user."""
         penalties = self._read()
         return [p for p in penalties if p["user_id"] == user_id and p["status"] == "active"]
 
-    def create(self, penalty_data: Dict) -> Dict:
+    def create(self, penalty_data: dict) -> dict:
         """Create a new penalty."""
         penalties = self._read()
         new_penalty = {
@@ -64,7 +66,7 @@ class PenaltiesRepository:
             "reason": penalty_data["reason"],
             "description": penalty_data.get("description"),
             "status": "active",
-            "issued_at": datetime.now(timezone.utc).isoformat(),
+            "issued_at": datetime.now(UTC).isoformat(),
             "resolved_at": None,
             "issued_by": penalty_data["issued_by"],
         }
@@ -73,7 +75,7 @@ class PenaltiesRepository:
         self._write(penalties)
         return new_penalty
 
-    def update(self, penalty_id: str, penalty_data: Dict) -> Optional[Dict]:
+    def update(self, penalty_id: str, penalty_data: dict) -> dict | None:
         """Update a penalty."""
         penalties = self._read()
         for i, p in enumerate(penalties):
@@ -90,7 +92,7 @@ class PenaltiesRepository:
         for i, p in enumerate(penalties):
             if p["id"] == penalty_id:
                 penalties[i]["status"] = "resolved"
-                penalties[i]["resolved_at"] = datetime.now(timezone.utc).isoformat()
+                penalties[i]["resolved_at"] = datetime.now(UTC).isoformat()
                 self._write(penalties)
                 return True
         return False

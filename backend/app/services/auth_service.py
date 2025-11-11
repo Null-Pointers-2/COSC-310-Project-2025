@@ -1,16 +1,19 @@
 """Authentication and authorization service."""
-from typing import Optional
-from app.core.dependencies import decode_token
-from datetime import datetime, timedelta, timezone
-import jwt
-from fastapi import HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from jwt.exceptions import InvalidTokenError
+
+from datetime import UTC, datetime, timedelta
+
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
+from fastapi import HTTPException
+from fastapi.security import OAuth2PasswordBearer
+import jwt
+
 from app.core.config import settings
+from app.core.dependencies import decode_token
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 def verify_password(plain_password: str, hashed_password: str, password_hasher: PasswordHasher) -> bool:
     """Verify a password against its hash."""
@@ -20,9 +23,11 @@ def verify_password(plain_password: str, hashed_password: str, password_hasher: 
     except VerifyMismatchError:
         return False
 
+
 def get_password_hash(password: str, password_hasher: PasswordHasher) -> str:
     """Hash a password."""
     return password_hasher.hash(password)
+
 
 def authenticate_user(username: str, password: str, resources):
     """Authenticate a user by username and password."""
@@ -33,18 +38,20 @@ def authenticate_user(username: str, password: str, resources):
         return False
     return user
 
+
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     """Create a JWT access token."""
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+        expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+        expire = datetime.now(UTC) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
-def get_user_from_token(token: str, resources) -> Optional[dict]:
+
+def get_user_from_token(token: str, resources) -> dict | None:
     """Get user information from a JWT token."""
     try:
         token_data = decode_token(token, resources.users_repo)
@@ -54,6 +61,7 @@ def get_user_from_token(token: str, resources) -> Optional[dict]:
         return user
     except HTTPException:
         return None
+
 
 def register_user(username: str, email: str, password: str, resources, role: str = "user") -> dict:
     """Register a new user."""
@@ -72,7 +80,7 @@ def register_user(username: str, email: str, password: str, resources, role: str
         "email": email,
         "hashed_password": hashed_password,
         "role": role,
-        "created_at": datetime.now(timezone.utc).isoformat()
+        "created_at": datetime.now(UTC).isoformat(),
     }
     new_user = resources.users_repo.create(user_data)
     return new_user

@@ -1,15 +1,25 @@
+import threading
+from typing import Optional
+
+from argon2 import PasswordHasher
 from fastapi import FastAPI
 
-from typing import Optional
-from app.routers import auth, users, movies, ratings, recommendations, watchlist, admin, export
-from app.repositories.users_repo import UsersRepository
 from app.repositories.movies_repo import MoviesRepository
-from app.repositories.ratings_repo import RatingsRepository
-from app.repositories.watchlist_repo import WatchlistRepository
-from app.repositories.recommendations_repo import RecommendationsRepository
 from app.repositories.penalties_repo import PenaltiesRepository
-from argon2 import PasswordHasher
-import threading
+from app.repositories.ratings_repo import RatingsRepository
+from app.repositories.recommendations_repo import RecommendationsRepository
+from app.repositories.users_repo import UsersRepository
+from app.repositories.watchlist_repo import WatchlistRepository
+from app.routers import (
+    admin,
+    auth,
+    export,
+    movies,
+    ratings,
+    recommendations,
+    users,
+    watchlist,
+)
 
 
 class SingletonResources:
@@ -17,6 +27,7 @@ class SingletonResources:
     Singleton container for shared application resources.
     Initialized once at startup and shared across the application.
     """
+
     _instance: Optional["SingletonResources"] = None
     _initialized: bool = False
     _lock: threading.Lock = threading.Lock()
@@ -51,13 +62,15 @@ class SingletonResources:
         print("Cleaning up singleton resources...")
         print("Singleton resources cleaned up")
 
+
 app = FastAPI(
     title="Movie Recommendations API",
     description="Backend API for personalized movie recommendations",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
+
 
 # Health check endpoint
 @app.get("/health", tags=["Health"])
@@ -69,8 +82,9 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "movie-recommendations-backend",
-        "version": "1.0.0"
+        "version": "1.0.0",
     }
+
 
 # Root endpoint
 @app.get("/", tags=["Root"])
@@ -83,8 +97,9 @@ async def root():
         "version": "1.0.0",
         "docs": "/docs",
         "redoc": "/redoc",
-        "health": "/health"
+        "health": "/health",
     }
+
 
 # Routers
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
@@ -95,6 +110,7 @@ app.include_router(recommendations.router, prefix="/recommendations", tags=["Rec
 app.include_router(watchlist.router, prefix="/watchlist", tags=["Watchlist"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
 app.include_router(export.router, prefix="/export", tags=["Export"])
+
 
 # Startup event
 @app.on_event("startup")
@@ -109,6 +125,7 @@ async def startup_event():
     # TODO: Validate data files
     print("Application startup complete")
 
+
 # Shutdown event
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -117,6 +134,6 @@ async def shutdown_event():
     Cleanup resources and save state.
     """
     print("Application shutting down...")
-    if hasattr(app.state, 'resources') and app.state.resources:
+    if hasattr(app.state, "resources") and app.state.resources:
         app.state.resources.cleanup()
     print("Application shutdown complete")

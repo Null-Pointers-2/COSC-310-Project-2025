@@ -4,13 +4,16 @@ End-to-end test for complete recommendation flow.
 Tests the entire recommendation pipeline from user registration
 through rating movies to receiving personalized recommendations.
 """
-import pytest
+
 from pathlib import Path
 
-from app.repositories.users_repo import UsersRepository
+import pytest
+
+from app.repositories.movies_repo import MoviesRepository
 from app.repositories.ratings_repo import RatingsRepository
 from app.repositories.recommendations_repo import RecommendationsRepository
-from app.repositories.movies_repo import MoviesRepository
+from app.repositories.users_repo import UsersRepository
+
 
 users_repo = UsersRepository()
 ratings_repo = RatingsRepository()
@@ -24,7 +27,7 @@ def check_ml_artifacts_exist():
     required_files = [
         "movies_clean.csv",
         "similarity_matrix.npy",
-        "movie_id_to_idx.pkl"
+        "movie_id_to_idx.pkl",
     ]
     missing = [f for f in required_files if not (ml_dir / f).exists()]
     return len(missing) == 0, missing
@@ -35,7 +38,7 @@ def cleanup_test_data():
     """Clean up test data before and after the test."""
     test_usernames = ["e2e_user"]
     test_emails = ["e2e@test.com"]
-    
+
     for username in test_usernames:
         user = users_repo.get_by_username(username)
         if user:
@@ -44,7 +47,7 @@ def cleanup_test_data():
                 ratings_repo.delete(rating["id"])
             recommendations_repo.clear_for_user(user["id"])
             users_repo.delete(user["id"])
-    
+
     for email in test_emails:
         user = users_repo.get_by_email(email)
         if user:
@@ -53,9 +56,9 @@ def cleanup_test_data():
                 ratings_repo.delete(rating["id"])
             recommendations_repo.clear_for_user(user["id"])
             users_repo.delete(user["id"])
-    
+
     yield
-    
+
     for username in test_usernames:
         user = users_repo.get_by_username(username)
         if user:
@@ -64,7 +67,7 @@ def cleanup_test_data():
                 ratings_repo.delete(rating["id"])
             recommendations_repo.clear_for_user(user["id"])
             users_repo.delete(user["id"])
-    
+
     for email in test_emails:
         user = users_repo.get_by_email(email)
         if user:
@@ -78,20 +81,19 @@ def cleanup_test_data():
 def test_complete_recommendation_flow(client):
     """
     E2E test for complete recommendation flow.
-    
+
     Flow:
     1. User registers and authenticates
     2. User browses movies
     3. User rates multiple movies (some high, some low)
     4. User requests recommendations (gets personalized results)
     """
-    
+
     # Check if ML artifacts exist
     ml_ready, missing = check_ml_artifacts_exist()
     if not ml_ready:
         pytest.skip(
-            f"ML artifacts not found. Run 'python scripts/setup_ml_data.py' first. "
-            f"Missing files: {', '.join(missing)}"
+            f"ML artifacts not found. Run 'python scripts/setup_ml_data.py' first. Missing files: {', '.join(missing)}"
         )
 
     # Step 1: Register and authenticate
@@ -100,29 +102,23 @@ def test_complete_recommendation_flow(client):
         json={
             "username": "e2e_user",
             "email": "e2e@test.com",
-            "password": "E2ETest123!"
-        }
+            "password": "E2ETest123!",
+        },
     )
     assert register_response.status_code == 201, "User registration should succeed"
     user = register_response.json()
     assert user["username"] == "e2e_user"
     assert user["email"] == "e2e@test.com"
-    
-    login_response = client.post(
-        "/auth/login",
-        data={
-            "username": "e2e_user",
-            "password": "E2ETest123!"
-        }
-    )
+
+    login_response = client.post("/auth/login", data={"username": "e2e_user", "password": "E2ETest123!"})
     assert login_response.status_code == 200, "Login should succeed"
     token = login_response.json()["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     me_response = client.get("/auth/me", headers=headers)
     assert me_response.status_code == 200
     assert me_response.json()["id"] == user["id"]
-   
+
     # Step 2: Browse movies
     movies_response = client.get("/movies?page=1&page_size=30")
     assert movies_response.status_code == 200
@@ -130,50 +126,44 @@ def test_complete_recommendation_flow(client):
     assert "movies" in movies_data
     assert len(movies_data["movies"]) > 0
     movies = movies_data["movies"]
-    
+
     first_movie = movies[0]
     movie_detail_response = client.get(f"/movies/{first_movie['movieId']}")
     assert movie_detail_response.status_code == 200
     movie_detail = movie_detail_response.json()
     assert movie_detail["movieId"] == first_movie["movieId"]
-    
+
     # Step 3: Rate movies
     rated_movies = []
     high_rated_movies = []
     low_rated_movies = []
-    
+
     for i, movie in enumerate(movies[:10]):
         rating_value = 4.5 if i < 5 else 2.0
-        
+
         rating_response = client.post(
             "/ratings",
             headers=headers,
-            json={
-                "movie_id": movie["movieId"],
-                "rating": rating_value
-            }
+            json={"movie_id": movie["movieId"], "rating": rating_value},
         )
         assert rating_response.status_code == 201, f"Rating creation should succeed for movie {movie['movieId']}"
         rating = rating_response.json()
         assert rating["rating"] == rating_value
         assert rating["movie_id"] == movie["movieId"]
-        
+
         rated_movies.append(movie["movieId"])
         if rating_value >= 4.0:
             high_rated_movies.append(movie["movieId"])
         else:
             low_rated_movies.append(movie["movieId"])
-            
+
     my_ratings_response = client.get("/ratings/me", headers=headers)
     assert my_ratings_response.status_code == 200
     my_ratings = my_ratings_response.json()
     assert len(my_ratings) == 10
-    
+
     # Step 4: Get recommendations
-    recommendations_response = client.get(
-        "/recommendations/me?limit=10",
-        headers=headers
-    )
+    recommendations_response = client.get("/recommendations/me?limit=10", headers=headers)
     assert recommendations_response.status_code == 200, (
         f"Recommendations endpoint should succeed. Response: {recommendations_response.text}"
     )
@@ -181,7 +171,7 @@ def test_complete_recommendation_flow(client):
     assert "user_id" in recommendations_data
     assert "recommendations" in recommendations_data
     assert recommendations_data["user_id"] == user["id"]
-    
+
     recommendations = recommendations_data["recommendations"]
 
     if len(recommendations) == 0:
@@ -192,16 +182,16 @@ def test_complete_recommendation_flow(client):
             "3. The similarity matrix couldn't find similar movies\n"
             f"Rated movie IDs: {rated_movies}"
         )
-    
+
     assert len(recommendations) > 0, "Should receive recommendations"
     assert len(recommendations) <= 10, "Should respect limit"
-        
+
     first_rec = recommendations[0]
     assert "movie_id" in first_rec
     assert "similarity_score" in first_rec
     assert isinstance(first_rec["similarity_score"], (int, float))
     assert 0 <= first_rec["similarity_score"] <= 1
-    
+
     recommended_movie_ids = {rec["movie_id"] for rec in recommendations}
     rated_movie_ids_set = set(rated_movies)
     overlap = recommended_movie_ids.intersection(rated_movie_ids_set)
@@ -209,71 +199,55 @@ def test_complete_recommendation_flow(client):
 
     scores = [rec["similarity_score"] for rec in recommendations]
     assert scores == sorted(scores, reverse=True), "Recommendations should be sorted by score"
-    
+
     # Test caching
-    cached_response = client.get(
-        "/recommendations/me?limit=10",
-        headers=headers
-    )
+    cached_response = client.get("/recommendations/me?limit=10", headers=headers)
     assert cached_response.status_code == 200
     cached_recommendations = cached_response.json()["recommendations"]
-    
+
     assert cached_recommendations == recommendations, "Cached recommendations should be identical"
 
     # Test refresh after adding more ratings
     additional_movies = movies[10:15]  # Next 5 movies
     additional_rated = []
-    
+
     for movie in additional_movies:
         rating_response = client.post(
             "/ratings",
             headers=headers,
-            json={
-                "movie_id": movie["movieId"],
-                "rating": 4.0
-            }
+            json={"movie_id": movie["movieId"], "rating": 4.0},
         )
         assert rating_response.status_code == 201
         additional_rated.append(movie["movieId"])
-    
+
     all_rated_movies = rated_movies + additional_rated
-    
-    refresh_response = client.post(
-        "/recommendations/me/refresh?limit=10",
-        headers=headers
-    )
+
+    refresh_response = client.post("/recommendations/me/refresh?limit=10", headers=headers)
     assert refresh_response.status_code == 200
     refreshed_recommendations = refresh_response.json()["recommendations"]
     assert len(refreshed_recommendations) > 0
-    
+
     refreshed_movie_ids = {rec["movie_id"] for rec in refreshed_recommendations}
     all_rated_ids_set = set(all_rated_movies)
     overlap_after_refresh = refreshed_movie_ids.intersection(all_rated_ids_set)
     assert len(overlap_after_refresh) == 0, "Refreshed recommendations should exclude all rated movies"
-    
+
     # Test force refresh
-    force_refresh_response = client.get(
-        "/recommendations/me?limit=10&force_refresh=true",
-        headers=headers
-    )
+    force_refresh_response = client.get("/recommendations/me?limit=10&force_refresh=true", headers=headers)
     assert force_refresh_response.status_code == 200
     force_refreshed = force_refresh_response.json()["recommendations"]
     assert len(force_refreshed) > 0
-    
+
     # Test similar movies endpoint
     seed_movie_id = high_rated_movies[0]
-    seed_movie = next(m for m in movies if m["movieId"] == seed_movie_id)
-    
-    similar_response = client.get(
-        f"/recommendations/similar/{seed_movie_id}?limit=5",
-        headers=headers
-    )
-    
+
+    similar_response = client.get(f"/recommendations/similar/{seed_movie_id}?limit=5", headers=headers)
+
     if similar_response.status_code == 200:
         similar_movies = similar_response.json()
         assert len(similar_movies) > 0
         assert len(similar_movies) <= 5
-        
+
         for similar in similar_movies:
             assert "movie_id" in similar
             assert "similarity_score" in similar

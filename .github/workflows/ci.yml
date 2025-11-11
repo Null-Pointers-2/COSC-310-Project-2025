@@ -37,6 +37,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Run Ruff linter
+      working-directory: ./backend
+      run: |
+        ruff check . --output-format=github
+
+    - name: Run Ruff formatter check
+      working-directory: ./backend
+      run: |
+        ruff format --check .
+
     - name: Run all tests
       working-directory: ./backend
       run: |
@@ -163,3 +173,4 @@ jobs:
         labels: ${{ steps.meta-frontend.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        

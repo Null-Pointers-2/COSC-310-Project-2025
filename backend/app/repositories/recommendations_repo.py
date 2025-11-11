@@ -1,60 +1,62 @@
 """Repository for cached recommendations."""
+
+from datetime import UTC, datetime, timedelta
 import json
-from typing import Optional, Dict, List
 from pathlib import Path
+
 from app.core.config import settings
-from datetime import datetime, timezone, timedelta
+
 
 class RecommendationsRepository:
     """Handle cached recommendations stored in JSON."""
-    
-    def __init__(self, recommendations_file: Optional[str] = None):
+
+    def __init__(self, recommendations_file: str | None = None):
         """Initialize with path to recommendations JSON file."""
         if recommendations_file is None:
             recommendations_file = settings.RECOMMENDATIONS_FILE
         self.recommendations_file = Path(recommendations_file)
         self._ensure_file_exists()
-    
+
     def _ensure_file_exists(self):
         """Create recommendations file if it doesn't exist."""
         if not self.recommendations_file.exists():
             self.recommendations_file.parent.mkdir(parents=True, exist_ok=True)
             self.recommendations_file.write_text("{}", encoding="utf-8")
-    
-    def _read(self) -> Dict:
+
+    def _read(self) -> dict:
         """Read all cached recommendations."""
         try:
-            with open(self.recommendations_file, "r", encoding="utf-8") as f:
+            with open(self.recommendations_file, encoding="utf-8") as f:
                 return json.load(f)
-        except (IOError, json.JSONDecodeError):
+        except (OSError, json.JSONDecodeError):
             return {}
-    
-    def _write(self, recommendations: Dict):
+
+    def _write(self, recommendations: dict):
         """Write all recommendations to file."""
         try:
             with open(self.recommendations_file, "w", encoding="utf-8") as f:
                 json.dump(recommendations, f, indent=2, ensure_ascii=False)
         except OSError as e:
             raise Exception(f"Failed to write recommendations file: {e}") from e
-    
-    def get_for_user(self, user_id: str) -> Optional[Dict]:
+
+    def get_for_user(self, user_id: str) -> dict | None:
         """Get cached recommendations for a user."""
         try:
             data = self._read()
         except Exception:
             return None
         return data.get(str(user_id))
-    
-    def save_for_user(self, user_id: str, recommendations: List[Dict]):
+
+    def save_for_user(self, user_id: str, recommendations: list[dict]):
         """Save recommendations for a user."""
         data = self._read()
         data[str(user_id)] = {
             "recommendations": recommendations,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "generated_at": datetime.now(timezone.utc).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
         }
         self._write(data)
-    
+
     def clear_for_user(self, user_id: str):
         """Clear cached recommendations for a user."""
         data = self._read()
@@ -62,7 +64,7 @@ class RecommendationsRepository:
         if user_key in data:
             del data[user_key]
             self._write(data)
-    
+
     def is_fresh(self, user_id: str, max_age_hours: int = 24) -> bool:
         """Check if cached recommendations are still fresh."""
         cached = self.get_for_user(user_id)
@@ -71,7 +73,7 @@ class RecommendationsRepository:
 
         try:
             cached_time = datetime.fromisoformat(cached["timestamp"].replace("Z", "+00:00"))
-            age = datetime.now(timezone.utc) - cached_time
+            age = datetime.now(UTC) - cached_time
             return age < timedelta(hours=max_age_hours)
         except (ValueError, KeyError):
             return False

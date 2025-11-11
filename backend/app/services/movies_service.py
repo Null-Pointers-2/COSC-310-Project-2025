@@ -1,7 +1,9 @@
 """Movie service."""
-from typing import List, Optional
+
 from math import ceil
+
 from app.schemas.movie import Movie, MoviePage
+
 
 def get_movies(resources, page: int = 1, page_size: int = 30) -> MoviePage:
     """Get paginated list of movies."""
@@ -22,7 +24,8 @@ def get_movies(resources, page: int = 1, page_size: int = 30) -> MoviePage:
         total_pages=total_pages,
     )
 
-def get_movie_by_id(resources, movie_id: int) -> Optional[Movie]:
+
+def get_movie_by_id(resources, movie_id: int) -> Movie | None:
     """Get movie details."""
     try:
         movie_id_int = int(movie_id)
@@ -38,14 +41,16 @@ def get_movie_by_id(resources, movie_id: int) -> Optional[Movie]:
 
     return Movie(**movie_data)
 
-def search_movies(resources, query: str, limit: int = 20) -> List[Movie]:
+
+def search_movies(resources, query: str, limit: int = 20) -> list[Movie]:
     """Search movies by title."""
     results = resources.movies_repo.search(query=query, limit=limit)
     for m in results:
         m["average_rating"] = resources.movies_repo.get_average_rating(m["movieId"])
     return [Movie(**m) for m in results]
 
-def filter_movies(resources, genre: Optional[str] = None, limit: int = 20) -> List[Movie]:
+
+def filter_movies(resources, genre: str | None = None, limit: int = 20) -> list[Movie]:
     """Filter movies by genre."""
     if genre:
         results = resources.movies_repo.filter_by_genre(genre=genre, limit=limit)
@@ -57,11 +62,13 @@ def filter_movies(resources, genre: Optional[str] = None, limit: int = 20) -> Li
 
     return [Movie(**m) for m in results]
 
-def get_all_genres(resources) -> List[str]:
+
+def get_all_genres(resources) -> list[str]:
     """Get list of all genres."""
     return resources.movies_repo.get_genres()
 
-def get_movie_ratings(resources, movie_id: int) -> List[dict]:
+
+def get_movie_ratings(resources, movie_id: int) -> list[dict]:
     """Get all ratings for a movie."""
     ratings = resources.ratings_repo.get_by_movie(movie_id)
     return ratings

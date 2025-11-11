@@ -1,9 +1,13 @@
 """Unit tests for ratings service."""
-import pytest
+
 from unittest.mock import Mock
-from app.services import ratings_service
+
+import pytest
+
 from app.repositories.ratings_repo import RatingsRepository
 from app.schemas.rating import RatingCreate
+from app.services import ratings_service
+
 
 @pytest.fixture
 def setup_repos(tmp_path):
@@ -16,18 +20,20 @@ def setup_repos(tmp_path):
 
     return resources
 
+
 def test_create_rating(setup_repos):
     resources = setup_repos
 
     rating_data = RatingCreate(movie_id=1, rating=4.0)
     result = ratings_service.create_rating(resources, "u1", rating_data)
-    
+
     assert result.rating == 4.0
     assert result.user_id == "u1"
     assert result.movie_id == 1
 
     all_ratings = resources.ratings_repo.get_all()
     assert len(all_ratings) == 1
+
 
 def test_create_duplicate_rating_fails(setup_repos):
     resources = setup_repos
@@ -43,12 +49,14 @@ def test_create_duplicate_rating_fails(setup_repos):
     assert len(all_ratings) == 1
     assert all_ratings[0]["rating"] == 4.0
 
+
 def test_update_existing_rating(setup_repos):
     resources = setup_repos
 
     created = resources.ratings_repo.create({"user_id": "u1", "movie_id": 1, "rating": 4.0})
 
     from app.schemas.rating import RatingUpdate
+
     update_data = RatingUpdate(rating=5.0)
     updated = ratings_service.update_rating(resources, created["id"], "u1", update_data)
 
@@ -58,6 +66,7 @@ def test_update_existing_rating(setup_repos):
     all_ratings = resources.ratings_repo.get_all()
     assert len(all_ratings) == 1
     assert all_ratings[0]["rating"] == 5.0
+
 
 def test_get_user_ratings(setup_repos):
     resources = setup_repos
@@ -70,6 +79,7 @@ def test_get_user_ratings(setup_repos):
     assert len(user_ratings) == 2
     assert all(r.user_id == "u1" for r in user_ratings)
 
+
 def test_delete_rating(setup_repos):
     resources = setup_repos
 
@@ -79,6 +89,7 @@ def test_delete_rating(setup_repos):
     assert deleted is True
     assert resources.ratings_repo.get_by_id(created["id"]) is None
 
+
 def test_delete_rating_permission_denied(setup_repos):
     resources = setup_repos
 
@@ -87,6 +98,7 @@ def test_delete_rating_permission_denied(setup_repos):
 
     assert deleted is False
     assert resources.ratings_repo.get_by_id(created["id"]) is not None
+
 
 def test_admin_can_delete_any_rating(setup_repos):
     resources = setup_repos

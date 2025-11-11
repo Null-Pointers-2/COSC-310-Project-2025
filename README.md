@@ -113,6 +113,29 @@ python -m pytest tests/e2e/          # E2E tests only
 
 ---
 
+## Code Linting/Formatting (Ruff)
+
+To run tests under `backend/tests/`:
+
+```bash
+# In backend/ directory with venv activated:
+
+# Check for linting issues
+ruff check .
+
+# Auto-fix what can be fixed automatically
+ruff check . --fix
+
+# Format all code
+ruff format .
+
+# Verify everything passes
+ruff check .
+ruff format --check .
+```
+
+---
+
 ## Docker Setup
 
 ### Build the Docker image

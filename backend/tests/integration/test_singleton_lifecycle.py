@@ -1,34 +1,43 @@
 """Integration tests for SingletonResources lifecycle with FastAPI."""
-import pytest
+
+from unittest.mock import Mock, patch
+
 from fastapi.testclient import TestClient
-from unittest.mock import patch, Mock
-from app.main import app, SingletonResources
+import pytest
+
+from app.main import SingletonResources, app
+
 
 @pytest.fixture
 def patched_resources():
-    with patch("app.main.UsersRepository"), \
-         patch("app.main.MoviesRepository"), \
-         patch("app.main.RatingsRepository"), \
-         patch("app.main.WatchlistRepository"), \
-         patch("app.main.RecommendationsRepository"), \
-         patch("app.main.PenaltiesRepository"), \
-         patch("app.main.PasswordHasher"):
+    with (
+        patch("app.main.UsersRepository"),
+        patch("app.main.MoviesRepository"),
+        patch("app.main.RatingsRepository"),
+        patch("app.main.WatchlistRepository"),
+        patch("app.main.RecommendationsRepository"),
+        patch("app.main.PenaltiesRepository"),
+        patch("app.main.PasswordHasher"),
+    ):
         yield
 
+
 def test_singleton_initialized_on_startup(patched_resources):
-    with TestClient(app) as client:
+    with TestClient(app):
         assert app.state.resources is not None
-        assert hasattr(app.state.resources, 'users_repo')
-        assert hasattr(app.state.resources, 'movies_repo')
+        assert hasattr(app.state.resources, "users_repo")
+        assert hasattr(app.state.resources, "movies_repo")
+
 
 def test_singleton_available_in_app_state(patched_resources):
     with TestClient(app) as client:
         response = client.get("/health")
         assert response.status_code == 200
 
-        assert hasattr(app.state, 'resources')
+        assert hasattr(app.state, "resources")
         resources = app.state.resources
         assert resources is not None
+
 
 def test_singleton_cleanup_called_on_shutdown(patched_resources):
     mock_cleanup = Mock()
@@ -38,6 +47,7 @@ def test_singleton_cleanup_called_on_shutdown(patched_resources):
         client.get("/health")
 
     mock_cleanup.assert_called_once()
+
 
 def test_singleton_persists_across_requests(test_app, client):
     client.get("/health")
@@ -50,9 +60,11 @@ def test_singleton_persists_across_requests(test_app, client):
     assert first_resources is second_resources
     assert first_resources is not None
 
+
 def test_global_resources_variable_set(test_app):
-    assert hasattr(test_app.state, 'resources')
+    assert hasattr(test_app.state, "resources")
     assert test_app.state.resources is not None
+
 
 def test_health_endpoint_works_with_singleton(patched_resources):
     with TestClient(app) as client:
@@ -61,6 +73,7 @@ def test_health_endpoint_works_with_singleton(patched_resources):
         data = response.json()
         assert data["status"] == "healthy"
 
+
 def test_root_endpoint_works_with_singleton(patched_resources):
     with TestClient(app) as client:
         response = client.get("/")
@@ -68,18 +81,19 @@ def test_root_endpoint_works_with_singleton(patched_resources):
         data = response.json()
         assert data["message"] == "Movie Recommendations API"
 
-def test_app_handles_repository_initialization_error():
-    with patch('app.main.UsersRepository', side_effect=Exception("Init error")), \
-            patch('app.main.MoviesRepository'), \
-            patch('app.main.RatingsRepository'), \
-            patch('app.main.WatchlistRepository'), \
-            patch('app.main.RecommendationsRepository'), \
-            patch('app.main.PenaltiesRepository'), \
-            patch('app.main.PasswordHasher'):
 
+def test_app_handles_repository_initialization_error():
+    with (
+        patch("app.main.UsersRepository", side_effect=Exception("Init error")),
+        patch("app.main.MoviesRepository"),
+        patch("app.main.RatingsRepository"),
+        patch("app.main.WatchlistRepository"),
+        patch("app.main.RecommendationsRepository"),
+        patch("app.main.PenaltiesRepository"),
+        patch("app.main.PasswordHasher"),
+    ):
         SingletonResources._instance = None
         SingletonResources._initialized = False
 
-        with pytest.raises(Exception, match="Init error"):
-            with TestClient(app) as client:
-                pass
+        with pytest.raises(Exception, match="Init error"), TestClient(app):
+            pass

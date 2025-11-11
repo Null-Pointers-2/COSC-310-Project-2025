@@ -1,13 +1,17 @@
 """Authentication endpoints."""
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from app.schemas.auth import Token
-from app.schemas.user import UserCreate, User
-from app.services import auth_service
+
 from app.core.dependencies import get_resources
+from app.schemas.auth import Token
+from app.schemas.user import User, UserCreate
+from app.services import auth_service
+
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+
 
 @router.post("/register", response_model=User, status_code=status.HTTP_201_CREATED)
 def register(user_data: UserCreate, resources=Depends(get_resources)):
@@ -21,6 +25,7 @@ def register(user_data: UserCreate, resources=Depends(get_resources)):
         )
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
 
 @router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), resources=Depends(get_resources)):

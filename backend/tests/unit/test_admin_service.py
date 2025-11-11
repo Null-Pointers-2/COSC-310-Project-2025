@@ -1,16 +1,17 @@
 """Unit tests for admin service."""
-import pytest
-import csv
-from datetime import datetime, timezone, timedelta
-from pathlib import Path
+
+from datetime import UTC, datetime
 from unittest.mock import Mock
-from app.services import admin_service
-from app.repositories.users_repo import UsersRepository
+
+import pytest
+
 from app.repositories.penalties_repo import PenaltiesRepository
 from app.repositories.ratings_repo import RatingsRepository
+from app.repositories.users_repo import UsersRepository
 from app.repositories.watchlist_repo import WatchlistRepository
-from app.repositories.movies_repo import MoviesRepository
 from app.schemas.penalty import PenaltyCreate
+from app.services import admin_service
+
 
 @pytest.fixture
 def setup_repos(tmp_path):
@@ -37,35 +38,42 @@ def setup_repos(tmp_path):
 
     return resources
 
+
 def test_get_all_users_with_stats(setup_repos):
     resources = setup_repos
 
-    user1 = resources.users_repo.create({
-        "username": "user1",
-        "email": "user1@test.com",
-        "hashed_password": "hash1",
-        "role": "user",
-        "created_at": "2025-01-01"
-    })
-    user2 = resources.users_repo.create({
-        "username": "user2",
-        "email": "user2@test.com",
-        "hashed_password": "hash2",
-        "role": "user",
-        "created_at": "2025-01-02"
-    })
+    user1 = resources.users_repo.create(
+        {
+            "username": "user1",
+            "email": "user1@test.com",
+            "hashed_password": "hash1",
+            "role": "user",
+            "created_at": "2025-01-01",
+        }
+    )
+    user2 = resources.users_repo.create(
+        {
+            "username": "user2",
+            "email": "user2@test.com",
+            "hashed_password": "hash2",
+            "role": "user",
+            "created_at": "2025-01-02",
+        }
+    )
 
     resources.ratings_repo.create({"user_id": user1["id"], "movie_id": 1, "rating": 4.0})
     resources.ratings_repo.create({"user_id": user1["id"], "movie_id": 2, "rating": 5.0})
 
     resources.watchlist_repo.add(user1["id"], 10)
 
-    resources.penalties_repo.create({
-        "user_id": user1["id"],
-        "reason": "Spam",
-        "description": None,
-        "issued_by": "admin1"
-    })
+    resources.penalties_repo.create(
+        {
+            "user_id": user1["id"],
+            "reason": "Spam",
+            "description": None,
+            "issued_by": "admin1",
+        }
+    )
 
     users_with_stats = admin_service.get_all_users_with_stats(resources)
 
@@ -82,22 +90,21 @@ def test_get_all_users_with_stats(setup_repos):
     assert user2_stats["stats"]["watchlist_count"] == 0
     assert user2_stats["stats"]["total_penalties"] == 0
 
+
 def test_apply_penalty(setup_repos):
     resources = setup_repos
 
-    user = resources.users_repo.create({
-        "username": "testuser",
-        "email": "test@test.com",
-        "hashed_password": "hash",
-        "role": "user",
-        "created_at": "2025-01-01"
-    })
-
-    penalty_data = PenaltyCreate(
-        user_id=user["id"],
-        reason="Spam",
-        description="Posted 100 ratings in 1 minute"
+    user = resources.users_repo.create(
+        {
+            "username": "testuser",
+            "email": "test@test.com",
+            "hashed_password": "hash",
+            "role": "user",
+            "created_at": "2025-01-01",
+        }
     )
+
+    penalty_data = PenaltyCreate(user_id=user["id"], reason="Spam", description="Posted 100 ratings in 1 minute")
 
     result = admin_service.apply_penalty(resources, "admin1", penalty_data)
 
@@ -106,21 +113,26 @@ def test_apply_penalty(setup_repos):
     assert result.status == "active"
     assert result.issued_by == "admin1"
 
+
 def test_get_all_penalties(setup_repos):
     resources = setup_repos
 
-    resources.penalties_repo.create({
-        "user_id": "user1",
-        "reason": "Spam",
-        "description": None,
-        "issued_by": "admin1"
-    })
-    resources.penalties_repo.create({
-        "user_id": "user2",
-        "reason": "Harassment",
-        "description": None,
-        "issued_by": "admin1"
-    })
+    resources.penalties_repo.create(
+        {
+            "user_id": "user1",
+            "reason": "Spam",
+            "description": None,
+            "issued_by": "admin1",
+        }
+    )
+    resources.penalties_repo.create(
+        {
+            "user_id": "user2",
+            "reason": "Harassment",
+            "description": None,
+            "issued_by": "admin1",
+        }
+    )
 
     penalties = admin_service.get_all_penalties(resources)
 
@@ -128,42 +140,52 @@ def test_get_all_penalties(setup_repos):
     assert all(hasattr(p, "user_id") for p in penalties)
     assert all(hasattr(p, "reason") for p in penalties)
 
+
 def test_get_user_penalties(setup_repos):
     resources = setup_repos
 
-    resources.penalties_repo.create({
-        "user_id": "user1",
-        "reason": "Spam",
-        "description": None,
-        "issued_by": "admin1"
-    })
-    resources.penalties_repo.create({
-        "user_id": "user1",
-        "reason": "Harassment",
-        "description": None,
-        "issued_by": "admin1"
-    })
-    resources.penalties_repo.create({
-        "user_id": "user2",
-        "reason": "Spam",
-        "description": None,
-        "issued_by": "admin1"
-    })
+    resources.penalties_repo.create(
+        {
+            "user_id": "user1",
+            "reason": "Spam",
+            "description": None,
+            "issued_by": "admin1",
+        }
+    )
+    resources.penalties_repo.create(
+        {
+            "user_id": "user1",
+            "reason": "Harassment",
+            "description": None,
+            "issued_by": "admin1",
+        }
+    )
+    resources.penalties_repo.create(
+        {
+            "user_id": "user2",
+            "reason": "Spam",
+            "description": None,
+            "issued_by": "admin1",
+        }
+    )
 
     user1_penalties = admin_service.get_user_penalties(resources, "user1")
 
     assert len(user1_penalties) == 2
     assert all(p.user_id == "user1" for p in user1_penalties)
 
+
 def test_resolve_penalty(setup_repos):
     resources = setup_repos
 
-    created = resources.penalties_repo.create({
-        "user_id": "user1",
-        "reason": "Spam",
-        "description": None,
-        "issued_by": "admin1"
-    })
+    created = resources.penalties_repo.create(
+        {
+            "user_id": "user1",
+            "reason": "Spam",
+            "description": None,
+            "issued_by": "admin1",
+        }
+    )
 
     success = admin_service.resolve_penalty(resources, created["id"])
 
@@ -172,49 +194,59 @@ def test_resolve_penalty(setup_repos):
     resolved = resources.penalties_repo.get_by_id(created["id"])
     assert resolved["status"] == "resolved"
 
+
 def test_delete_penalty(setup_repos):
     resources = setup_repos
 
-    created = resources.penalties_repo.create({
-        "user_id": "user1",
-        "reason": "Spam",
-        "description": None,
-        "issued_by": "admin1"
-    })
+    created = resources.penalties_repo.create(
+        {
+            "user_id": "user1",
+            "reason": "Spam",
+            "description": None,
+            "issued_by": "admin1",
+        }
+    )
 
     success = admin_service.delete_penalty(resources, created["id"])
 
     assert success is True
     assert resources.penalties_repo.get_by_id(created["id"]) is None
 
+
 def test_get_system_stats(setup_repos):
     resources = setup_repos
 
-    user1 = resources.users_repo.create({
-        "username": "user1",
-        "email": "user1@test.com",
-        "hashed_password": "hash",
-        "role": "user",
-        "created_at": "2025-01-01"
-    })
-    user2 = resources.users_repo.create({
-        "username": "user2",
-        "email": "user2@test.com",
-        "hashed_password": "hash",
-        "role": "user",
-        "created_at": "2025-01-02"
-    })
+    user1 = resources.users_repo.create(
+        {
+            "username": "user1",
+            "email": "user1@test.com",
+            "hashed_password": "hash",
+            "role": "user",
+            "created_at": "2025-01-01",
+        }
+    )
+    user2 = resources.users_repo.create(
+        {
+            "username": "user2",
+            "email": "user2@test.com",
+            "hashed_password": "hash",
+            "role": "user",
+            "created_at": "2025-01-02",
+        }
+    )
 
     resources.ratings_repo.create({"user_id": user1["id"], "movie_id": 1, "rating": 4.0})
     resources.ratings_repo.create({"user_id": user1["id"], "movie_id": 2, "rating": 5.0})
     resources.ratings_repo.create({"user_id": user2["id"], "movie_id": 3, "rating": 3.0})
 
-    resources.penalties_repo.create({
-        "user_id": user1["id"],
-        "reason": "Spam",
-        "description": None,
-        "issued_by": "admin1"
-    })
+    resources.penalties_repo.create(
+        {
+            "user_id": user1["id"],
+            "reason": "Spam",
+            "description": None,
+            "issued_by": "admin1",
+        }
+    )
 
     resources.watchlist_repo.add(user1["id"], 10)
     resources.watchlist_repo.add(user2["id"], 20)
@@ -228,24 +260,23 @@ def test_get_system_stats(setup_repos):
     assert stats["total_watchlist_items"] == 2
     assert stats["avg_ratings_per_user"] == 1.5
 
+
 def test_check_user_violations_spam(setup_repos):
     resources = setup_repos
 
-    user = resources.users_repo.create({
-        "username": "spammer",
-        "email": "spam@test.com",
-        "hashed_password": "hash",
-        "role": "user",
-        "created_at": "2025-01-01"
-    })
+    user = resources.users_repo.create(
+        {
+            "username": "spammer",
+            "email": "spam@test.com",
+            "hashed_password": "hash",
+            "role": "user",
+            "created_at": "2025-01-01",
+        }
+    )
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     for i in range(60):
-        rating = resources.ratings_repo.create({
-            "user_id": user["id"],
-            "movie_id": i,
-            "rating": 4.0
-        })
+        rating = resources.ratings_repo.create({"user_id": user["id"], "movie_id": i, "rating": 4.0})
         all_ratings = resources.ratings_repo._read()
         for r in all_ratings:
             if r["id"] == rating["id"]:
@@ -257,39 +288,41 @@ def test_check_user_violations_spam(setup_repos):
     assert len(violations) > 0
     assert any("Spam detected" in v for v in violations)
 
+
 def test_check_user_violations_all_same_rating(setup_repos):
     resources = setup_repos
 
-    user = resources.users_repo.create({
-        "username": "suspicious",
-        "email": "sus@test.com",
-        "hashed_password": "hash",
-        "role": "user",
-        "created_at": "2025-01-01"
-    })
+    user = resources.users_repo.create(
+        {
+            "username": "suspicious",
+            "email": "sus@test.com",
+            "hashed_password": "hash",
+            "role": "user",
+            "created_at": "2025-01-01",
+        }
+    )
 
     for i in range(15):
-        resources.ratings_repo.create({
-            "user_id": user["id"],
-            "movie_id": i,
-            "rating": 5.0
-        })
+        resources.ratings_repo.create({"user_id": user["id"], "movie_id": i, "rating": 5.0})
 
     violations = admin_service.check_user_violations(resources, user["id"])
 
     assert len(violations) > 0
     assert any("Suspicious pattern" in v and "5.0" in v for v in violations)
 
+
 def test_check_user_violations_no_violations(setup_repos):
     resources = setup_repos
 
-    user = resources.users_repo.create({
-        "username": "normal",
-        "email": "normal@test.com",
-        "hashed_password": "hash",
-        "role": "user",
-        "created_at": "2025-01-01"
-    })
+    user = resources.users_repo.create(
+        {
+            "username": "normal",
+            "email": "normal@test.com",
+            "hashed_password": "hash",
+            "role": "user",
+            "created_at": "2025-01-01",
+        }
+    )
 
     resources.ratings_repo.create({"user_id": user["id"], "movie_id": 1, "rating": 4.0})
     resources.ratings_repo.create({"user_id": user["id"], "movie_id": 2, "rating": 3.5})

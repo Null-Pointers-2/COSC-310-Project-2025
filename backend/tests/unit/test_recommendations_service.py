@@ -213,9 +213,13 @@ def test_clear_cache_calls_repo(mock_resources):
 
 def test_fallback_respects_limit(mock_resources):
     """Should respect limit parameter for fallback."""
-    mock_resources.movies_repo.get_all.side_effect = lambda limit=None: [
-        {"movieId": i, "title": f"Movie {i}"} for i in range(limit)
-    ]
+
+    def get_all_mock(limit=None):
+        actual_limit = limit or 0
+        return [{"movieId": i, "title": f"Movie {i}"} for i in range(actual_limit)]
+
+    mock_resources.movies_repo.get_all.side_effect = get_all_mock
+
     result = recommendations_service._get_fallback_recommendations(mock_resources, limit=5)
     assert len(result) == 5
     mock_resources.movies_repo.get_all.assert_called_once_with(limit=5)

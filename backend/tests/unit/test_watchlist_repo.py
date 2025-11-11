@@ -1,6 +1,5 @@
 """Unit tests for watchlist repository."""
 import json
-from pathlib import Path
 import pytest
 from app.repositories.watchlist_repo import WatchlistRepository
 

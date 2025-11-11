@@ -4,14 +4,12 @@ from unittest.mock import Mock
 from app.services import watchlist_service
 from app.schemas.watchlist import WatchlistItemCreate
 
-
 @pytest.fixture
 def mock_resources():
     resources = Mock()
     resources.watchlist_repo = Mock()
     resources.movies_repo = Mock()
     return resources
-
 
 @pytest.fixture
 def sample_movie():

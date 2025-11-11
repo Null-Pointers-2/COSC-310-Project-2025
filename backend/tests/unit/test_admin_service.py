@@ -25,12 +25,10 @@ def setup_repos(tmp_path):
     ratings_repo = RatingsRepository(ratings_file=str(ratings_file))
     watchlist_repo = WatchlistRepository(watchlist_file=str(watchlist_file))
 
-    # Create mock movies_repo with movies_df attribute
     movies_repo = Mock()
     movies_repo.movies_df = Mock()
     movies_repo.movies_df.__len__ = Mock(return_value=100)  # Mock 100 movies
 
-    # Create mock resources object
     resources = Mock()
     resources.users_repo = users_repo
     resources.penalties_repo = penalties_repo
@@ -44,7 +42,6 @@ def test_get_all_users_with_stats(setup_repos):
     """Test getting all users with statistics."""
     resources = setup_repos
 
-    # Create test users
     user1 = resources.users_repo.create({
         "username": "user1",
         "email": "user1@test.com",
@@ -60,14 +57,11 @@ def test_get_all_users_with_stats(setup_repos):
         "created_at": "2025-01-02"
     })
 
-    # Add ratings for user1
     resources.ratings_repo.create({"user_id": user1["id"], "movie_id": 1, "rating": 4.0})
     resources.ratings_repo.create({"user_id": user1["id"], "movie_id": 2, "rating": 5.0})
 
-    # Add watchlist for user1
     resources.watchlist_repo.add(user1["id"], 10)
 
-    # Add penalty for user1
     resources.penalties_repo.create({
         "user_id": user1["id"],
         "reason": "Spam",
@@ -204,7 +198,6 @@ def test_get_system_stats(setup_repos):
     """Test getting system-wide statistics."""
     resources = setup_repos
 
-    # Create users
     user1 = resources.users_repo.create({
         "username": "user1",
         "email": "user1@test.com",
@@ -220,12 +213,10 @@ def test_get_system_stats(setup_repos):
         "created_at": "2025-01-02"
     })
 
-    # Create ratings
     resources.ratings_repo.create({"user_id": user1["id"], "movie_id": 1, "rating": 4.0})
     resources.ratings_repo.create({"user_id": user1["id"], "movie_id": 2, "rating": 5.0})
     resources.ratings_repo.create({"user_id": user2["id"], "movie_id": 3, "rating": 3.0})
 
-    # Create penalties
     resources.penalties_repo.create({
         "user_id": user1["id"],
         "reason": "Spam",
@@ -233,7 +224,6 @@ def test_get_system_stats(setup_repos):
         "issued_by": "admin1"
     })
 
-    # Add watchlist items
     resources.watchlist_repo.add(user1["id"], 10)
     resources.watchlist_repo.add(user2["id"], 20)
 
@@ -258,7 +248,6 @@ def test_check_user_violations_spam(setup_repos):
         "created_at": "2025-01-01"
     })
 
-    # Create 60 ratings in the last hour
     now = datetime.now(timezone.utc)
     for i in range(60):
         rating = resources.ratings_repo.create({
@@ -266,7 +255,6 @@ def test_check_user_violations_spam(setup_repos):
             "movie_id": i,
             "rating": 4.0
         })
-        # Manually update timestamp to be recent
         all_ratings = resources.ratings_repo._read()
         for r in all_ratings:
             if r["id"] == rating["id"]:
@@ -290,7 +278,6 @@ def test_check_user_violations_all_same_rating(setup_repos):
         "created_at": "2025-01-01"
     })
 
-    # Create 15 ratings all with 5.0
     for i in range(15):
         resources.ratings_repo.create({
             "user_id": user["id"],
@@ -315,7 +302,6 @@ def test_check_user_violations_no_violations(setup_repos):
         "created_at": "2025-01-01"
     })
 
-    # Create a few normal ratings
     resources.ratings_repo.create({"user_id": user["id"], "movie_id": 1, "rating": 4.0})
     resources.ratings_repo.create({"user_id": user["id"], "movie_id": 2, "rating": 3.5})
     resources.ratings_repo.create({"user_id": user["id"], "movie_id": 3, "rating": 5.0})

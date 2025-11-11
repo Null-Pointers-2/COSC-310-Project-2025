@@ -12,7 +12,6 @@ def setup_repos(tmp_path):
 
     ratings_repo = RatingsRepository(ratings_file=str(ratings_file))
 
-    # Create mock resources object
     resources = Mock()
     resources.ratings_repo = ratings_repo
 
@@ -22,7 +21,7 @@ def test_create_rating(setup_repos):
     """Test creating a new rating."""
     resources = setup_repos
 
-    rating_data = RatingCreate(movie_id=1, rating=4.0, user_id="u1")
+    rating_data = RatingCreate(movie_id=1, rating=4.0)
     result = ratings_service.create_rating(resources, "u1", rating_data)
 
     assert result.rating == 4.0
@@ -36,10 +35,10 @@ def test_create_duplicate_rating_fails(setup_repos):
     """Test that creating a duplicate rating raises ValueError."""
     resources = setup_repos
 
-    rating_data1 = RatingCreate(movie_id=1, rating=4.0, user_id="u1")
+    rating_data1 = RatingCreate(movie_id=1, rating=4.0)
     ratings_service.create_rating(resources, "u1", rating_data1)
 
-    rating_data2 = RatingCreate(movie_id=1, rating=5.0, user_id="u1")
+    rating_data2 = RatingCreate(movie_id=1, rating=5.0)
     with pytest.raises(ValueError, match="Rating already exists"):
         ratings_service.create_rating(resources, "u1", rating_data2)
 

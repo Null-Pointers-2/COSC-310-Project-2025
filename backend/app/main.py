@@ -21,21 +21,17 @@ class SingletonResources:
     _lock = threading.Lock()
 
     def __new__(cls):
-        # Thread-safe singleton instance creation
         if cls._instance is None:
             with cls._lock:
-                # Double-checked locking pattern
                 if cls._instance is None:
                     cls._instance = super().__new__(cls)
         return cls._instance
 
     def __init__(self):
-        # Thread-safe initialization
         with SingletonResources._lock:
             if SingletonResources._initialized:
                 return
 
-            # Initialize all repositories once
             print("Initializing singleton resources...")
             self.users_repo = UsersRepository()
             self.movies_repo = MoviesRepository()
@@ -44,7 +40,6 @@ class SingletonResources:
             self.recommendations_repo = RecommendationsRepository()
             self.penalties_repo = PenaltiesRepository()
 
-            # Security
             self.password_hasher = PasswordHasher()
 
             SingletonResources._initialized = True
@@ -53,7 +48,6 @@ class SingletonResources:
     def cleanup(self):
         """Cleanup resources on shutdown."""
         print("Cleaning up singleton resources...")
-        # Add any cleanup logic here if needed
         print("Singleton resources cleaned up")
 
 app = FastAPI(

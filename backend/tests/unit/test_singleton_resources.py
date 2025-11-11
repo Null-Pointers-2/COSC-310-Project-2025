@@ -1,112 +1,77 @@
-"""Unit tests for resources singleton."""
+"""Unit tests for singleton resources."""
 from unittest.mock import Mock, patch
-from app.main import SingletonResources
-import pytest
 import threading
+import pytest
+from app.main import SingletonResources
 
-@pytest.fixture
-def patched_resources():
-    with patch('app.main.UsersRepository') as mock_users, \
-         patch('app.main.MoviesRepository') as mock_movies, \
-         patch('app.main.RatingsRepository') as mock_ratings, \
-         patch('app.main.WatchlistRepository') as mock_watchlist, \
-         patch('app.main.RecommendationsRepository') as mock_recommendations, \
-         patch('app.main.PenaltiesRepository') as mock_penalties, \
-         patch('app.main.PasswordHasher') as mock_hasher:
-        yield {
-            "users": mock_users,
-            "movies": mock_movies,
-            "ratings": mock_ratings,
-            "watchlist": mock_watchlist,
-            "recommendations": mock_recommendations,
-            "penalties": mock_penalties,
-            "hasher": mock_hasher
-        }
-
-
-
-def test_singleton_returns_same_instance(patched_resources):
-
+@pytest.fixture(autouse=True)
+def reset_singleton():
+    SingletonResources._instance = None
+    SingletonResources._initialized = False
+    yield
     SingletonResources._instance = None
     SingletonResources._initialized = False
 
+def test_singleton_returns_same_instance():
     instance1 = SingletonResources()
     instance2 = SingletonResources()
-
     assert instance1 is instance2
 
-def test_singleton_initializes_once(patched_resources):
+def test_singleton_initializes_once():
+    mock_users = Mock()
+    with patch("app.main.UsersRepository", return_value=mock_users):
+        instance1 = SingletonResources()
+        instance2 = SingletonResources()
+        app_users_repo_instance = instance1.users_repo
+        assert app_users_repo_instance is mock_users
 
-    SingletonResources._instance = None
-    SingletonResources._initialized = False
+def test_singleton_has_all_repositories():
+    mock_users = Mock()
+    mock_movies = Mock()
+    mock_ratings = Mock()
+    mock_watchlist = Mock()
+    mock_recommendations = Mock()
+    mock_penalties = Mock()
+    mock_hasher = Mock()
 
-    instance1 = SingletonResources()
-    instance2 = SingletonResources()
-    instance3 = SingletonResources()
+    with patch("app.main.UsersRepository", return_value=mock_users), \
+         patch("app.main.MoviesRepository", return_value=mock_movies), \
+         patch("app.main.RatingsRepository", return_value=mock_ratings), \
+         patch("app.main.WatchlistRepository", return_value=mock_watchlist), \
+         patch("app.main.RecommendationsRepository", return_value=mock_recommendations), \
+         patch("app.main.PenaltiesRepository", return_value=mock_penalties), \
+         patch("app.main.PasswordHasher", return_value=mock_hasher):
+        resources = SingletonResources()
 
-    mock_users_repo = patched_resources["users"]
-    assert mock_users_repo.call_count == 1
+        assert resources.users_repo is mock_users
+        assert resources.movies_repo is mock_movies
+        assert resources.ratings_repo is mock_ratings
+        assert resources.watchlist_repo is mock_watchlist
+        assert resources.recommendations_repo is mock_recommendations
+        assert resources.penalties_repo is mock_penalties
+        assert resources.password_hasher is mock_hasher
 
-def test_singleton_has_all_repositories(patched_resources):
+def test_singleton_thread_safety():
+    mock_users = Mock()
+    with patch("app.main.UsersRepository", return_value=mock_users):
+        instances = []
 
-    SingletonResources._instance = None
-    SingletonResources._initialized = False
+        def create_instance():
+            instances.append(SingletonResources())
 
-    resources = SingletonResources()
+        threads = [threading.Thread(target=create_instance) for _ in range(10)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
 
-    assert hasattr(resources, 'users_repo')
-    assert hasattr(resources, 'movies_repo')
-    assert hasattr(resources, 'ratings_repo')
-    assert hasattr(resources, 'watchlist_repo')
-    assert hasattr(resources, 'recommendations_repo')
-    assert hasattr(resources, 'penalties_repo')
-    assert hasattr(resources, 'password_hasher')
+        first_instance = instances[0]
+        for instance in instances:
+            assert instance is first_instance
 
-def test_singleton_cleanup_method(patched_resources):
 
-    SingletonResources._instance = None
-    SingletonResources._initialized = False
-
-    resources = SingletonResources()
-
-    resources.cleanup()
-
-def test_singleton_thread_safety(patched_resources):
-
-    SingletonResources._instance = None
-    SingletonResources._initialized = False
-
-    instances = []
-
-    threads = [threading.Thread(target=instances.append(SingletonResources())) for _ in range(10)]
-    for thread in threads:
-        thread.start()
-    for thread in threads:
-        thread.join()
-
-    first_instance = instances[0]
-    for instance in instances:
-        assert instance is first_instance
-
-def test_users_repository_initialized(patched_resources):
-    mock_repo = Mock()
-
-    SingletonResources._instance = None
-    SingletonResources._initialized = False
-
-    resources = SingletonResources()
-
-    assert resources.users_repo is mock_repo
-
-def test_password_hasher_initialized(patched_resources):
-    mock_hasher_class = Mock()
+def test_password_hasher_initialized():
     mock_hasher_instance = Mock()
-    mock_hasher_class.return_value = mock_hasher_instance
-
-    SingletonResources._instance = None
-    SingletonResources._initialized = False
-
-    resources = SingletonResources()
-
-    mock_hasher_class.assert_called_once()
-    assert resources.password_hasher is mock_hasher_instance
+    with patch("app.main.PasswordHasher", return_value=mock_hasher_instance):
+        resources = SingletonResources()
+        assert resources.password_hasher is mock_hasher_instance

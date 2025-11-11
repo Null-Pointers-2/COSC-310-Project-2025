@@ -14,11 +14,12 @@ class MovieRecommender:
     """
     def __init__(self, data_dir: str = "data/ml"):
         self.data_dir = Path(data_dir)
-        self.movies_df = None
-        self.similarity_matrix = None
-        self.movie_id_to_idx = None
-        self.idx_to_movie_id = None
-        self.title_to_movie_id = None
+        self.movies_df: pd.DataFrame
+        self.similarity_matrix: np.ndarray
+        self.movie_id_to_idx: dict[int, int]
+        self.idx_to_movie_id: dict[int, int]
+        self.title_to_movie_id: dict[str, int]
+        self.movie_id_to_title: dict[int, str]
         
         self.load_data()
         
@@ -31,6 +32,11 @@ class MovieRecommender:
             raise FileNotFoundError(f"Missing {movies_path}. Run data_preprocessor.py.")
         self.movies_df = pd.read_csv(movies_path)
         
+        self.movie_id_to_title = pd.Series(
+            self.movies_df.title.values, 
+            index=self.movies_df.movieId
+        ).to_dict()
+
         sim_matrix_path = self.data_dir / 'similarity_matrix.npy'
         if not sim_matrix_path.exists():
             raise FileNotFoundError(f"Missing {sim_matrix_path}. Run similarity_matrix.py.")
@@ -56,6 +62,9 @@ class MovieRecommender:
         Returns:
             A list of (title, score) tuples, or None if movie not found.
         """
+        if self.title_to_movie_id is None:
+            raise ValueError("Recommender data not loaded.")
+        
         if movie_title not in self.title_to_movie_id:
             print(f"Error: Movie '{movie_title}' not found in database.")
             return None
@@ -66,8 +75,14 @@ class MovieRecommender:
             print(f"Error: Movie '{movie_title}' (ID: {movie_id}) not in feature matrix. Was it filtered?")
             return None
             
+        if self.movie_id_to_idx is None:
+            raise ValueError("Recommender data not loaded.")
+
         movie_idx = self.movie_id_to_idx[movie_id]
         
+        if self.similarity_matrix is None:
+            raise ValueError("Similarity matrix not loaded.")
+
         sim_scores = self.similarity_matrix[movie_idx]
         
         top_indices = np.argsort(sim_scores)[-(n+1):]
@@ -75,15 +90,17 @@ class MovieRecommender:
         top_indices = np.flip(top_indices)
         
         recommendations = []
+        
         for idx in top_indices:
             if idx == movie_idx:
                 continue  # Skip the input movie itself
-                
+
             rec_movie_id = self.idx_to_movie_id.get(idx)
+
             if rec_movie_id is None:
                 continue
-                
-            rec_title = self.movies_df[self.movies_df.movieId == rec_movie_id].title.values[0]
+            
+            rec_title = self.movie_id_to_title.get(rec_movie_id, "Unknown")
             score = sim_scores[idx]
             
             recommendations.append((rec_title, score))

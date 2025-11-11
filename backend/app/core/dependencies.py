@@ -3,7 +3,6 @@ FastAPI dependencies for authentication and authorization.
 """
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
-from datetime import datetime, timezone
 import jwt
 from jwt.exceptions import InvalidTokenError
 from app.core.config import settings

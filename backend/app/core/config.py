@@ -5,8 +5,6 @@ from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    """Application settings."""
-    
     # Base Directories
     BASE_DIR: Path = Path(__file__).parent.parent.parent
     DATA_DIR: Path = BASE_DIR / "data"  
@@ -54,4 +52,4 @@ class Settings(BaseSettings):
         case_sensitive=True
     )
 
-settings = Settings() 
+settings = Settings() # type: ignore

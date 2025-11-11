@@ -41,5 +41,5 @@ def create_genre_features(movies_df: pd.DataFrame) -> Tuple[np.ndarray, TfidfVec
     
     tfidf = TfidfVectorizer(stop_words='english', max_features=100) # Limit features since genres are limited
     tfidf_matrix = tfidf.fit_transform(movies_processed_df['genres_processed'])
-    
-    return tfidf_matrix.toarray(), tfidf, movies_processed_df
+
+    return np.array(tfidf_matrix), tfidf, movies_processed_df

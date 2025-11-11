@@ -10,7 +10,7 @@ def compute_and_save_similarity(data_dir: Path):
     Loads the feature matrix and computes the cosine similarity matrix.
     
     The feature matrix is assumed to be L2-normalized,
-    so cosine similarity is just a dot product (matrix multiplication).
+    so cosine similarity is just matrix multiplication.
     """
     feature_matrix_path = data_dir / 'combined_features.npy'
     output_path = data_dir / 'similarity_matrix.npy'

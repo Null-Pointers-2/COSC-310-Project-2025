@@ -8,6 +8,7 @@ import numpy as np
 from pathlib import Path
 from typing import Tuple
 from sklearn.preprocessing import normalize
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 from feature_engineering import genre_processor, genome_processor
 

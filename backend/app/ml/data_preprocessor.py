@@ -10,7 +10,7 @@ from typing import Tuple
 from sklearn.preprocessing import normalize
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from feature_engineering import genre_processor, genome_processor
+from app.ml.feature_engineering import genre_processor, genome_processor
 
 class MovieDataPreprocessor:
     """
@@ -74,14 +74,26 @@ class MovieDataPreprocessor:
             Combined feature matrix
         """
         print("Combining genre and genome features...")
+        print(f"  Genre matrix shape: {genre_matrix.shape}, dtype: {genre_matrix.dtype}")
+        print(f"  Genome matrix shape: {genome_matrix.shape}, dtype: {genome_matrix.dtype}")
+        
+        if not isinstance(genre_matrix, np.ndarray):
+            genre_matrix = np.array(genre_matrix.toarray() if hasattr(genre_matrix, 'toarray') else genre_matrix)
+        if not isinstance(genome_matrix, np.ndarray):
+            genome_matrix = np.array(genome_matrix.toarray() if hasattr(genome_matrix, 'toarray') else genome_matrix)
+        
+        # Normalize each feature set
         genre_normalized = normalize(genre_matrix, norm='l2', axis=1)
         genome_normalized = normalize(genome_matrix, norm='l2', axis=1)
         
+        # Apply weights
         genre_weighted = genre_normalized * self.genre_weight
         genome_weighted = genome_normalized * self.genome_weight
         
+        # Combine features
         combined = np.hstack([genre_weighted, genome_weighted])
         
+        # Final normalization
         combined = normalize(combined, norm='l2', axis=1)
         
         return combined

@@ -129,14 +129,13 @@ def get_similar_movies(resources, movie_id: int, limit: int = 10) -> List[Recomm
     result = []
     for title, score in recommendations:
         matching_movies = resources.movies_repo.search(title, limit=1)
-        if matching_movies and matching_movies[0]["title"] == title:
+        if matching_movies:
             result.append(
                 RecommendationItem(
                     movie_id=matching_movies[0]["movieId"],
                     similarity_score=round(float(score), 4)
                 )
             )
-    
     return result
 
 

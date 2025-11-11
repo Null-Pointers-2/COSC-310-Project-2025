@@ -21,7 +21,7 @@ A Software Engineering Project for COSC 310 (2025)
 ```bash
 git clone https://github.com/Null-Pointers-2/COSC-310-Project-2025.git
 cd COSC-310-Project-2025/backend
-````
+```
 
 ### 2. Create a virtual environment
 
@@ -38,19 +38,41 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. Download the genome-scores.csv dataset
+### 4. Download the MovieLens datasets
 
-The dataset file (genome-scores.csv, ~400 MB) is stored as a GitHub release asset.
-Download it into the correct directory before running the backend:
+The genome-scores.csv dataset (~400 MB) is stored as a GitHub release asset.
+Download it into the correct directory:
 
 ```bash
-curl -L -o data/movies/genome-scores.csv \
+# Linux/macOS
+curl -L -o app/static/movies/genome-scores.csv \
   https://github.com/Null-Pointers-2/COSC-310-Project-2025/releases/latest/download/genome-scores.csv
+
+# Windows PowerShell
+Invoke-WebRequest -Uri "https://github.com/Null-Pointers-2/COSC-310-Project-2025/releases/latest/download/genome-scores.csv" -OutFile "app\static\movies\genome-scores.csv"
 ```
 
-If you’re on Windows and don’t have curl, you can just download it manually from the [Releases page](https://github.com/Null-Pointers-2/COSC-310-Project-2025/releases) and place it in backend/data/movies/.
+If the curl command doesn't work, download manually from the [Releases page](https://github.com/Null-Pointers-2/COSC-310-Project-2025/releases) and place it in `backend/app/static/movies/`.
 
-### 5. Create secret key in .env
+### 5. Generate ML artifacts for recommendations
+
+Before running the server for the first time, you need to generate the ML artifacts (feature matrices and similarity matrix) that power the recommendation system:
+
+```bash
+# From backend/ directory with venv activated:
+python scripts/setup_ml_data.py
+```
+
+This process takes a few minutes and creates the following artifacts in `data/ml/`:
+- `movies_clean.csv` - Preprocessed movie data
+- `combined_features.npy` - Combined genre + genome feature matrix
+- `similarity_matrix.npy` - Pre-computed movie similarity matrix
+- `tfidf_vectorizer.pkl` - Trained TF-IDF vectorizer for genres
+- `movie_id_to_idx.pkl` - Movie ID to matrix index mapping
+
+**Note:** This step only needs to be run once (or when the MovieLens dataset is updated). The artifacts are gitignored because they're large (~500MB total) and derived from the source data.
+
+### 6. Create secret key in .env
 
 ```bash
 python -c "import secrets; f = open('.env', 'w', encoding='utf-8'); f.write('SECRET_KEY=' + secrets.token_urlsafe(48) + '\n'); f.close()"
@@ -74,7 +96,7 @@ Then visit:
 
 ## Running Tests (Pytest)
 
-To run tests under `backend/tests/`, run:
+To run tests under `backend/tests/`:
 
 ```bash
 # In backend/ directory with venv activated:
@@ -82,6 +104,11 @@ python -m pytest
 
 # With coverage:
 python -m pytest -v --cov=app --cov-report=html
+
+# Run specific test types:
+python -m pytest tests/unit/          # Unit tests only
+python -m pytest tests/integration/   # Integration tests only
+python -m pytest tests/e2e/          # E2E tests only
 ```
 
 ---

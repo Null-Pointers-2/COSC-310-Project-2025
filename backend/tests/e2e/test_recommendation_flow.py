@@ -5,6 +5,7 @@ Tests the entire recommendation pipeline from user registration
 through rating movies to receiving personalized recommendations.
 """
 import pytest
+from pathlib import Path
 
 from app.repositories.users_repo import UsersRepository
 from app.repositories.ratings_repo import RatingsRepository
@@ -15,6 +16,18 @@ users_repo = UsersRepository()
 ratings_repo = RatingsRepository()
 recommendations_repo = RecommendationsRepository()
 movies_repo = MoviesRepository()
+
+
+def check_ml_artifacts_exist():
+    """Check if required ML artifacts exist."""
+    ml_dir = Path("data/ml")
+    required_files = [
+        "movies_clean.csv",
+        "similarity_matrix.npy",
+        "movie_id_to_idx.pkl"
+    ]
+    missing = [f for f in required_files if not (ml_dir / f).exists()]
+    return len(missing) == 0, missing
 
 
 @pytest.fixture(autouse=True)
@@ -72,6 +85,14 @@ def test_complete_recommendation_flow(client):
     3. User rates multiple movies (some high, some low)
     4. User requests recommendations (gets personalized results)
     """
+    
+    # Check if ML artifacts exist
+    ml_ready, missing = check_ml_artifacts_exist()
+    if not ml_ready:
+        pytest.skip(
+            f"ML artifacts not found. Run 'python scripts/setup_ml_data.py' first. "
+            f"Missing files: {', '.join(missing)}"
+        )
 
     # Step 1: Register and authenticate
     register_response = client.post(
@@ -153,13 +174,25 @@ def test_complete_recommendation_flow(client):
         "/recommendations/me?limit=10",
         headers=headers
     )
-    assert recommendations_response.status_code == 200
+    assert recommendations_response.status_code == 200, (
+        f"Recommendations endpoint should succeed. Response: {recommendations_response.text}"
+    )
     recommendations_data = recommendations_response.json()
     assert "user_id" in recommendations_data
     assert "recommendations" in recommendations_data
     assert recommendations_data["user_id"] == user["id"]
     
     recommendations = recommendations_data["recommendations"]
+
+    if len(recommendations) == 0:
+        pytest.fail(
+            "No recommendations returned. This could mean:\n"
+            "1. ML artifacts are corrupted - try running 'python scripts/setup_ml_data.py' again\n"
+            "2. The rated movies aren't in the cleaned dataset\n"
+            "3. The similarity matrix couldn't find similar movies\n"
+            f"Rated movie IDs: {rated_movies}"
+        )
+    
     assert len(recommendations) > 0, "Should receive recommendations"
     assert len(recommendations) <= 10, "Should respect limit"
         

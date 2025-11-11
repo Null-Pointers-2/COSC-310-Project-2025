@@ -89,9 +89,12 @@ def test_dashboard_success(mock_resources, sample_user, sample_ratings, sample_p
     mock_resources.users_repo.get_by_id.return_value = sample_user
     mock_resources.ratings_repo.get_by_user.return_value = sample_ratings
     mock_resources.penalties_repo.get_by_user.return_value = sample_penalties
-    mock_resources.recommendations_repo.get_for_user.return_value = [
-        {"movie_id": 1, "similarity_score": 0.9}
-    ]
+    mock_resources.recommendations_repo.get_for_user.return_value = {
+        "user_id": "user123",
+        "recommendations": [
+            {"movie_id": 1, "similarity_score": 0.9}
+        ]
+    }
 
     dashboard = users_service.get_user_dashboard("user123", mock_resources)
 

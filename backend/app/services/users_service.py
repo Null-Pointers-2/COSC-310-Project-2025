@@ -47,16 +47,22 @@ def get_user_dashboard(user_id: str, resources) -> Optional[UserDashboard]:
     
     recent_ratings = resources.ratings_repo.get_by_user(user_id, limit=RECENT_MOVIE_VIEW_LIMIT)
     penalties = resources.penalties_repo.get_by_user(user_id)
-    recommendations = resources.recommendations_repo.get_for_user(user_id)
-    
+    recommendations_data = resources.recommendations_repo.get_for_user(user_id)
+
+    if recommendations_data:
+        recommendations_list = recommendations_data.get("recommendations", [])
+    else:
+        recommendations_list = []
+
     dashboard_data = {
         "user": profile,
         "recent_ratings": recent_ratings,
-        "recommendations": recommendations,
+        "recommendations": recommendations_list, 
         "penalties": penalties
     }
 
     return UserDashboard(**dashboard_data)
+
 
 def update_user(user_id: str, update_data: UserUpdate, resources) -> Optional[dict]:
     """Update user information."""

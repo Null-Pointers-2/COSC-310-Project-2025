@@ -121,21 +121,25 @@ def get_similar_movies(resources, movie_id: int, limit: int = 10) -> List[Recomm
     
     movie_title = movie["title"]
     
-    recommendations = recommender.get_recommendations(movie_title, n=limit)
-    
-    if not recommendations:
+    recommendations = recommender.get_similar_by_id(movie_id, n=limit)
+
+    if recommendations is None:
+        print(f"Warning: Movie ID {movie_id} not found in recommender dataset")
         return []
-    
+
     result = []
-    for title, score in recommendations:
-        matching_movies = resources.movies_repo.search(title, limit=1)
-        if matching_movies:
+    for rec_id, score in recommendations:
+        movie = resources.movies_repo.get_by_id(rec_id)
+        if movie:
             result.append(
                 RecommendationItem(
-                    movie_id=matching_movies[0]["movieId"],
+                    movie_id=rec_id,
                     similarity_score=round(float(score), 4)
                 )
             )
+        else:
+            print(f"Warning: Recommended movie ID {rec_id} not found in movies repository")
+
     return result
 
 

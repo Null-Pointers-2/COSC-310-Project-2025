@@ -9,21 +9,8 @@ from app.schemas.recommendation import RecommendationItem
 def mock_resources():
     """Mock resources object with repositories."""
     resources = Mock()
-    resources.ratings_repo = Mock()
-    resources.recommendations_repo = Mock()
-    resources.movies_repo = Mock()
-    
-    resources.recommendations_repo.get_for_user = Mock()
-    resources.recommendations_repo.is_fresh = Mock()
-    resources.recommendations_repo.save_for_user = Mock()
-    resources.recommendations_repo.clear_for_user = Mock()
-    resources.ratings_repo.get_by_user = Mock()
-    resources.movies_repo.get_by_id = Mock()
-    resources.movies_repo.search = Mock()
-    resources.movies_repo.get_all = Mock()
     
     return resources
-
 
 @pytest.fixture
 def mock_recommender(mocker):
@@ -34,7 +21,6 @@ def mock_recommender(mocker):
     mocker.patch.object(recommendations_service, "_recommender", None)
     
     return mock_instance
-
 
 def test_returns_cached_recommendations_when_fresh(mock_resources, mock_recommender):
     cached_data = {
@@ -163,17 +149,34 @@ def test_aggregates_scores_from_multiple_seeds(mocker, mock_resources, mock_reco
     assert 0.7 < movie_100.similarity_score < 0.9
 
 def test_returns_similar_movies_for_valid_movie(mocker, mock_resources, mock_recommender):
-    mock_resources.movies_repo.get_by_id.return_value = {"movieId": 1, "title": "The Matrix (1999)"}
-    mock_recommender.get_recommendations.return_value = [
-        ("The Matrix Reloaded (2003)", 0.92),
-        ("Inception (2010)", 0.88),
+    def mock_get_by_id(movie_id):
+        if movie_id == 1:
+            return {"movieId": 1, "title": "The Matrix (1999)"}
+        elif movie_id == 2:
+            return {"movieId": 2, "title": "The Matrix Reloaded (2003)"}
+        elif movie_id == 3:
+            return {"movieId": 3, "title": "Inception (2010)"}
+        return None
+
+    mock_resources.movies_repo.get_by_id.side_effect = mock_get_by_id
+    
+    mock_recommender.get_similar_by_id.return_value = [
+        (2, 0.92), 
+        (3, 0.88),  
     ]
-    mock_resources.movies_repo.search.side_effect = lambda t, limit: [{"movieId": 2, "title": t}]
 
     result = recommendations_service.get_similar_movies(mock_resources, 1, limit=2)
     assert len(result) == 2
     assert all(isinstance(r, RecommendationItem) for r in result)
-    mock_recommender.get_recommendations.assert_called_once()
+    
+    mock_recommender.get_similar_by_id.assert_called_once_with(1, n=2)
+
+    assert result[0].movie_id == 2
+    assert result[0].similarity_score == 0.92
+    assert result[1].movie_id == 3
+    assert result[1].similarity_score == 0.88
+    
+    assert mock_resources.movies_repo.get_by_id.call_count == 3
 
 def test_returns_empty_for_invalid_movie(mock_resources, mock_recommender):
     mock_resources.movies_repo.get_by_id.return_value = None

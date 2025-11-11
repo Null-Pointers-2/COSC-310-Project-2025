@@ -54,58 +54,57 @@ class MovieRecommender:
     def get_recommendations(self, movie_title: str, n: int = 10) -> Optional[List[Tuple[str, float]]]:
         """
         Get top N recommendations for a given movie title.
-        
-        Args:
-            movie_title: The exact title of the movie (e.g., "Toy Story (1995)")
-            n: Number of recommendations to return
-            
-        Returns:
-            A list of (title, score) tuples, or None if movie not found.
         """
         if self.title_to_movie_id is None:
             raise ValueError("Recommender data not loaded.")
         
-        if movie_title not in self.title_to_movie_id:
-            print(f"Error: Movie '{movie_title}' not found in database.")
+        movie_id = self.title_to_movie_id.get(movie_title)
+        if movie_id is None:
+            print(f"Error: Movie '{movie_title}' not found in recommender dataset.")
             return None
-            
-        movie_id = self.title_to_movie_id[movie_title]
+
+        recs_by_id = self.get_similar_by_id(movie_id, n)
+        if recs_by_id is None:
+            return None
+
+        return [
+            (self.movie_id_to_title.get(mid, "Unknown"), score)
+            for mid, score in recs_by_id
+        ]
+    
+    def get_similar_by_id(self, movie_id: int, n: int = 10) -> Optional[List[Tuple[int, float]]]:
+        """
+        Get top N recommendations for a given movie ID.
         
-        if movie_id not in self.movie_id_to_idx:
-            print(f"Error: Movie '{movie_title}' (ID: {movie_id}) not in feature matrix. Was it filtered?")
-            return None
+        Args:
+            movie_id: The MovieLens ID of the movie
+            n: Number of recommendations to return
             
-        if self.movie_id_to_idx is None:
+        Returns:
+            A list of (movie_id, score) tuples, or None if movie not found.
+        """
+        if self.movie_id_to_idx is None or self.similarity_matrix is None:
             raise ValueError("Recommender data not loaded.")
 
-        movie_idx = self.movie_id_to_idx[movie_id]
-        
-        if self.similarity_matrix is None:
-            raise ValueError("Similarity matrix not loaded.")
+        if movie_id not in self.movie_id_to_idx:
+            print(f"Warning: Movie ID {movie_id} not found in recommender dataset")
+            return None
 
+        movie_idx = self.movie_id_to_idx[movie_id]
         sim_scores = self.similarity_matrix[movie_idx]
-        
-        top_indices = np.argsort(sim_scores)[-(n+1):]
-        
-        top_indices = np.flip(top_indices)
-        
+
+        # Get top N most similar (excluding itself)
+        top_indices = np.argsort(sim_scores)[::-1]  # descending
         recommendations = []
-        
         for idx in top_indices:
             if idx == movie_idx:
-                continue  # Skip the input movie itself
-
+                continue  # skip itself
             rec_movie_id = self.idx_to_movie_id.get(idx)
-
             if rec_movie_id is None:
                 continue
-            
-            rec_title = self.movie_id_to_title.get(rec_movie_id, "Unknown")
-            score = sim_scores[idx]
-            
-            recommendations.append((rec_title, score))
-            
-            if len(recommendations) == n:
+            score = float(sim_scores[idx])
+            recommendations.append((rec_movie_id, score))
+            if len(recommendations) >= n:
                 break
-                
+
         return recommendations

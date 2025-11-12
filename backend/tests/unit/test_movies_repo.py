@@ -1,3 +1,5 @@
+"""Unit tests for movies repository."""
+
 import json
 
 import pytest

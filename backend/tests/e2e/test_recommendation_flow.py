@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pytest
 
+from app.main import app
+
 
 def check_ml_artifacts_exist():
     """Check if required ML artifacts exist."""
@@ -22,7 +24,13 @@ def check_ml_artifacts_exist():
     return len(missing) == 0, missing
 
 
-def test_recommendation_flow(client, clean_test_data):
+def force_recommender_initialization(app):
+    """Force lazy initialization of the recommender if not already initialized."""
+    if app.state.resources._recommender is None:
+        _ = app.state.resources.recommender
+
+
+def test_complete_recommendation_flow(client, clean_test_data):
     """
     E2E test for complete recommendation flow.
 
@@ -31,18 +39,20 @@ def test_recommendation_flow(client, clean_test_data):
     2. User browses movies
     3. User rates multiple movies (some high, some low)
     4. User requests recommendations (gets personalized results)
+    5. User refreshes recommendations after adding more ratings
     """
-    # Get test repositories
+
     users_repo = clean_test_data["users_repo"]
     ratings_repo = clean_test_data["ratings_repo"]
     recommendations_repo = clean_test_data["recommendations_repo"]
 
-    # Check if ML artifacts exist
     ml_ready, missing = check_ml_artifacts_exist()
     if not ml_ready:
         pytest.skip(
             f"ML artifacts not found. Run 'python scripts/setup_ml_data.py' first. Missing files: {', '.join(missing)}"
         )
+
+    force_recommender_initialization(app)
 
     # Step 1: Register and authenticate
     register_response = client.post(
@@ -152,7 +162,7 @@ def test_recommendation_flow(client, clean_test_data):
     scores = [rec["similarity_score"] for rec in recommendations]
     assert scores == sorted(scores, reverse=True), "Recommendations should be sorted by score"
 
-    # Test caching of recommendations
+    # Test caching
     cached_data = recommendations_repo.get_for_user(user["id"])
     assert cached_data is not None, "Recommendations should be cached"
     assert len(cached_data["recommendations"]) > 0

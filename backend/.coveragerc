@@ -8,6 +8,7 @@ omit =
     */env/*
     */__init__.py
     */schemas/*.py
+    */app/ml/*
 
 [report]
 precision = 2

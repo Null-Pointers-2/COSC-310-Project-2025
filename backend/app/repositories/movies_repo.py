@@ -20,8 +20,6 @@ class MoviesRepository:
         self.movies_dir = Path(movies_dir)
         self.movies_df: pd.DataFrame | None = None
         self.links_df: pd.DataFrame | None = None
-        self.genome_scores_df: pd.DataFrame | None = None
-        self.genome_tags_df: pd.DataFrame | None = None
         self._load_data()
 
     def _extract_year(self, title: str) -> int | None:

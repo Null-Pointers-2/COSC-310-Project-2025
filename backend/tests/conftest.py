@@ -3,7 +3,6 @@ Pytest configuration and fixtures for FastAPI application testing.
 """
 
 import os
-from unittest.mock import Mock
 
 
 os.environ["SECRET_KEY"] = "test-secret-key-for-testing-only-not-for-production"
@@ -51,15 +50,13 @@ def test_app(test_repositories):
 
     app.state.resources = SingletonResources()
 
+    # Replace user data repositories with test repositories
+    # movies_repo uses production data (needed for ML recommendations and related tests)
     app.state.resources.users_repo = test_repositories["users_repo"]
     app.state.resources.ratings_repo = test_repositories["ratings_repo"]
     app.state.resources.recommendations_repo = test_repositories["recommendations_repo"]
     app.state.resources.penalties_repo = test_repositories["penalties_repo"]
     app.state.resources.watchlist_repo = test_repositories["watchlist_repo"]
-
-    mock_recommender = Mock()
-    mock_recommender.get_similar_by_id.return_value = []
-    app.state.resources._recommender = mock_recommender
 
     yield app
 
@@ -84,6 +81,7 @@ def clean_test_data(test_repositories):
     ratings_repo = test_repositories["ratings_repo"]
     recommendations_repo = test_repositories["recommendations_repo"]
     penalties_repo = test_repositories["penalties_repo"]
+    watchlist_repo = test_repositories["watchlist_repo"]
 
     def cleanup():
         all_users = users_repo.get_all()

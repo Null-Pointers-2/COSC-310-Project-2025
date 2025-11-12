@@ -32,6 +32,9 @@ def get_movie_by_id(resources, movie_id: int) -> Movie | None:
     except ValueError:
         return None
 
+    if movie_id_int <= 0:
+        return None
+
     movie_data = resources.movies_repo.get_by_id(movie_id_int)
     if not movie_data:
         return None

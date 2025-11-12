@@ -13,6 +13,7 @@ router = APIRouter()
 @router.get("/users")
 def get_all_users(
     resources=Depends(get_resources),
+    _current_admin: dict = Depends(get_current_admin_user),
 ):
     """Get all users with statistics."""
     return admin_service.get_all_users_with_stats(resources)
@@ -32,6 +33,7 @@ def apply_penalty(
 @router.get("/penalties", response_model=list[Penalty])
 def get_all_penalties(
     resources=Depends(get_resources),
+    _current_admin: dict = Depends(get_current_admin_user),
 ):
     """Get all penalties."""
     return admin_service.get_all_penalties(resources)
@@ -41,6 +43,7 @@ def get_all_penalties(
 def get_user_penalties(
     user_id: str,
     resources=Depends(get_resources),
+    _current_admin: dict = Depends(get_current_admin_user),
 ):
     """Get penalties for a specific user."""
     return admin_service.get_user_penalties(resources, user_id)
@@ -50,6 +53,7 @@ def get_user_penalties(
 def resolve_penalty(
     penalty_id: str,
     resources=Depends(get_resources),
+    _current_admin: dict = Depends(get_current_admin_user),
 ):
     """Mark a penalty as resolved."""
     success = admin_service.resolve_penalty(resources, penalty_id)
@@ -65,6 +69,7 @@ def resolve_penalty(
 def delete_penalty(
     penalty_id: str,
     resources=Depends(get_resources),
+    _current_admin: dict = Depends(get_current_admin_user),
 ):
     """Delete a penalty."""
     success = admin_service.delete_penalty(resources, penalty_id)
@@ -78,6 +83,7 @@ def delete_penalty(
 @router.get("/stats")
 def get_system_stats(
     resources=Depends(get_resources),
+    _current_admin: dict = Depends(get_current_admin_user),
 ):
     """Get system-wide statistics."""
     return admin_service.get_system_stats(resources)
@@ -87,6 +93,7 @@ def get_system_stats(
 def check_user_violations(
     user_id: str,
     resources=Depends(get_resources),
+    _current_admin: dict = Depends(get_current_admin_user),
 ):
     """Check for user violations."""
     violations = admin_service.check_user_violations(resources, user_id)

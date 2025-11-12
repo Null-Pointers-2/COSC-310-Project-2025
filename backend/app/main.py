@@ -55,13 +55,19 @@ class SingletonResources:
 
             self.password_hasher = PasswordHasher()
 
-            self.recommender = MovieRecommender()
+            self._recommender = None
 
             SingletonResources._initialized = True
             print("Singleton resources initialized successfully")
 
+    @property
+    def recommender(self):
+        if self._recommender is None:
+            print("Initializing MovieRecommender...")
+            self._recommender = MovieRecommender()
+        return self._recommender
+
     def cleanup(self):
-        """Cleanup resources on shutdown."""
         print("Cleaning up singleton resources...")
         print("Singleton resources cleaned up")
 
@@ -120,8 +126,6 @@ async def startup_event():
     """
     print("Application starting up...")
     app.state.resources = SingletonResources()
-    # TODO: Load/precompute similarity matrix for recommendations (still not sure how this will work...)
-    # TODO: Validate data files
     print("Application startup complete")
 
 

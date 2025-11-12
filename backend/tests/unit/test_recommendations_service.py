@@ -1,6 +1,6 @@
 """Unit tests for recommendations service."""
 
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
@@ -11,22 +11,16 @@ from app.services import recommendations_service
 @pytest.fixture
 def mock_resources():
     """Mock resources object with repositories."""
+    resources = Mock()
 
-    return Mock()
+    mock_recommender = Mock()
+    mock_recommender.get_similar_by_id.return_value = []
+    resources.recommender = mock_recommender
 
-
-@pytest.fixture
-def mock_recommender(mocker):
-    mock_recommender_class = mocker.patch("app.services.recommendations_service.MovieRecommender", autospec=True)
-    mock_instance = MagicMock()
-    mock_recommender_class.return_value = mock_instance
-
-    mocker.patch.object(recommendations_service, "_recommender", None)
-
-    return mock_instance
+    return resources
 
 
-def test_returns_cached_recommendations_when_fresh(mock_resources, mock_recommender):
+def test_returns_cached_recommendations_when_fresh(mock_resources):
     cached_data = {
         "recommendations": [
             {"movie_id": 100, "similarity_score": 0.95},
@@ -41,12 +35,12 @@ def test_returns_cached_recommendations_when_fresh(mock_resources, mock_recommen
     assert result.user_id == "user123"
     assert len(result.recommendations) == 2
     assert result.recommendations[0].movie_id == 100
-    mock_recommender.get_recommendations.assert_not_called()
+    mock_resources.recommender.get_similar_by_id.assert_not_called()
     mock_resources.recommendations_repo.get_for_user.assert_called_once_with("user123")
     mock_resources.recommendations_repo.is_fresh.assert_called_once()
 
 
-def test_generates_new_recommendations_when_cache_stale(mocker, mock_resources, mock_recommender):
+def test_generates_new_recommendations_when_cache_stale(mocker, mock_resources):
     mock_resources.recommendations_repo.get_for_user.return_value = None
     mock_resources.ratings_repo.get_by_user.return_value = [
         {"movie_id": 1, "rating": 4.5},
@@ -85,7 +79,7 @@ def test_force_refresh_bypasses_cache(mocker, mock_resources):
     mock_generate.assert_called_once_with(mock_resources, "user123", 10)
 
 
-def test_returns_fallback_for_user_with_no_ratings(mock_resources, mock_recommender):
+def test_returns_fallback_for_user_with_no_ratings(mock_resources):
     mock_resources.ratings_repo.get_by_user.return_value = []
     mock_resources.movies_repo.get_all.return_value = [
         {"movieId": 1, "title": "Movie 1"},
@@ -99,7 +93,7 @@ def test_returns_fallback_for_user_with_no_ratings(mock_resources, mock_recommen
     mock_resources.movies_repo.get_all.assert_called_once_with(limit=10)
 
 
-def test_uses_high_rated_movies_as_seeds(mocker, mock_resources, mock_recommender):
+def test_uses_high_rated_movies_as_seeds(mocker, mock_resources):
     mock_resources.ratings_repo.get_by_user.return_value = [
         {"movie_id": 1, "rating": 4.5},
         {"movie_id": 2, "rating": 4.0},
@@ -125,7 +119,7 @@ def test_uses_high_rated_movies_as_seeds(mocker, mock_resources, mock_recommende
     assert 4 in seed_movie_ids
 
 
-def test_excludes_already_rated_movies(mocker, mock_resources, mock_recommender):
+def test_excludes_already_rated_movies(mocker, mock_resources):
     mock_resources.ratings_repo.get_by_user.return_value = [
         {"movie_id": 1, "rating": 4.5},
         {"movie_id": 2, "rating": 4.0},
@@ -149,7 +143,7 @@ def test_excludes_already_rated_movies(mocker, mock_resources, mock_recommender)
     assert 100 in movie_ids
 
 
-def test_aggregates_scores_from_multiple_seeds(mocker, mock_resources, mock_recommender):
+def test_aggregates_scores_from_multiple_seeds(mocker, mock_resources):
     mock_resources.ratings_repo.get_by_user.return_value = [
         {"movie_id": 1, "rating": 4.0},
         {"movie_id": 2, "rating": 5.0},
@@ -176,7 +170,7 @@ def test_aggregates_scores_from_multiple_seeds(mocker, mock_resources, mock_reco
     assert 0.7 < movie_100.similarity_score < 0.9
 
 
-def test_returns_similar_movies_for_valid_movie(mocker, mock_resources, mock_recommender):
+def test_returns_similar_movies_for_valid_movie(mock_resources):
     def mock_get_by_id(movie_id):
         if movie_id == 1:
             return {"movieId": 1, "title": "The Matrix (1999)"}
@@ -188,7 +182,7 @@ def test_returns_similar_movies_for_valid_movie(mocker, mock_resources, mock_rec
 
     mock_resources.movies_repo.get_by_id.side_effect = mock_get_by_id
 
-    mock_recommender.get_similar_by_id.return_value = [
+    mock_resources.recommender.get_similar_by_id.return_value = [
         (2, 0.92),
         (3, 0.88),
     ]
@@ -197,7 +191,7 @@ def test_returns_similar_movies_for_valid_movie(mocker, mock_resources, mock_rec
     assert len(result) == 2
     assert all(isinstance(r, RecommendationItem) for r in result)
 
-    mock_recommender.get_similar_by_id.assert_called_once_with(1, n=2)
+    mock_resources.recommender.get_similar_by_id.assert_called_once_with(1, n=2)
 
     assert result[0].movie_id == 2
     assert result[0].similarity_score == 0.92
@@ -207,11 +201,11 @@ def test_returns_similar_movies_for_valid_movie(mocker, mock_resources, mock_rec
     assert mock_resources.movies_repo.get_by_id.call_count == 3
 
 
-def test_returns_empty_for_invalid_movie(mock_resources, mock_recommender):
+def test_returns_empty_for_invalid_movie(mock_resources):
     mock_resources.movies_repo.get_by_id.return_value = None
     result = recommendations_service.get_similar_movies(mock_resources, 9999, limit=5)
     assert result == []
-    mock_recommender.get_recommendations.assert_not_called()
+    mock_resources.recommender.get_similar_by_id.assert_not_called()
 
 
 def test_clear_cache_calls_repo(mock_resources):

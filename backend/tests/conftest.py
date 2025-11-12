@@ -3,6 +3,7 @@ Pytest configuration and fixtures for FastAPI application testing.
 """
 
 import os
+from unittest.mock import Mock
 
 
 os.environ["SECRET_KEY"] = "test-secret-key-for-testing-only-not-for-production"
@@ -20,6 +21,10 @@ def test_app():
     SingletonResources._initialized = False
 
     app.state.resources = SingletonResources()
+
+    mock_recommender = Mock()
+    mock_recommender.get_similar_by_id.return_value = []
+    app.state.resources._recommender = mock_recommender
 
     yield app
 

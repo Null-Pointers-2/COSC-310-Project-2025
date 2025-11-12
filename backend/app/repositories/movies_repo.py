@@ -38,9 +38,10 @@ class MoviesRepository:
             self.movies_df = pd.DataFrame(columns=["movie_id", "title", "genres", "year"])
             return
 
-        self.movies_df = pd.read_csv(movie_path, encoding="utf-8")
+        self.movies_df = pd.read_csv(movie_path, encoding="utf-8", quotechar='"', doublequote=True, escapechar=None)
         self.movies_df["genres"] = self.movies_df["genres"].fillna("").str.split("|")
 
+        self.movies_df["title"] = self.movies_df["title"].str.strip()
         self.movies_df["year"] = self.movies_df["title"].apply(self._extract_year)
 
         if links_path.exists():

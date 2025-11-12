@@ -115,7 +115,7 @@ python -m pytest tests/e2e/          # E2E tests only
 
 ## Code Linting/Formatting (Ruff)
 
-To run tests under `backend/tests/`:
+To check code for formatting/code smells:
 
 ```bash
 # In backend/ directory with venv activated:

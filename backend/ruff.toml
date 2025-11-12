@@ -18,60 +18,65 @@ extend-exclude = [
     "testing-documents",
 ]
 
-# Line length to match your codebase
+fixable = ["ALL"]
 line-length = 120
-
-# Target Python 3.11
+indent-width = 4
 target-version = "py311"
 
 [lint]
-# Enable pycodestyle (E, W), Pyflakes (F), isort (I), and other rules
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
 select = [
-    "E",     # pycodestyle errors
-    "W",     # pycodestyle warnings
-    "F",     # Pyflakes
-    "I",     # isort
-    "N",     # pep8-naming
-    "UP",    # pyupgrade
-    "B",     # flake8-bugbear
-    "C4",    # flake8-comprehensions
-    "DTZ",   # flake8-datetimez
-    "T10",   # flake8-debugger
-    "ISC",   # flake8-implicit-str-concat
-    "ICN",   # flake8-import-conventions
-    "PIE",   # flake8-pie
-    "PT",    # flake8-pytest-style
-    "RSE",   # flake8-raise
-    "RET",   # flake8-return
-    "SIM",   # flake8-simplify
-    "ARG",   # flake8-unused-arguments
-    "PTH",   # flake8-use-pathlib
-    "PL",    # Pylint
-    "RUF",   # Ruff-specific rules
+    "ALL"
 ]
 
 # Rules to ignore
 ignore = [
-    "E501",    # Line too long (handled by formatter)
-    "B008",    # Do not perform function call in argument defaults (FastAPI dependencies)
-    "PLR0913", # Too many arguments to function call
-    "PLR2004", # Magic value used in comparison
-    "RUF012",  # Mutable class attributes should be annotated
-    "N815",    # mixedCase variable in class scope (for Pydantic models)
-    "ISC001",  # Conflicts with formatter
+    "ANN", # flake8-annotations
+    "COM", # flake8-commas
+    "C90", # mccabe complexity
+    "DJ",  # django
+    "EXE", # flake8-executable
+    "T10", # debugger
+    "TID", # flake8-tidy-imports
+
+    "B008",   # fastAPI convention
+    "D100",   # ignore missing docs
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D107",
+    "D200",
+    "D205",
+    "D212",
+    "D400",
+    "D401",
+    "D415",
+    "EM101",
+    "EM102",  # string literals
+    "E402",   # false positives for local imports
+    "E501",   # line too long
+    "TRY003", # external messages in exceptions are too verbose
+    "TD002",
+    "TD003",
+    "FIX002", # too verbose descriptions of todos
 ]
 
-# Allow autofix for all enabled rules
-fixable = ["ALL"]
-unfixable = []
-
-# Allow unused variables when underscore-prefixed
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+[lint.pydocstyle]
+convention = "google"
 
 [lint.per-file-ignores]
 # Test files can use assertions and have more relaxed rules
 "tests/**/*.py" = [
+    "S105", "S106",    # Hardcoded passwords
+    "SLF001",  # Accessing private methods
     "S101",    # Use of assert
+    "BLE001",  # Broad exceptions
+    "FBT",     # Booleans as positional arguments
     "ARG",     # Unused function arguments
     "PLR2004", # Magic values in tests are fine
     "F841",    # Unused local variables (common in test setup)
@@ -80,52 +85,23 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 # E2E tests can be long and complex
 "tests/e2e/**/*.py" = [
-    "S101",    # Use of assert
     "PLR0915", # Too many statements (E2E tests are naturally long)
     "PLR0912", # Too many branches
 ]
 
 # Integration tests with fixtures can have complex setup/teardown
 "tests/integration/**/*.py" = [
-    "S101",    # Use of assert
     "PLR0912", # Too many branches (fixtures with cleanup)
     "PLR0915", # Too many statements
 ]
 
 # Scripts can be long and complex
 "scripts/*.py" = [
+    "T201", # Print statements
     "PLR0912", # Too many branches
     "PLR0915", # Too many statements
 ]
 
-# __init__.py files can have unused imports
-"**/__init__.py" = [
-    "F401",    # Unused imports
+"app/schemas/auth.py" = [
+    "S105", # Hardcoded password for token
 ]
-
-[lint.isort]
-# Sort imports
-known-first-party = ["app"]
-force-single-line = false
-lines-after-imports = 2
-force-sort-within-sections = true
-
-[lint.mccabe]
-# Maximum complexity
-max-complexity = 10
-
-[format]
-# Use double quotes for strings
-quote-style = "double"
-
-# Indent with spaces
-indent-style = "space"
-
-# Use \n line endings
-line-ending = "auto"
-
-# Skip magic trailing comma
-skip-magic-trailing-comma = false
-
-# Respect existing line breaks
-docstring-code-format = true

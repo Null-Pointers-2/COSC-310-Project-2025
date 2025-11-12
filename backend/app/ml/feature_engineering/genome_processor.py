@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 def create_genome_features(movies_df: pd.DataFrame, genome_scores_df: pd.DataFrame) -> np.ndarray:
     """
-    Create genome feature matrix from relevance scores using vectorized operations.
+    Create genome feature matrix from relevance scores.
     """
     movie_ids = movies_df["movie_id"].unique()
     num_tags = genome_scores_df["tag_id"].max()
@@ -23,4 +23,4 @@ def create_genome_features(movies_df: pd.DataFrame, genome_scores_df: pd.DataFra
 
     genome_pivot = genome_pivot.reindex(movie_ids, fill_value=0.0)
 
-    return genome_pivot.to_numpy().astype(np.float32)
+    return genome_pivot.to_numpy(dtype=np.float32)

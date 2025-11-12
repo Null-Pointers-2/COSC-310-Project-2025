@@ -8,47 +8,13 @@ import jwt
 import pytest
 
 from app.core.config import settings
-from app.repositories.users_repo import UsersRepository
-
-
-users_repo = UsersRepository()
-
-
-@pytest.fixture(autouse=True)
-def cleanup_test_users():
-    test_usernames = ["testuser", "testuser2", "adminuser", "existinguser"]
-    test_emails = [
-        "test@example.com",
-        "test2@example.com",
-        "admin@example.com",
-        "existing@example.com",
-    ]
-
-    for username in test_usernames:
-        user = users_repo.get_by_username(username)
-        if user:
-            users_repo.delete(user["id"])
-
-    for email in test_emails:
-        user = users_repo.get_by_email(email)
-        if user:
-            users_repo.delete(user["id"])
-
-    yield
-
-    for username in test_usernames:
-        user = users_repo.get_by_username(username)
-        if user:
-            users_repo.delete(user["id"])
-
-    for email in test_emails:
-        user = users_repo.get_by_email(email)
-        if user:
-            users_repo.delete(user["id"])
 
 
 @pytest.fixture
-def auth_headers(client):
+def auth_headers(client, clean_test_data):
+    """Create a test user and return auth headers."""
+    users_repo = clean_test_data["users_repo"]
+
     client.post(
         "/auth/register",
         json={
@@ -63,7 +29,8 @@ def auth_headers(client):
 
 
 @pytest.fixture
-def registered_user(client):
+def registered_user(client, clean_test_data):
+    """Create and return a registered user."""
     response = client.post(
         "/auth/register",
         json={
@@ -75,7 +42,7 @@ def registered_user(client):
     return response.json()
 
 
-def test_register_success(client):
+def test_register_success(client, clean_test_data):
     response = client.post(
         "/auth/register",
         json={
@@ -96,7 +63,7 @@ def test_register_success(client):
     assert "hashed_password" not in data
 
 
-def test_register_duplicate_username(client):
+def test_register_duplicate_username(client, clean_test_data):
     client.post(
         "/auth/register",
         json={
@@ -119,7 +86,7 @@ def test_register_duplicate_username(client):
     assert "already registered" in response.json()["detail"].lower()
 
 
-def test_register_duplicate_email(client):
+def test_register_duplicate_email(client, clean_test_data):
     client.post(
         "/auth/register",
         json={
@@ -141,7 +108,9 @@ def test_register_duplicate_email(client):
     assert "already registered" in response.json()["detail"].lower()
 
 
-def test_register_user_stored_in_database(client):
+def test_register_user_stored_in_database(client, clean_test_data):
+    users_repo = clean_test_data["users_repo"]
+
     response = client.post(
         "/auth/register",
         json={
@@ -183,7 +152,7 @@ def test_login_wrong_password(client, registered_user):
     assert "incorrect" in response.json()["detail"].lower()
 
 
-def test_login_nonexistent_user(client):
+def test_login_nonexistent_user(client, clean_test_data):
     response = client.post("/auth/login", data={"username": "nonexistent", "password": "SecurePass123!"})
     assert response.status_code == 401
     assert "incorrect" in response.json()["detail"].lower()
@@ -201,12 +170,14 @@ def test_get_me_success(client, auth_headers):
     assert "hashed_password" not in data
 
 
-def test_get_me_invalid_token(client):
+def test_get_me_invalid_token(client, clean_test_data):
     response = client.get("/auth/me", headers={"Authorization": "Bearer invalid_token_string"})
     assert response.status_code == 401
 
 
-def test_get_me_token_for_deleted_user(client, auth_headers):
+def test_get_me_token_for_deleted_user(client, auth_headers, clean_test_data):
+    users_repo = clean_test_data["users_repo"]
+
     user = users_repo.get_by_username("testuser")
     assert user is not None
     users_repo.delete(user["id"])

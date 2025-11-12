@@ -8,64 +8,13 @@ import jwt
 import pytest
 
 from app.core.config import settings
-from app.repositories.penalties_repo import PenaltiesRepository
-from app.repositories.ratings_repo import RatingsRepository
-from app.repositories.users_repo import UsersRepository
-
-
-users_repo = UsersRepository()
-penalties_repo = PenaltiesRepository()
-ratings_repo = RatingsRepository()
-
-
-@pytest.fixture(autouse=True)
-def cleanup_test_data():
-    test_usernames = ["adminuser", "testuser", "penalizeduser"]
-    test_emails = ["admin@example.com", "test@example.com", "penalized@example.com"]
-
-    for username in test_usernames:
-        user = users_repo.get_by_username(username)
-        if user:
-            user_ratings = ratings_repo.get_by_user(user["id"])
-            for rating in user_ratings:
-                ratings_repo.delete(rating["id"])
-            users_repo.delete(user["id"])
-
-    for email in test_emails:
-        user = users_repo.get_by_email(email)
-        if user:
-            user_ratings = ratings_repo.get_by_user(user["id"])
-            for rating in user_ratings:
-                ratings_repo.delete(rating["id"])
-            users_repo.delete(user["id"])
-
-    yield
-
-    for username in test_usernames:
-        user = users_repo.get_by_username(username)
-        if user:
-            user_ratings = ratings_repo.get_by_user(user["id"])
-            for rating in user_ratings:
-                ratings_repo.delete(rating["id"])
-            penalties = penalties_repo.get_by_user(user["id"])
-            for penalty in penalties:
-                penalties_repo.delete(penalty["id"])
-            users_repo.delete(user["id"])
-
-    for email in test_emails:
-        user = users_repo.get_by_email(email)
-        if user:
-            user_ratings = ratings_repo.get_by_user(user["id"])
-            for rating in user_ratings:
-                ratings_repo.delete(rating["id"])
-            penalties = penalties_repo.get_by_user(user["id"])
-            for penalty in penalties:
-                penalties_repo.delete(penalty["id"])
-            users_repo.delete(user["id"])
 
 
 @pytest.fixture
-def admin_token(client):
+def admin_token(client, clean_test_data):
+    """Create an admin user and return auth token."""
+    users_repo = clean_test_data["users_repo"]
+
     response = client.post(
         "/auth/register",
         json={
@@ -79,12 +28,12 @@ def admin_token(client):
     users_repo.update(admin["id"], {"role": "admin"})
 
     payload = {"sub": "adminuser", "exp": datetime.now(UTC).timestamp() + 3600}
-
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
 @pytest.fixture
-def regular_user(client):
+def regular_user(client, clean_test_data):
+    """Create a regular user and return user data."""
     response = client.post(
         "/auth/register",
         json={
@@ -97,7 +46,8 @@ def regular_user(client):
 
 
 @pytest.fixture
-def regular_user_token(client):
+def regular_user_token(client, clean_test_data):
+    """Create a regular user and return auth token."""
     client.post(
         "/auth/register",
         json={
@@ -108,11 +58,10 @@ def regular_user_token(client):
     )
 
     payload = {"sub": "testuser", "exp": datetime.now(UTC).timestamp() + 3600}
-
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
-def test_get_all_users_success(client, admin_token, regular_user):
+def test_get_all_users_success(client, admin_token, regular_user, clean_test_data):
     response = client.get("/admin/users", headers={"Authorization": f"Bearer {admin_token}"})
 
     assert response.status_code == 200
@@ -129,20 +78,19 @@ def test_get_all_users_success(client, admin_token, regular_user):
     assert "total_penalties" in user_data["stats"]
 
 
-def test_get_all_users_forbidden_for_regular_user(client, regular_user_token):
+def test_get_all_users_forbidden_for_regular_user(client, regular_user_token, clean_test_data):
     response = client.get("/admin/users", headers={"Authorization": f"Bearer {regular_user_token}"})
 
     assert response.status_code == 403
     assert "Admin privileges required" in response.json()["detail"]
 
 
-def test_get_all_users_unauthorized_without_token(client):
+def test_get_all_users_unauthorized_without_token(client, clean_test_data):
     response = client.get("/admin/users")
-
     assert response.status_code == 401
 
 
-def test_apply_penalty_success(client, admin_token, regular_user):
+def test_apply_penalty_success(client, admin_token, regular_user, clean_test_data):
     response = client.post(
         "/admin/penalties",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -162,7 +110,8 @@ def test_apply_penalty_success(client, admin_token, regular_user):
     assert "issued_at" in data
 
 
-def test_apply_penalty_forbidden_for_regular_user(client, regular_user_token):
+def test_apply_penalty_forbidden_for_regular_user(client, regular_user_token, clean_test_data):
+    users_repo = clean_test_data["users_repo"]
     user = users_repo.get_by_username("testuser")
     assert user is not None
 
@@ -175,7 +124,7 @@ def test_apply_penalty_forbidden_for_regular_user(client, regular_user_token):
     assert response.status_code == 403
 
 
-def test_get_all_penalties_success(client, admin_token, regular_user):
+def test_get_all_penalties_success(client, admin_token, regular_user, clean_test_data):
     client.post(
         "/admin/penalties",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -190,13 +139,12 @@ def test_get_all_penalties_success(client, admin_token, regular_user):
     assert len(data) >= 1
 
 
-def test_get_all_penalties_forbidden_for_regular_user(client, regular_user_token):
+def test_get_all_penalties_forbidden_for_regular_user(client, regular_user_token, clean_test_data):
     response = client.get("/admin/penalties", headers={"Authorization": f"Bearer {regular_user_token}"})
-
     assert response.status_code == 403
 
 
-def test_get_user_penalties_success(client, admin_token, regular_user):
+def test_get_user_penalties_success(client, admin_token, regular_user, clean_test_data):
     client.post(
         "/admin/penalties",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -215,7 +163,7 @@ def test_get_user_penalties_success(client, admin_token, regular_user):
     assert data[0]["user_id"] == regular_user["id"]
 
 
-def test_resolve_penalty_success(client, admin_token, regular_user):
+def test_resolve_penalty_success(client, admin_token, regular_user, clean_test_data):
     penalty_response = client.post(
         "/admin/penalties",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -232,7 +180,7 @@ def test_resolve_penalty_success(client, admin_token, regular_user):
     assert "Penalty resolved successfully" in response.json()["message"]
 
 
-def test_resolve_nonexistent_penalty_returns_404(client, admin_token):
+def test_resolve_nonexistent_penalty_returns_404(client, admin_token, clean_test_data):
     response = client.put(
         "/admin/penalties/non-existent-id/resolve",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -241,7 +189,7 @@ def test_resolve_nonexistent_penalty_returns_404(client, admin_token):
     assert response.status_code == 404
 
 
-def test_delete_penalty_success(client, admin_token, regular_user):
+def test_delete_penalty_success(client, admin_token, regular_user, clean_test_data):
     penalty_response = client.post(
         "/admin/penalties",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -257,7 +205,7 @@ def test_delete_penalty_success(client, admin_token, regular_user):
     assert response.status_code == 204
 
 
-def test_delete_nonexistent_penalty_returns_404(client, admin_token):
+def test_delete_nonexistent_penalty_returns_404(client, admin_token, clean_test_data):
     response = client.delete(
         "/admin/penalties/non-existent-id",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -266,7 +214,7 @@ def test_delete_nonexistent_penalty_returns_404(client, admin_token):
     assert response.status_code == 404
 
 
-def test_get_system_stats_success(client, admin_token, regular_user):
+def test_get_system_stats_success(client, admin_token, regular_user, clean_test_data):
     response = client.get("/admin/stats", headers={"Authorization": f"Bearer {admin_token}"})
 
     assert response.status_code == 200
@@ -280,7 +228,7 @@ def test_get_system_stats_success(client, admin_token, regular_user):
     assert data["total_users"] >= 2  # At least admin and regular user
 
 
-def test_check_user_violations_success(client, admin_token, regular_user):
+def test_check_user_violations_success(client, admin_token, regular_user, clean_test_data):
     response = client.get(
         f"/admin/violations/{regular_user['id']}",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -293,7 +241,8 @@ def test_check_user_violations_success(client, admin_token, regular_user):
     assert isinstance(data["violations"], list)
 
 
-def test_penalized_user_blocked_from_access(client, admin_token, regular_user_token):
+def test_penalized_user_blocked_from_access(client, admin_token, regular_user_token, clean_test_data):
+    users_repo = clean_test_data["users_repo"]
     user = users_repo.get_by_username("testuser")
     assert user is not None
 
@@ -317,7 +266,8 @@ def test_penalized_user_blocked_from_access(client, admin_token, regular_user_to
     assert "active penalties" in response.json()["detail"].lower()
 
 
-def test_user_can_access_after_penalty_resolved(client, admin_token, regular_user_token):
+def test_user_can_access_after_penalty_resolved(client, admin_token, regular_user_token, clean_test_data):
+    users_repo = clean_test_data["users_repo"]
     user = users_repo.get_by_username("testuser")
     assert user is not None
 

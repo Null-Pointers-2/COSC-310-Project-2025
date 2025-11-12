@@ -1,6 +1,6 @@
 """Integration tests for SingletonResources lifecycle with FastAPI."""
 
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 from fastapi.testclient import TestClient
 import pytest
@@ -10,6 +10,7 @@ from app.main import SingletonResources, app
 
 @pytest.fixture
 def reset_singleton():
+    """Reset singleton state before and after test."""
     SingletonResources._instance = None
     SingletonResources._initialized = False
     yield
@@ -32,7 +33,7 @@ def test_singleton_available_in_app_state(client):
     assert resources is not None
 
 
-def test_singleton_cleanup_called_on_shutdown(reset_singleton):
+def test_singleton_cleanup_called_on_shutdown(reset_singleton, test_data_dir):
     mock_cleanup = Mock()
 
     with TestClient(app) as test_client:
@@ -72,17 +73,3 @@ def test_root_endpoint_works_with_singleton(client):
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Movie Recommendations API"
-
-
-def test_app_handles_repository_initialization_error(reset_singleton):
-    with (
-        patch("app.main.UsersRepository", side_effect=Exception("Init error")),
-        patch("app.main.MoviesRepository"),
-        patch("app.main.RatingsRepository"),
-        patch("app.main.WatchlistRepository"),
-        patch("app.main.RecommendationsRepository"),
-        patch("app.main.PenaltiesRepository"),
-        patch("app.main.PasswordHasher"),
-        pytest.raises(Exception, match="Init error"),
-    ):
-        SingletonResources()

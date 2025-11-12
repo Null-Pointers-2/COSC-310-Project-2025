@@ -9,17 +9,6 @@ from pathlib import Path
 
 import pytest
 
-from app.repositories.movies_repo import MoviesRepository
-from app.repositories.ratings_repo import RatingsRepository
-from app.repositories.recommendations_repo import RecommendationsRepository
-from app.repositories.users_repo import UsersRepository
-
-
-users_repo = UsersRepository()
-ratings_repo = RatingsRepository()
-recommendations_repo = RecommendationsRepository()
-movies_repo = MoviesRepository()
-
 
 def check_ml_artifacts_exist():
     """Check if required ML artifacts exist."""
@@ -33,52 +22,7 @@ def check_ml_artifacts_exist():
     return len(missing) == 0, missing
 
 
-@pytest.fixture(autouse=True)
-def cleanup_test_data():
-    """Clean up test data before and after the test."""
-    test_usernames = ["e2e_user"]
-    test_emails = ["e2e@test.com"]
-
-    for username in test_usernames:
-        user = users_repo.get_by_username(username)
-        if user:
-            user_ratings = ratings_repo.get_by_user(user["id"])
-            for rating in user_ratings:
-                ratings_repo.delete(rating["id"])
-            recommendations_repo.clear_for_user(user["id"])
-            users_repo.delete(user["id"])
-
-    for email in test_emails:
-        user = users_repo.get_by_email(email)
-        if user:
-            user_ratings = ratings_repo.get_by_user(user["id"])
-            for rating in user_ratings:
-                ratings_repo.delete(rating["id"])
-            recommendations_repo.clear_for_user(user["id"])
-            users_repo.delete(user["id"])
-
-    yield
-
-    for username in test_usernames:
-        user = users_repo.get_by_username(username)
-        if user:
-            user_ratings = ratings_repo.get_by_user(user["id"])
-            for rating in user_ratings:
-                ratings_repo.delete(rating["id"])
-            recommendations_repo.clear_for_user(user["id"])
-            users_repo.delete(user["id"])
-
-    for email in test_emails:
-        user = users_repo.get_by_email(email)
-        if user:
-            user_ratings = ratings_repo.get_by_user(user["id"])
-            for rating in user_ratings:
-                ratings_repo.delete(rating["id"])
-            recommendations_repo.clear_for_user(user["id"])
-            users_repo.delete(user["id"])
-
-
-def test_complete_recommendation_flow(client):
+def test_recommendation_flow(client, clean_test_data):
     """
     E2E test for complete recommendation flow.
 
@@ -88,6 +32,10 @@ def test_complete_recommendation_flow(client):
     3. User rates multiple movies (some high, some low)
     4. User requests recommendations (gets personalized results)
     """
+    # Get test repositories
+    users_repo = clean_test_data["users_repo"]
+    ratings_repo = clean_test_data["ratings_repo"]
+    recommendations_repo = clean_test_data["recommendations_repo"]
 
     # Check if ML artifacts exist
     ml_ready, missing = check_ml_artifacts_exist()
@@ -162,6 +110,10 @@ def test_complete_recommendation_flow(client):
     my_ratings = my_ratings_response.json()
     assert len(my_ratings) == 10
 
+    # Verify ratings are stored in test repository
+    user_ratings_from_repo = ratings_repo.get_by_user(user["id"])
+    assert len(user_ratings_from_repo) == 10
+
     # Step 4: Get recommendations
     recommendations_response = client.get("/recommendations/me?limit=10", headers=headers)
     assert recommendations_response.status_code == 200, (
@@ -200,7 +152,11 @@ def test_complete_recommendation_flow(client):
     scores = [rec["similarity_score"] for rec in recommendations]
     assert scores == sorted(scores, reverse=True), "Recommendations should be sorted by score"
 
-    # Test caching
+    # Test caching of recommendations
+    cached_data = recommendations_repo.get_for_user(user["id"])
+    assert cached_data is not None, "Recommendations should be cached"
+    assert len(cached_data["recommendations"]) > 0
+
     cached_response = client.get("/recommendations/me?limit=10", headers=headers)
     assert cached_response.status_code == 200
     cached_recommendations = cached_response.json()["recommendations"]
@@ -221,6 +177,10 @@ def test_complete_recommendation_flow(client):
         additional_rated.append(movie["movieId"])
 
     all_rated_movies = rated_movies + additional_rated
+
+    # Verify all ratings are in repository
+    all_user_ratings = ratings_repo.get_by_user(user["id"])
+    assert len(all_user_ratings) == 15
 
     refresh_response = client.post("/recommendations/me/refresh?limit=10", headers=headers)
     assert refresh_response.status_code == 200
@@ -268,3 +228,8 @@ def test_complete_recommendation_flow(client):
     profile = profile_response.json()
     assert profile["total_ratings"] == len(all_rated_movies)
     assert profile["average_rating"] > 0
+
+    # Verify user exists in test repository
+    user_from_repo = users_repo.get_by_id(user["id"])
+    assert user_from_repo is not None
+    assert user_from_repo["username"] == "e2e_user"

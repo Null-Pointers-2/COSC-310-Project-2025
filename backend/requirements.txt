@@ -27,6 +27,7 @@ numpy==1.26.2
 packaging==25.0
 pandas==2.3.3
 pluggy==1.6.0
+pre-commit==4.4.0
 pwdlib==0.2.1
 pyasn1==0.6.1
 pycparser==2.23

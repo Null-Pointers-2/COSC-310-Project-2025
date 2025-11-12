@@ -26,7 +26,7 @@ class RatingsRepository:
     def _read(self) -> list[dict]:
         """Read all ratings from file."""
         try:
-            with open(self.ratings_file, encoding="utf-8") as f:
+            with Path.open(self.ratings_file, encoding="utf-8") as f:
                 return json.load(f)
         except json.JSONDecodeError:
             self.ratings_file.write_text("[]", encoding="utf-8")
@@ -34,7 +34,7 @@ class RatingsRepository:
 
     def _write(self, ratings: list[dict]):
         """Write all ratings to file."""
-        with open(self.ratings_file, "w", encoding="utf-8") as f:
+        with Path.open(self.ratings_file, "w", encoding="utf-8") as f:
             json.dump(ratings, f, indent=2, ensure_ascii=False)
 
     def _get_next_id(self) -> int:

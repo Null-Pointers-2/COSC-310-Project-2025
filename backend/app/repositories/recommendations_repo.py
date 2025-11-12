@@ -26,7 +26,7 @@ class RecommendationsRepository:
     def _read(self) -> dict:
         """Read all cached recommendations."""
         try:
-            with open(self.recommendations_file, encoding="utf-8") as f:
+            with Path.open(self.recommendations_file, encoding="utf-8") as f:
                 return json.load(f)
         except (OSError, json.JSONDecodeError):
             return {}
@@ -34,7 +34,7 @@ class RecommendationsRepository:
     def _write(self, recommendations: dict):
         """Write all recommendations to file."""
         try:
-            with open(self.recommendations_file, "w", encoding="utf-8") as f:
+            with Path.open(self.recommendations_file, "w", encoding="utf-8") as f:
                 json.dump(recommendations, f, indent=2, ensure_ascii=False)
         except OSError as e:
             raise Exception(f"Failed to write recommendations file: {e}") from e

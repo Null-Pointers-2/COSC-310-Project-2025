@@ -5,7 +5,7 @@ from unittest.mock import Mock
 import pytest
 
 from app.repositories.ratings_repo import RatingsRepository
-from app.schemas.rating import RatingCreate
+from app.schemas.rating import RatingCreate, RatingUpdate
 from app.services import ratings_service
 
 
@@ -54,8 +54,6 @@ def test_update_existing_rating(setup_repos):
     resources = setup_repos
 
     created = resources.ratings_repo.create({"user_id": "u1", "movie_id": 1, "rating": 4.0})
-
-    from app.schemas.rating import RatingUpdate
 
     update_data = RatingUpdate(rating=5.0)
     updated = ratings_service.update_rating(resources, created["id"], "u1", update_data)

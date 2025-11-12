@@ -45,7 +45,7 @@ class MovieRecommender:
         mapping_path = self.data_dir / "movie_id_to_idx.pkl"
         if not mapping_path.exists():
             raise FileNotFoundError(f"Missing {mapping_path}. Run data_preprocessor.py.")
-        with open(mapping_path, "rb") as f:
+        with Path.open(mapping_path, "rb") as f:
             self.movie_id_to_idx = pickle.load(f)
 
         self.idx_to_movie_id = {idx: mid for mid, idx in self.movie_id_to_idx.items()}

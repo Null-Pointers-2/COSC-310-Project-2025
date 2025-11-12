@@ -79,9 +79,8 @@ def admin_token(client):
     users_repo.update(admin["id"], {"role": "admin"})
 
     payload = {"sub": "adminuser", "exp": datetime.now(UTC).timestamp() + 3600}
-    token = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-    return token
+    return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
 @pytest.fixture
@@ -109,9 +108,8 @@ def regular_user_token(client):
     )
 
     payload = {"sub": "testuser", "exp": datetime.now(UTC).timestamp() + 3600}
-    token = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-    return token
+    return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
 def test_get_all_users_success(client, admin_token, regular_user):

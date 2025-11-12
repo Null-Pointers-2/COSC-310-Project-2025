@@ -75,7 +75,8 @@ def test_clear_for_user(mocker):
 
     repo.clear_for_user("u1")
     result = mock_write.call_args[0][0]
-    assert "u1" not in result and "u2" in result
+    assert "u1" not in result
+    assert "u2" in result
 
 
 def test_is_fresh_true(mocker):

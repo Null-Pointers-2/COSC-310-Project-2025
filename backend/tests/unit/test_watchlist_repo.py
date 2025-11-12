@@ -15,7 +15,7 @@ def temp_watchlist(tmp_path):
 
 
 def test_file_is_created_if_not_exists(temp_watchlist):
-    repo, file_path = temp_watchlist
+    _repo, file_path = temp_watchlist
 
     assert file_path.exists()
     assert json.loads(file_path.read_text()) == {}
@@ -45,7 +45,7 @@ def test_add_multiple_movies_same_user(temp_watchlist):
 
 
 def test_get_by_user(temp_watchlist):
-    repo, file_path = temp_watchlist
+    repo, _file_path = temp_watchlist
 
     repo.add("user1", 1)
     repo.add("user1", 2)
@@ -96,7 +96,7 @@ def test_remove_movies(temp_watchlist):
 
 
 def test_remove_movie_not_found(temp_watchlist):
-    repo, file_path = temp_watchlist
+    repo, _file_path = temp_watchlist
 
     repo.add("user1", 1)
     result = repo.remove("user1", 999)  # Former site of 💯 from when IDs were strings, RIP

@@ -27,7 +27,7 @@ class PenaltiesRepository:
     def _read(self) -> list[dict]:
         """Read all penalties from file."""
         try:
-            with open(self.penalties_file, encoding="utf-8") as f:
+            with Path.open(self.penalties_file, encoding="utf-8") as f:
                 return json.load(f)
         except json.JSONDecodeError:
             self.penalties_file.write_text("[]", encoding="utf-8")
@@ -35,7 +35,7 @@ class PenaltiesRepository:
 
     def _write(self, penalties: list[dict]):
         """Write all penalties to file."""
-        with open(self.penalties_file, "w", encoding="utf-8") as f:
+        with Path.open(self.penalties_file, "w", encoding="utf-8") as f:
             json.dump(penalties, f, indent=2, ensure_ascii=False)
 
     def get_all(self) -> list[dict]:

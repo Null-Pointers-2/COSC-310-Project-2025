@@ -102,9 +102,7 @@ class MovieDataPreprocessor:
         combined = np.hstack([genre_weighted, genome_weighted])
 
         # Final normalization
-        combined = normalize(combined, norm="l2", axis=1)
-
-        return combined
+        return normalize(combined, norm="l2", axis=1)
 
     def save_processed_data(
         self,
@@ -121,13 +119,13 @@ class MovieDataPreprocessor:
         np.save(combined_path, combined_matrix)
 
         vectorizer_path = self.output_dir / "tfidf_vectorizer.pkl"
-        with open(vectorizer_path, "wb") as f:
+        with Path.open(vectorizer_path, "wb") as f:
             pickle.dump(tfidf_vectorizer, f)
 
         movie_id_to_idx = pd.Series(range(len(movies_df)), index=movies_df["movieId"]).to_dict()
 
         mapping_path = self.output_dir / "movie_id_to_idx.pkl"
-        with open(mapping_path, "wb") as f:
+        with Path.open(mapping_path, "wb") as f:
             pickle.dump(movie_id_to_idx, f)
 
     def run_preprocessing(self):

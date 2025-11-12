@@ -9,6 +9,7 @@ Usage:
 
 from pathlib import Path
 import sys
+import traceback
 
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -55,7 +56,7 @@ def main():
         )
 
         preprocessor.run_preprocessing()
-        print("✓ Feature matrices created successfully")
+        print("Feature matrices created successfully")
         print()
 
         print("Step 2: Computing similarity matrix...")
@@ -102,7 +103,6 @@ def main():
         print("ERROR: Setup failed!")
         print(f"{type(e).__name__}: {e}")
         print()
-        import traceback
 
         traceback.print_exc()
         return 1

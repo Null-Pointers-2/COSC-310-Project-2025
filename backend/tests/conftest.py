@@ -27,7 +27,7 @@ def test_app():
         app.state.resources.cleanup()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def client(test_app):
     """Create a test client for each test function."""
     with TestClient(test_app) as test_client:

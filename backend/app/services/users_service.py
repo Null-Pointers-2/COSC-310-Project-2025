@@ -53,10 +53,7 @@ def get_user_dashboard(user_id: str, resources) -> UserDashboard | None:
     penalties = resources.penalties_repo.get_by_user(user_id)
     recommendations_data = resources.recommendations_repo.get_for_user(user_id)
 
-    if recommendations_data:
-        recommendations_list = recommendations_data.get("recommendations", [])
-    else:
-        recommendations_list = []
+    recommendations_list = recommendations_data.get("recommendations", []) if recommendations_data else []
 
     dashboard_data = {
         "user": profile,
@@ -75,8 +72,7 @@ def update_user(user_id: str, update_data: UserUpdate, resources) -> dict | None
     if not update_dict:
         return get_user_by_id(user_id, resources)
 
-    updated_user = resources.users_repo.update(user_id, update_dict)
-    return updated_user
+    return resources.users_repo.update(user_id, update_dict)
 
 
 def get_all_users(resources) -> list[dict]:

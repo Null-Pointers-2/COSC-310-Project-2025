@@ -4,6 +4,7 @@ from typing import Optional
 from argon2 import PasswordHasher
 from fastapi import FastAPI
 
+from app.ml.recommender import MovieRecommender
 from app.repositories.movies_repo import MoviesRepository
 from app.repositories.penalties_repo import PenaltiesRepository
 from app.repositories.ratings_repo import RatingsRepository
@@ -54,6 +55,8 @@ class SingletonResources:
 
             self.password_hasher = PasswordHasher()
 
+            self.recommender = MovieRecommender()
+
             SingletonResources._initialized = True
             print("Singleton resources initialized successfully")
 
@@ -72,7 +75,6 @@ app = FastAPI(
 )
 
 
-# Health check endpoint
 @app.get("/health", tags=["Health"])
 async def health_check():
     """
@@ -86,7 +88,6 @@ async def health_check():
     }
 
 
-# Root endpoint
 @app.get("/", tags=["Root"])
 async def root():
     """
@@ -101,7 +102,6 @@ async def root():
     }
 
 
-# Routers
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/users", tags=["Users"])
 app.include_router(movies.router, prefix="/movies", tags=["Movies"])
@@ -112,7 +112,6 @@ app.include_router(admin.router, prefix="/admin", tags=["Admin"])
 app.include_router(export.router, prefix="/export", tags=["Export"])
 
 
-# Startup event
 @app.on_event("startup")
 async def startup_event():
     """
@@ -126,7 +125,6 @@ async def startup_event():
     print("Application startup complete")
 
 
-# Shutdown event
 @app.on_event("shutdown")
 async def shutdown_event():
     """

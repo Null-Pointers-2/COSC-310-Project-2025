@@ -78,6 +78,26 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
     "F401",    # Unused imports (fixtures, etc.)
 ]
 
+# E2E tests can be long and complex
+"tests/e2e/**/*.py" = [
+    "S101",    # Use of assert
+    "PLR0915", # Too many statements (E2E tests are naturally long)
+    "PLR0912", # Too many branches
+]
+
+# Integration tests with fixtures can have complex setup/teardown
+"tests/integration/**/*.py" = [
+    "S101",    # Use of assert
+    "PLR0912", # Too many branches (fixtures with cleanup)
+    "PLR0915", # Too many statements
+]
+
+# Scripts can be long and complex
+"scripts/*.py" = [
+    "PLR0912", # Too many branches
+    "PLR0915", # Too many statements
+]
+
 # __init__.py files can have unused imports
 "**/__init__.py" = [
     "F401",    # Unused imports
@@ -108,4 +128,4 @@ line-ending = "auto"
 skip-magic-trailing-comma = false
 
 # Respect existing line breaks
-docstring-code-format = true 
+docstring-code-format = true

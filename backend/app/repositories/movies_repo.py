@@ -103,7 +103,7 @@ class MoviesRepository:
         """Get list of all unique genres."""
         if self.movies_df is None or self.movies_df.empty:
             return []
-        all_genres = set(genre for sublist in self.movies_df["genres"] for genre in sublist if genre)
+        all_genres = {genre for sublist in self.movies_df["genres"] for genre in sublist if genre}
         return sorted(all_genres)
 
     def get_average_rating(self, movie_id: int, ratings_path: Path | None = None) -> float | None:
@@ -115,7 +115,7 @@ class MoviesRepository:
             return None
 
         try:
-            with open(ratings_path, encoding="utf-8") as f:
+            with Path.open(ratings_path, encoding="utf-8") as f:
                 ratings = json.load(f)
         except json.JSONDecodeError:
             return None

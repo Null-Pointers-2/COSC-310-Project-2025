@@ -70,5 +70,4 @@ def get_all_genres(resources) -> list[str]:
 
 def get_movie_ratings(resources, movie_id: int) -> list[dict]:
     """Get all ratings for a movie."""
-    ratings = resources.ratings_repo.get_by_movie(movie_id)
-    return ratings
+    return resources.ratings_repo.get_by_movie(movie_id)

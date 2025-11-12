@@ -18,10 +18,9 @@ def create_rating(
 ):
     """Rate a movie."""
     try:
-        new_rating = ratings_service.create_rating(resources, current_user["id"], rating_data)
-        return new_rating
+        return ratings_service.create_rating(resources, current_user["id"], rating_data)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/me", response_model=list[Rating])
@@ -30,14 +29,12 @@ def get_my_ratings(
     resources=Depends(get_resources),
 ):
     """Get current user's ratings."""
-    ratings = ratings_service.get_user_ratings(resources, current_user["id"])
-    return ratings
+    return ratings_service.get_user_ratings(resources, current_user["id"])
 
 
 @router.get("/{rating_id}", response_model=Rating)
 def get_rating(
     rating_id: int,
-    current_user: dict = Depends(get_current_active_user),
     resources=Depends(get_resources),
 ):
     """Get specific rating."""

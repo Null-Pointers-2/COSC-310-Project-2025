@@ -11,9 +11,8 @@ from app.services import recommendations_service
 @pytest.fixture
 def mock_resources():
     """Mock resources object with repositories."""
-    resources = Mock()
 
-    return resources
+    return Mock()
 
 
 @pytest.fixture
@@ -120,8 +119,10 @@ def test_uses_high_rated_movies_as_seeds(mocker, mock_resources, mock_recommende
     recommendations_service.generate_recommendations(mock_resources, "user123", limit=10)
 
     seed_movie_ids = [call.args[1] for call in mock_get_similar.call_args_list]  # Second arg is movie_id
-    assert 1 in seed_movie_ids and 2 in seed_movie_ids and 4 in seed_movie_ids
+    assert 1 in seed_movie_ids
+    assert 2 in seed_movie_ids
     assert 3 not in seed_movie_ids
+    assert 4 in seed_movie_ids
 
 
 def test_excludes_already_rated_movies(mocker, mock_resources, mock_recommender):
@@ -144,7 +145,8 @@ def test_excludes_already_rated_movies(mocker, mock_resources, mock_recommender)
 
     result = recommendations_service.generate_recommendations(mock_resources, "user123", limit=10)
     movie_ids = [r.movie_id for r in result]
-    assert 2 not in movie_ids and 100 in movie_ids
+    assert 2 not in movie_ids
+    assert 100 in movie_ids
 
 
 def test_aggregates_scores_from_multiple_seeds(mocker, mock_resources, mock_recommender):
@@ -210,19 +212,6 @@ def test_returns_empty_for_invalid_movie(mock_resources, mock_recommender):
     result = recommendations_service.get_similar_movies(mock_resources, 9999, limit=5)
     assert result == []
     mock_recommender.get_recommendations.assert_not_called()
-
-
-def test_recommender_singleton(mocker):
-    mock_recommender_class = mocker.patch("app.services.recommendations_service.MovieRecommender")
-    mock_instance = MagicMock()
-    mock_recommender_class.return_value = mock_instance
-
-    recommendations_service._recommender = None
-    r1 = recommendations_service._get_recommender()
-    r2 = recommendations_service._get_recommender()
-
-    assert r1 is r2
-    assert mock_recommender_class.call_count == 1
 
 
 def test_clear_cache_calls_repo(mock_resources):

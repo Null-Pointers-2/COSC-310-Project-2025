@@ -2,19 +2,7 @@
 
 from collections import defaultdict
 
-from app.ml.recommender import MovieRecommender
 from app.schemas.recommendation import RecommendationItem, RecommendationList
-
-
-_recommender: MovieRecommender | None = None
-
-
-def _get_recommender() -> MovieRecommender:
-    """Get or initialize the movie recommender singleton."""
-    global _recommender
-    if _recommender is None:
-        _recommender = MovieRecommender()
-    return _recommender
 
 
 def get_recommendations(resources, user_id: str, limit: int = 10, force_refresh: bool = False) -> RecommendationList:
@@ -110,13 +98,12 @@ def get_similar_movies(resources, movie_id: int, limit: int = 10) -> list[Recomm
     Returns:
         List of RecommendationItem sorted by similarity score
     """
-    recommender = _get_recommender()
 
     movie = resources.movies_repo.get_by_id(movie_id)
     if not movie:
         return []
 
-    recommendations = recommender.get_similar_by_id(movie_id, n=limit)
+    recommendations = resources.recommender.get_similar_by_id(movie_id, n=limit)
 
     if recommendations is None:
         print(f"Warning: Movie ID {movie_id} not found in recommender dataset")

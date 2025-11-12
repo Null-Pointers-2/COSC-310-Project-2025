@@ -51,12 +51,12 @@ def decode_token(token: str, users_repo) -> dict:
             )
 
         return {"user_id": user["id"], "username": username, "role": user["role"]}
-    except InvalidTokenError:
+    except InvalidTokenError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
-        )
+        ) from e
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme), resources=Depends(get_resources)) -> dict:
@@ -86,12 +86,12 @@ async def get_current_user(token: str = Depends(oauth2_scheme), resources=Depend
         return user
     except HTTPException:
         raise
-    except Exception:
+    except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
-        )
+        ) from e
 
 
 async def get_current_active_user(

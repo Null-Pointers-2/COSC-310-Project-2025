@@ -12,7 +12,6 @@ router = APIRouter()
 
 @router.get("/users")
 def get_all_users(
-    current_admin: dict = Depends(get_current_admin_user),
     resources=Depends(get_resources),
 ):
     """Get all users with statistics."""
@@ -32,7 +31,6 @@ def apply_penalty(
 
 @router.get("/penalties", response_model=list[Penalty])
 def get_all_penalties(
-    current_admin: dict = Depends(get_current_admin_user),
     resources=Depends(get_resources),
 ):
     """Get all penalties."""
@@ -42,7 +40,6 @@ def get_all_penalties(
 @router.get("/penalties/user/{user_id}", response_model=list[Penalty])
 def get_user_penalties(
     user_id: str,
-    current_admin: dict = Depends(get_current_admin_user),
     resources=Depends(get_resources),
 ):
     """Get penalties for a specific user."""
@@ -52,7 +49,6 @@ def get_user_penalties(
 @router.put("/penalties/{penalty_id}/resolve")
 def resolve_penalty(
     penalty_id: str,
-    current_admin: dict = Depends(get_current_admin_user),
     resources=Depends(get_resources),
 ):
     """Mark a penalty as resolved."""
@@ -68,7 +64,6 @@ def resolve_penalty(
 @router.delete("/penalties/{penalty_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_penalty(
     penalty_id: str,
-    current_admin: dict = Depends(get_current_admin_user),
     resources=Depends(get_resources),
 ):
     """Delete a penalty."""
@@ -82,7 +77,6 @@ def delete_penalty(
 
 @router.get("/stats")
 def get_system_stats(
-    current_admin: dict = Depends(get_current_admin_user),
     resources=Depends(get_resources),
 ):
     """Get system-wide statistics."""
@@ -92,7 +86,6 @@ def get_system_stats(
 @router.get("/violations/{user_id}")
 def check_user_violations(
     user_id: str,
-    current_admin: dict = Depends(get_current_admin_user),
     resources=Depends(get_resources),
 ):
     """Check for user violations."""

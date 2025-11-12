@@ -42,13 +42,9 @@ def authenticate_user(username: str, password: str, resources):
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     """Create a JWT access token."""
     to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now(UTC) + expires_delta
-    else:
-        expire = datetime.now(UTC) + timedelta(minutes=15)
+    expire = datetime.now(UTC) + expires_delta if expires_delta else datetime.now(UTC) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
-    return encoded_jwt
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
 def get_user_from_token(token: str, resources) -> dict | None:
@@ -82,5 +78,4 @@ def register_user(username: str, email: str, password: str, resources, role: str
         "role": role,
         "created_at": datetime.now(UTC).isoformat(),
     }
-    new_user = resources.users_repo.create(user_data)
-    return new_user
+    return resources.users_repo.create(user_data)

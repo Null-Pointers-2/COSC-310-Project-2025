@@ -78,6 +78,12 @@ This process takes a few minutes and creates the following artifacts in `data/ml
 python -c "import secrets; f = open('.env', 'w', encoding='utf-8'); f.write('SECRET_KEY=' + secrets.token_urlsafe(48) + '\n'); f.close()"
 ```
 
+### 7. (Optional) Install pre-commit hooks for automatic linting/formatting
+Once installed, pre-commit will automatically run before every git commit, to ensure code quality.
+
+```bash
+pre-commit install
+```
 ---
 
 ## Running the Server

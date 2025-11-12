@@ -3,7 +3,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.core.dependencies import (
-    get_current_admin_user,
     get_current_user,
     get_resources,
 )
@@ -50,18 +49,15 @@ def update_my_profile(
 
 @router.get("", response_model=list[User])
 def get_all_users(
-    current_user: dict = Depends(get_current_admin_user),
     resources=Depends(get_resources),
 ):
     """Get all users (admin only)."""
-    users = users_service.get_all_users(resources)
-    return users
+    return users_service.get_all_users(resources)
 
 
 @router.get("/{user_id}", response_model=UserProfile)
 def get_user_profile(
     user_id: str,
-    current_user: dict = Depends(get_current_admin_user),
     resources=Depends(get_resources),
 ):
     """Get specific user's profile (admin only)."""

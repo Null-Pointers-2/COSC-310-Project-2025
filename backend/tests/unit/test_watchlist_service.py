@@ -204,7 +204,7 @@ def test_handles_mixed_valid_invalid_movies(mock_resources):
     result = watchlist_service.get_user_watchlist(mock_resources, "user123")
 
     assert len(result) == 2
-    assert set(item.movie_id for item in result) == {1, 2}
+    assert {item.movie_id for item in result} == {1, 2}
 
 
 def test_add_movie_with_integer_conversion(mock_resources, sample_movie):

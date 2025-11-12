@@ -1,11 +1,15 @@
 """Recommendations service using cosine similarity."""
 
+import logging
 from collections import defaultdict
 
+from app.core.config import settings
 from app.schemas.recommendation import RecommendationItem, RecommendationList
 
+logger = logging.getLogger(__name__)
 
-def get_recommendations(resources, user_id: str, limit: int = 10, force_refresh: bool = False) -> RecommendationList:
+
+def get_recommendations(resources, user_id: str, limit: int = 10, *, force_refresh: bool = False) -> RecommendationList:
     """
     Get personalized recommendations for a user.
 
@@ -20,6 +24,7 @@ def get_recommendations(resources, user_id: str, limit: int = 10, force_refresh:
 
     Returns:
         RecommendationList with personalized recommendations
+
     """
     if not force_refresh:
         cached = resources.recommendations_repo.get_for_user(user_id)
@@ -44,14 +49,14 @@ def generate_recommendations(resources, user_id: str, limit: int = 10) -> list[R
 
     Returns:
         List of RecommendationItem sorted by similarity score
-    """
 
+    """
     user_ratings = resources.ratings_repo.get_by_user(user_id)
 
     if not user_ratings:
         return _get_fallback_recommendations(resources, limit)
 
-    seed_movies = [r for r in user_ratings if r["rating"] >= 4.0]
+    seed_movies = [r for r in user_ratings if r["rating"] >= settings.HIGH_RATING_THRESHOLD]
 
     if not seed_movies:
         seed_movies = sorted(user_ratings, key=lambda x: x["rating"], reverse=True)[:5]
@@ -97,8 +102,8 @@ def get_similar_movies(resources, movie_id: int, limit: int = 10) -> list[Recomm
 
     Returns:
         List of RecommendationItem sorted by similarity score
-    """
 
+    """
     movie = resources.movies_repo.get_by_id(movie_id)
     if not movie:
         return []
@@ -106,7 +111,7 @@ def get_similar_movies(resources, movie_id: int, limit: int = 10) -> list[Recomm
     recommendations = resources.recommender.get_similar_by_id(movie_id, n=limit)
 
     if recommendations is None:
-        print(f"Warning: Movie ID {movie_id} not found in recommender dataset")
+        logger.warning("Movie ID %s not found in recommender dataset", movie_id)
         return []
 
     result = []
@@ -115,7 +120,7 @@ def get_similar_movies(resources, movie_id: int, limit: int = 10) -> list[Recomm
         if movie:
             result.append(RecommendationItem(movie_id=rec_id, similarity_score=round(float(score), 4)))
         else:
-            print(f"Warning: Recommended movie ID {rec_id} not found in movies repository")
+            logger.warning("Recommended movie ID %s not found in movies repository", rec_id)
 
     return result
 
@@ -132,13 +137,14 @@ def _get_fallback_recommendations(resources, limit: int = 10) -> list[Recommenda
 
     Returns:
         List of RecommendationItem with default similarity scores
+
     """
     # Get first N movies as fallback
     movies = resources.movies_repo.get_all(limit=limit)
 
     return [
         RecommendationItem(
-            movie_id=movie["movieId"],
+            movie_id=movie["movie_id"],
             similarity_score=0.5,  # Neutral score for fallback recommendations
         )
         for movie in movies
@@ -158,6 +164,7 @@ def refresh_recommendations_for_user(resources, user_id: str, limit: int = 10) -
 
     Returns:
         RecommendationList with fresh recommendations
+
     """
     return get_recommendations(resources, user_id, limit=limit, force_refresh=True)
 
@@ -169,5 +176,6 @@ def clear_recommendations_cache(resources, user_id: str) -> None:
     Args:
         resources: Application resources singleton
         user_id: User ID to clear cache for
+
     """
     resources.recommendations_repo.clear_for_user(user_id)

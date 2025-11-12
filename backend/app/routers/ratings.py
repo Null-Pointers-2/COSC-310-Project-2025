@@ -1,11 +1,13 @@
 """Rating endpoints."""
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.core.dependencies import get_current_active_user, get_resources
+from app.main import SingletonResources
 from app.schemas.rating import Rating, RatingCreate, RatingUpdate
 from app.services import ratings_service
-
 
 router = APIRouter()
 
@@ -13,8 +15,8 @@ router = APIRouter()
 @router.post("", response_model=Rating, status_code=status.HTTP_201_CREATED)
 def create_rating(
     rating_data: RatingCreate,
-    current_user: dict = Depends(get_current_active_user),
-    resources=Depends(get_resources),
+    current_user: Annotated[dict, Depends(get_current_active_user)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
     """Rate a movie."""
     try:
@@ -25,8 +27,8 @@ def create_rating(
 
 @router.get("/me", response_model=list[Rating])
 def get_my_ratings(
-    current_user: dict = Depends(get_current_active_user),
-    resources=Depends(get_resources),
+    current_user: Annotated[dict, Depends(get_current_active_user)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
     """Get current user's ratings."""
     return ratings_service.get_user_ratings(resources, current_user["id"])
@@ -48,8 +50,8 @@ def get_rating(
 def update_rating(
     rating_id: int,
     update_data: RatingUpdate,
-    current_user: dict = Depends(get_current_active_user),
-    resources=Depends(get_resources),
+    current_user: Annotated[dict, Depends(get_current_active_user)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
     """Update a rating."""
     existing_rating = ratings_service.get_rating_by_id(resources, rating_id)
@@ -67,8 +69,8 @@ def update_rating(
 @router.delete("/{rating_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_rating(
     rating_id: int,
-    current_user: dict = Depends(get_current_active_user),
-    resources=Depends(get_resources),
+    current_user: Annotated[dict, Depends(get_current_active_user)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
     """Delete a rating."""
     rating = ratings_service.get_rating_by_id(resources, rating_id)

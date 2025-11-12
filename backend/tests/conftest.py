@@ -4,13 +4,14 @@ Pytest configuration and fixtures for FastAPI application testing.
 
 import os
 
-
 os.environ["SECRET_KEY"] = "test-secret-key-for-testing-only-not-for-production"
 
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
 
-from app.main import SingletonResources, app
+from app.core.dependencies import get_resources
+from app.core.resources import SingletonResources
+from app.main import app
 from app.repositories.penalties_repo import PenaltiesRepository
 from app.repositories.ratings_repo import RatingsRepository
 from app.repositories.recommendations_repo import RecommendationsRepository
@@ -43,65 +44,44 @@ def test_repositories(test_data_dir):
 
 
 @pytest.fixture(scope="session")
-def test_app(test_repositories):
-    """Create a test app with initialized singleton resources using test repositories."""
-    SingletonResources._instance = None
-    SingletonResources._initialized = False
+def override_app_resources(test_repositories):
+    """
+    Overrides the app's 'get_resources' dependency for the entire session to return a SingletonResources object populated with shared test repositories.
+    """
+    mock_resources = SingletonResources()
 
-    app.state.resources = SingletonResources()
+    for repo_name, repo_instance in test_repositories.items():
+        if repo_instance is not None:
+            setattr(mock_resources, repo_name, repo_instance)
 
-    # Replace user data repositories with test repositories
-    # movies_repo uses production data (needed for ML recommendations and related tests)
-    app.state.resources.users_repo = test_repositories["users_repo"]
-    app.state.resources.ratings_repo = test_repositories["ratings_repo"]
-    app.state.resources.recommendations_repo = test_repositories["recommendations_repo"]
-    app.state.resources.penalties_repo = test_repositories["penalties_repo"]
-    app.state.resources.watchlist_repo = test_repositories["watchlist_repo"]
+    def mock_get_resources():
+        return mock_resources
 
-    yield app
+    app.dependency_overrides[get_resources] = mock_get_resources
 
-    if hasattr(app.state, "resources") and app.state.resources:
-        app.state.resources.cleanup()
+    yield
+
+    del app.dependency_overrides[get_resources]
 
 
 @pytest.fixture
-def client(test_app):
+def client(override_app_resources):
     """Create a test client for each test function."""
-    with TestClient(test_app) as test_client:
+    with TestClient(app) as test_client:
         yield test_client
 
 
 @pytest.fixture
 def clean_test_data(test_repositories):
-    """
-    Fixture to clean up test data before and after each test.
-    Ensures test isolation by removing all users, ratings, recommendations, and penalties.
-    """
-    users_repo = test_repositories["users_repo"]
-    ratings_repo = test_repositories["ratings_repo"]
-    recommendations_repo = test_repositories["recommendations_repo"]
-    penalties_repo = test_repositories["penalties_repo"]
-    watchlist_repo = test_repositories["watchlist_repo"]
+    """Fixture to clean up test data before and after each test."""
 
     def cleanup():
-        all_users = users_repo.get_all()
-        for user in all_users:
-            user_id = user["id"]
-
-            user_ratings = ratings_repo.get_by_user(user_id)
-            for rating in user_ratings:
-                ratings_repo.delete(rating["id"])
-
-            recommendations_repo.clear_for_user(user_id)
-
-            user_penalties = penalties_repo.get_by_user(user_id)
-            for penalty in user_penalties:
-                penalties_repo.delete(penalty["id"])
-
-            users_repo.delete(user_id)
+        test_repositories["users_repo"].save_all([])
+        test_repositories["ratings_repo"].save_data([])
+        test_repositories["recommendations_repo"].save_data({})
+        test_repositories["penalties_repo"].save_data([])
+        test_repositories["watchlist_repo"].save_data({})
 
     cleanup()
-
     yield test_repositories
-
     cleanup()

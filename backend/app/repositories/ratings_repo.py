@@ -1,7 +1,7 @@
 """Repository for ratings data operations."""
 
-from datetime import UTC, datetime
 import json
+from datetime import UTC, datetime
 from pathlib import Path
 
 from app.core.config import settings
@@ -116,3 +116,7 @@ class RatingsRepository:
             return False
         self._write(new_ratings)
         return True
+
+    def save_data(self, ratings: list[dict]):
+        """Overwrite the ratings file with the given list of ratings."""
+        self._write(ratings)

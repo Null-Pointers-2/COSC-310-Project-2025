@@ -19,19 +19,19 @@ def mock_resources():
 def sample_movies():
     return [
         {
-            "movieId": 1,
+            "movie_id": 1,
             "title": "Toy Story (1995)",
             "genres": ["Animation", "Children", "Comedy"],
             "year": 1995,
         },
         {
-            "movieId": 2,
+            "movie_id": 2,
             "title": "Are People Actually Reading These Titles? (2025)",
             "genres": ["Adventure", "Comedy", "Fantasy"],
             "year": 2025,
         },
         {
-            "movieId": 3,
+            "movie_id": 3,
             "title": "2001: A Space Odyssey (1968)",
             "genres": ["Sci-Fi", "Adventure", "Mystery"],
             "year": 1968,
@@ -51,7 +51,7 @@ def test_get_movies_with_pagination(mock_resources, sample_movies):
     assert result.total == 3
     assert result.total_pages == 1
     assert len(result.movies) == 3
-    assert result.movies[0].movieId == 1
+    assert result.movies[0].movie_id == 1
 
 
 def test_get_movies_calculates_total_pages(mock_resources, sample_movies):
@@ -82,7 +82,7 @@ def test_get_movies_adds_average_ratings(mock_resources, sample_movies):
 
 def test_get_movie_by_id_success(mock_resources):
     movie_data = {
-        "movieId": 1,
+        "movie_id": 1,
         "title": "Toy Story (1995)",
         "genres": ["Animation", "Children", "Comedy"],
     }
@@ -92,7 +92,7 @@ def test_get_movie_by_id_success(mock_resources):
     result = movies_service.get_movie_by_id(mock_resources, 1)
 
     assert result is not None
-    assert result.movieId == 1
+    assert result.movie_id == 1
     assert result.title == "Toy Story (1995)"
     assert result.average_rating == 4.5
 

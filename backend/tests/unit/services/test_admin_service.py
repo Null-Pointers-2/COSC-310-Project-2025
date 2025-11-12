@@ -49,7 +49,7 @@ def test_get_all_users_with_stats(setup_repos):
             "hashed_password": "hash1",
             "role": "user",
             "created_at": "2025-01-01",
-        }
+        },
     )
     user2 = resources.users_repo.create(
         {
@@ -58,7 +58,7 @@ def test_get_all_users_with_stats(setup_repos):
             "hashed_password": "hash2",
             "role": "user",
             "created_at": "2025-01-02",
-        }
+        },
     )
 
     resources.ratings_repo.create({"user_id": user1["id"], "movie_id": 1, "rating": 4.0})
@@ -72,7 +72,7 @@ def test_get_all_users_with_stats(setup_repos):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
 
     users_with_stats = admin_service.get_all_users_with_stats(resources)
@@ -101,7 +101,7 @@ def test_apply_penalty(setup_repos):
             "hashed_password": "hash",
             "role": "user",
             "created_at": "2025-01-01",
-        }
+        },
     )
 
     penalty_data = PenaltyCreate(user_id=user["id"], reason="Spam", description="Posted 100 ratings in 1 minute")
@@ -123,7 +123,7 @@ def test_get_all_penalties(setup_repos):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
     resources.penalties_repo.create(
         {
@@ -131,7 +131,7 @@ def test_get_all_penalties(setup_repos):
             "reason": "Harassment",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
 
     penalties = admin_service.get_all_penalties(resources)
@@ -150,7 +150,7 @@ def test_get_user_penalties(setup_repos):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
     resources.penalties_repo.create(
         {
@@ -158,7 +158,7 @@ def test_get_user_penalties(setup_repos):
             "reason": "Harassment",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
     resources.penalties_repo.create(
         {
@@ -166,7 +166,7 @@ def test_get_user_penalties(setup_repos):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
 
     user1_penalties = admin_service.get_user_penalties(resources, "user1")
@@ -184,7 +184,7 @@ def test_resolve_penalty(setup_repos):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
 
     success = admin_service.resolve_penalty(resources, created["id"])
@@ -204,7 +204,7 @@ def test_delete_penalty(setup_repos):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
 
     success = admin_service.delete_penalty(resources, created["id"])
@@ -223,7 +223,7 @@ def test_get_system_stats(setup_repos):
             "hashed_password": "hash",
             "role": "user",
             "created_at": "2025-01-01",
-        }
+        },
     )
     user2 = resources.users_repo.create(
         {
@@ -232,7 +232,7 @@ def test_get_system_stats(setup_repos):
             "hashed_password": "hash",
             "role": "user",
             "created_at": "2025-01-02",
-        }
+        },
     )
 
     resources.ratings_repo.create({"user_id": user1["id"], "movie_id": 1, "rating": 4.0})
@@ -245,7 +245,7 @@ def test_get_system_stats(setup_repos):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
 
     resources.watchlist_repo.add(user1["id"], 10)
@@ -271,7 +271,7 @@ def test_check_user_violations_spam(setup_repos):
             "hashed_password": "hash",
             "role": "user",
             "created_at": "2025-01-01",
-        }
+        },
     )
 
     now = datetime.now(UTC)
@@ -299,7 +299,7 @@ def test_check_user_violations_all_same_rating(setup_repos):
             "hashed_password": "hash",
             "role": "user",
             "created_at": "2025-01-01",
-        }
+        },
     )
 
     for i in range(15):
@@ -321,7 +321,7 @@ def test_check_user_violations_no_violations(setup_repos):
             "hashed_password": "hash",
             "role": "user",
             "created_at": "2025-01-01",
-        }
+        },
     )
 
     resources.ratings_repo.create({"user_id": user["id"], "movie_id": 1, "rating": 4.0})

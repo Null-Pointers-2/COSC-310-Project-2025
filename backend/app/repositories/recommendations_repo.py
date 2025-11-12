@@ -1,7 +1,7 @@
 """Repository for cached recommendations."""
 
-from datetime import UTC, datetime, timedelta
 import json
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from app.core.config import settings
@@ -37,14 +37,14 @@ class RecommendationsRepository:
             with Path.open(self.recommendations_file, "w", encoding="utf-8") as f:
                 json.dump(recommendations, f, indent=2, ensure_ascii=False)
         except OSError as e:
-            raise Exception(f"Failed to write recommendations file: {e}") from e
+            raise OSError(f"Failed to write recommendations file: {e}") from e
 
     def get_for_user(self, user_id: str) -> dict | None:
         """Get cached recommendations for a user."""
         try:
             data = self._read()
-        except Exception:
-            return None
+        except OSError as e:
+            raise OSError(f"Failed to get cached recommendations for user {user_id}: {e}") from e
         return data.get(str(user_id))
 
     def save_for_user(self, user_id: str, recommendations: list[dict]):
@@ -72,8 +72,12 @@ class RecommendationsRepository:
             return False
 
         try:
-            cached_time = datetime.fromisoformat(cached["timestamp"].replace("Z", "+00:00"))
+            cached_time = datetime.fromisoformat(cached["timestamp"])
             age = datetime.now(UTC) - cached_time
             return age < timedelta(hours=max_age_hours)
         except (ValueError, KeyError):
             return False
+
+    def save_data(self, recommendations: dict):
+        """Overwrite the recommendations file with the given dictionary."""
+        self._write(recommendations)

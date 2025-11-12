@@ -1,16 +1,11 @@
-import threading
-from typing import Optional
+"""Main application entry point for the Movie Recommendations API."""
 
-from argon2 import PasswordHasher
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-from app.ml.recommender import MovieRecommender
-from app.repositories.movies_repo import MoviesRepository
-from app.repositories.penalties_repo import PenaltiesRepository
-from app.repositories.ratings_repo import RatingsRepository
-from app.repositories.recommendations_repo import RecommendationsRepository
-from app.repositories.users_repo import UsersRepository
-from app.repositories.watchlist_repo import WatchlistRepository
+from app.core.resources import SingletonResources
 from app.routers import (
     admin,
     auth,
@@ -22,54 +17,31 @@ from app.routers import (
     watchlist,
 )
 
+logger = logging.getLogger(__name__)
 
-class SingletonResources:
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     """
-    Singleton container for shared application resources.
-    Initialized once at startup and shared across the application.
+    Lifespan context manager for FastAPI application.
+    Initializes and cleans up singleton resources.
     """
+    logger.info("Application starting up...")
 
-    _instance: Optional["SingletonResources"] = None
-    _initialized: bool = False
-    _lock: threading.Lock = threading.Lock()
+    if not hasattr(app.state, "resources") or app.state.resources is None:
+        logger.info("Initializing new SingletonResources...")
+        app.state.resources = SingletonResources()
+    else:
+        logger.info("SingletonResources already initialized, skipping...")
 
-    def __new__(cls):
-        if cls._instance is None:
-            with cls._lock:
-                if cls._instance is None:
-                    cls._instance = super().__new__(cls)
-        return cls._instance
-
-    def __init__(self):
-        with SingletonResources._lock:
-            if SingletonResources._initialized:
-                return
-
-            print("Initializing singleton resources...")
-            self.users_repo = UsersRepository()
-            self.movies_repo = MoviesRepository()
-            self.ratings_repo = RatingsRepository()
-            self.watchlist_repo = WatchlistRepository()
-            self.recommendations_repo = RecommendationsRepository()
-            self.penalties_repo = PenaltiesRepository()
-
-            self.password_hasher = PasswordHasher()
-
-            self._recommender = None
-
-            SingletonResources._initialized = True
-            print("Singleton resources initialized successfully")
-
-    @property
-    def recommender(self):
-        if self._recommender is None:
-            print("Initializing MovieRecommender...")
-            self._recommender = MovieRecommender()
-        return self._recommender
-
-    def cleanup(self):
-        print("Cleaning up singleton resources...")
-        print("Singleton resources cleaned up")
+    logger.info("Application startup complete")
+    try:
+        yield
+    finally:
+        logger.info("Application shutting down...")
+        if hasattr(app.state, "resources") and app.state.resources:
+            app.state.resources.cleanup()
+        logger.info("Application shutdown complete")
 
 
 app = FastAPI(
@@ -78,6 +50,7 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 
@@ -116,26 +89,3 @@ app.include_router(recommendations.router, prefix="/recommendations", tags=["Rec
 app.include_router(watchlist.router, prefix="/watchlist", tags=["Watchlist"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
 app.include_router(export.router, prefix="/export", tags=["Export"])
-
-
-@app.on_event("startup")
-async def startup_event():
-    """
-    Execute on application startup.
-    Initialize singleton resources and load data.
-    """
-    print("Application starting up...")
-    app.state.resources = SingletonResources()
-    print("Application startup complete")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """
-    Execute on application shutdown.
-    Cleanup resources and save state.
-    """
-    print("Application shutting down...")
-    if hasattr(app.state, "resources") and app.state.resources:
-        app.state.resources.cleanup()
-    print("Application shutdown complete")

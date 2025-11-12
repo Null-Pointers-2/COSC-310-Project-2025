@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     TFIDF_MATRIX_FILE: str = str(ML_DIR / "tfidf_matrix.npy")
     GENOME_MATRIX_FILE: str = str(ML_DIR / "genome_matrix.npy")
     COMBINED_MATRIX_FILE: str = str(ML_DIR / "combined_features.npy")
-    MOVIE_INDEX_FILE: str = str(ML_DIR / "movie_id_to_idx.pkl")
+    MOVIE_INDEX_FILE: str = str(ML_DIR / "movie_id_to_idx.json")
     TFIDF_VECTORIZER_FILE: str = str(ML_DIR / "tfidf_vectorizer.pkl")
 
     # Static Movie Data Files
@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     TAGS_CSV: str = str(STATIC_DIR / "movies" / "tags.csv")
 
     # Authentication
-    SECRET_KEY: str
+    SECRET_KEY: str = ""  # Will be set via environment variable
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
@@ -45,11 +45,17 @@ class Settings(BaseSettings):
     DEFAULT_PAGE_SIZE: int = 30
     MAX_PAGE_SIZE: int = 100
 
-    # Rate Limiting
-    MAX_RATINGS_PER_HOUR: int = 50
-    MAX_RATINGS_PER_DAY: int = 250
+    # Recommendation thresholds
+    HIGH_RATING_THRESHOLD: float = 4.0
+    MIN_RATING: float = 0.5
+    MAX_RATING: float = 5.0
+
+    # Penalty thresholds
+    MIN_RATINGS_FOR_SUSPICIOUS_PATTERN: int = 10
+    MAX_RATINGS_FOR_SPAM_HOURLY: int = 50
+    MAX_REPEAT_RATINGS_FOR_REVIEW_BOMBING: int = 20
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=True)
 
 
-settings = Settings()  # type: ignore
+settings = Settings()

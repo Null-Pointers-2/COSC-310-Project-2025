@@ -25,8 +25,3 @@ def compute_and_save_similarity(data_dir: Path):
 
     similarity_matrix = features @ features.T
     np.save(output_path, similarity_matrix)
-
-
-if __name__ == "__main__":
-    PROCESSED_DATA_PATH = Path("data/ml")
-    compute_and_save_similarity(PROCESSED_DATA_PATH)

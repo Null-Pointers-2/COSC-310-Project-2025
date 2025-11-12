@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from app.main import SingletonResources
+from app.core.resources import SingletonResources
 
 
 @pytest.fixture(autouse=True)
@@ -19,13 +19,13 @@ def reset_singleton():
 
 def test_singleton_returns_same_instance():
     with (
-        patch("app.main.UsersRepository"),
-        patch("app.main.MoviesRepository"),
-        patch("app.main.RatingsRepository"),
-        patch("app.main.WatchlistRepository"),
-        patch("app.main.RecommendationsRepository"),
-        patch("app.main.PenaltiesRepository"),
-        patch("app.main.PasswordHasher"),
+        patch("app.core.resources.UsersRepository"),
+        patch("app.core.resources.MoviesRepository"),
+        patch("app.core.resources.RatingsRepository"),
+        patch("app.core.resources.WatchlistRepository"),
+        patch("app.core.resources.RecommendationsRepository"),
+        patch("app.core.resources.PenaltiesRepository"),
+        patch("app.core.resources.PasswordHasher"),
     ):
         instance1 = SingletonResources()
         instance2 = SingletonResources()
@@ -35,13 +35,13 @@ def test_singleton_returns_same_instance():
 def test_singleton_initializes_once():
     mock_users = Mock()
     with (
-        patch("app.main.UsersRepository", return_value=mock_users),
-        patch("app.main.MoviesRepository"),
-        patch("app.main.RatingsRepository"),
-        patch("app.main.WatchlistRepository"),
-        patch("app.main.RecommendationsRepository"),
-        patch("app.main.PenaltiesRepository"),
-        patch("app.main.PasswordHasher"),
+        patch("app.core.resources.UsersRepository", return_value=mock_users),
+        patch("app.core.resources.MoviesRepository"),
+        patch("app.core.resources.RatingsRepository"),
+        patch("app.core.resources.WatchlistRepository"),
+        patch("app.core.resources.RecommendationsRepository"),
+        patch("app.core.resources.PenaltiesRepository"),
+        patch("app.core.resources.PasswordHasher"),
     ):
         instance1 = SingletonResources()
         instance2 = SingletonResources()
@@ -59,13 +59,13 @@ def test_singleton_has_all_repositories():
     mock_hasher = Mock()
 
     with (
-        patch("app.main.UsersRepository", return_value=mock_users),
-        patch("app.main.MoviesRepository", return_value=mock_movies),
-        patch("app.main.RatingsRepository", return_value=mock_ratings),
-        patch("app.main.WatchlistRepository", return_value=mock_watchlist),
-        patch("app.main.RecommendationsRepository", return_value=mock_recommendations),
-        patch("app.main.PenaltiesRepository", return_value=mock_penalties),
-        patch("app.main.PasswordHasher", return_value=mock_hasher),
+        patch("app.core.resources.UsersRepository", return_value=mock_users),
+        patch("app.core.resources.MoviesRepository", return_value=mock_movies),
+        patch("app.core.resources.RatingsRepository", return_value=mock_ratings),
+        patch("app.core.resources.WatchlistRepository", return_value=mock_watchlist),
+        patch("app.core.resources.RecommendationsRepository", return_value=mock_recommendations),
+        patch("app.core.resources.PenaltiesRepository", return_value=mock_penalties),
+        patch("app.core.resources.PasswordHasher", return_value=mock_hasher),
     ):
         resources = SingletonResources()
 
@@ -81,13 +81,13 @@ def test_singleton_has_all_repositories():
 def test_singleton_thread_safety():
     mock_users = Mock()
     with (
-        patch("app.main.UsersRepository", return_value=mock_users),
-        patch("app.main.MoviesRepository"),
-        patch("app.main.RatingsRepository"),
-        patch("app.main.WatchlistRepository"),
-        patch("app.main.RecommendationsRepository"),
-        patch("app.main.PenaltiesRepository"),
-        patch("app.main.PasswordHasher"),
+        patch("app.core.resources.UsersRepository", return_value=mock_users),
+        patch("app.core.resources.MoviesRepository"),
+        patch("app.core.resources.RatingsRepository"),
+        patch("app.core.resources.WatchlistRepository"),
+        patch("app.core.resources.RecommendationsRepository"),
+        patch("app.core.resources.PenaltiesRepository"),
+        patch("app.core.resources.PasswordHasher"),
     ):
         instances = []
 
@@ -108,13 +108,13 @@ def test_singleton_thread_safety():
 def test_password_hasher_initialized():
     mock_hasher_instance = Mock()
     with (
-        patch("app.main.UsersRepository"),
-        patch("app.main.MoviesRepository"),
-        patch("app.main.RatingsRepository"),
-        patch("app.main.WatchlistRepository"),
-        patch("app.main.RecommendationsRepository"),
-        patch("app.main.PenaltiesRepository"),
-        patch("app.main.PasswordHasher", return_value=mock_hasher_instance),
+        patch("app.core.resources.UsersRepository"),
+        patch("app.core.resources.MoviesRepository"),
+        patch("app.core.resources.RatingsRepository"),
+        patch("app.core.resources.WatchlistRepository"),
+        patch("app.core.resources.RecommendationsRepository"),
+        patch("app.core.resources.PenaltiesRepository"),
+        patch("app.core.resources.PasswordHasher", return_value=mock_hasher_instance),
     ):
         resources = SingletonResources()
         assert resources.password_hasher is mock_hasher_instance
@@ -124,14 +124,14 @@ def test_recommender_lazy_initialization():
     """Test that recommender is not initialized until accessed."""
     mock_recommender = Mock()
     with (
-        patch("app.main.UsersRepository"),
-        patch("app.main.MoviesRepository"),
-        patch("app.main.RatingsRepository"),
-        patch("app.main.WatchlistRepository"),
-        patch("app.main.RecommendationsRepository"),
-        patch("app.main.PenaltiesRepository"),
-        patch("app.main.PasswordHasher"),
-        patch("app.main.MovieRecommender", return_value=mock_recommender) as mock_recommender_class,
+        patch("app.core.resources.UsersRepository"),
+        patch("app.core.resources.MoviesRepository"),
+        patch("app.core.resources.RatingsRepository"),
+        patch("app.core.resources.WatchlistRepository"),
+        patch("app.core.resources.RecommendationsRepository"),
+        patch("app.core.resources.PenaltiesRepository"),
+        patch("app.core.resources.PasswordHasher"),
+        patch("app.core.resources.MovieRecommender", return_value=mock_recommender) as mock_recommender_class,
     ):
         resources = SingletonResources()
 

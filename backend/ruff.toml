@@ -18,12 +18,13 @@ extend-exclude = [
     "testing-documents",
 ]
 
-fixable = ["ALL"]
 line-length = 120
-indent-width = 4
 target-version = "py311"
 
 [lint]
+
+fixable = ["ALL"]
+
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
@@ -104,4 +105,8 @@ convention = "google"
 
 "app/schemas/auth.py" = [
     "S105", # Hardcoded password for token
+]
+
+"app/routers/auth.py" = [
+    "S106", # Hardcoded password for token
 ]

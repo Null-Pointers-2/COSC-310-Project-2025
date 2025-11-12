@@ -18,7 +18,7 @@ def get_user_watchlist(resources, user_id: str) -> list[WatchlistItem]:
                     user_id=user_id,
                     movie_id=movie_id,
                     #   added_at=datetime.now(), TODO: add datetime compatibility later
-                )
+                ),
             )
     return items
 
@@ -32,7 +32,8 @@ def add_to_watchlist(resources, user_id: str, item: WatchlistItemCreate) -> Watc
         raise ValueError(f"Movie with ID {movie_id} not found.")
 
     if resources.watchlist_repo.exists(user_id, movie_id):
-        raise ValueError("Movie already in watchlist.")
+        msg = "Movie already in watchlist."
+        raise ValueError(msg)
 
     resources.watchlist_repo.add(user_id, movie_id)
 

@@ -3,6 +3,7 @@
 from collections import Counter
 from datetime import UTC, datetime, timedelta
 
+from app.core.config import settings
 from app.schemas.penalty import Penalty, PenaltyCreate
 
 
@@ -35,7 +36,7 @@ def get_all_users_with_stats(resources) -> list[dict]:
                     "total_penalties": len(user_penalties),
                     "active_penalties": len(active_penalties),
                 },
-            }
+            },
         )
 
     return users_with_stats
@@ -105,36 +106,34 @@ def check_user_violations(resources, user_id: str) -> list[str]:
     violations = []
 
     user_ratings = resources.ratings_repo.get_by_user(user_id)
-
     if not user_ratings:
         return violations
 
-    # Spam (more than 50 ratings in last hour)
+    # Spam (too many ratings in last hour)
     now = datetime.now(UTC)
     one_hour_ago = now - timedelta(hours=1)
 
-    recent_ratings = [
-        r for r in user_ratings if datetime.fromisoformat(r["timestamp"].replace("Z", "+00:00")) > one_hour_ago
-    ]
+    recent_ratings = [r for r in user_ratings if datetime.fromisoformat(r["timestamp"]) > one_hour_ago]
 
-    if len(recent_ratings) > 50:
+    if len(recent_ratings) > settings.MAX_RATINGS_FOR_SPAM_HOURLY:
         violations.append(f"Spam detected: {len(recent_ratings)} ratings in last hour")
 
     # Rating bombing (same rating given to many movies in short time)
-    if len(recent_ratings) > 10:
+    if len(recent_ratings) > settings.MAX_RATINGS_FOR_SPAM_HOURLY:
         rating_values = [r["rating"] for r in recent_ratings]
         most_common_rating = Counter(rating_values).most_common(1)[0]
-        if most_common_rating[1] > 20:
+        if most_common_rating[1] > settings.MAX_REPEAT_RATINGS_FOR_REVIEW_BOMBING:
             violations.append(
                 f"Potential review bombing: {most_common_rating[1]} ratings of {most_common_rating[0]} in last hour"
             )
 
-    # Suspicious patterns (all 0.5s or all 5.0s)
+    # Suspicious patterns
     all_ratings = [r["rating"] for r in user_ratings]
-    if len(all_ratings) >= 10:
-        if all(r == 0.5 for r in all_ratings):
+
+    if len(all_ratings) >= settings.MIN_RATINGS_FOR_SUSPICIOUS_PATTERN:
+        if all(r == settings.MIN_RATING for r in all_ratings):
             violations.append("Suspicious pattern: All ratings are 0.5 stars")
-        elif all(r == 5.0 for r in all_ratings):
+        elif all(r == settings.MAX_RATING for r in all_ratings):
             violations.append("Suspicious pattern: All ratings are 5.0 stars")
 
     return violations

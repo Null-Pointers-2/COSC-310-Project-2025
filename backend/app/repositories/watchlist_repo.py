@@ -23,7 +23,7 @@ class WatchlistRepository:
                 self.watchlist_file.parent.mkdir(parents=True, exist_ok=True)
                 self.watchlist_file.write_text("{}")
         except OSError as e:
-            raise Exception(f"Failed to initialize watchlist file: {e}") from e
+            raise OSError(f"Failed to initialize watchlist file: {e}") from e
 
     def _read(self) -> dict[str, list[int]]:
         """Read all watchlist items."""
@@ -39,7 +39,7 @@ class WatchlistRepository:
             with self.watchlist_file.open("w") as f:
                 json.dump(data, f, indent=4)
         except OSError as e:
-            raise Exception(f"Failed to write watchlist file: {e}") from e
+            raise OSError(f"Failed to write watchlist file: {e}") from e
 
     def get_by_user(self, user_id: str) -> list[int]:
         """Get user's watchlist."""
@@ -78,3 +78,7 @@ class WatchlistRepository:
         data = self._read()
         movie_id = int(movie_id)
         return movie_id in data.get(str(user_id), [])
+
+    def save_data(self, data: dict[str, list[int]]):
+        """Overwrite the watchlist file with the given dictionary."""
+        self._write(data)

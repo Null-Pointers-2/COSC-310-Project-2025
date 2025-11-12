@@ -2,7 +2,6 @@
 
 from app.schemas.user import UserDashboard, UserProfile, UserUpdate
 
-
 RECENT_MOVIE_VIEW_LIMIT = 7
 RECOMMENDED_MOVIE_VIEW_LIMIT = 3
 

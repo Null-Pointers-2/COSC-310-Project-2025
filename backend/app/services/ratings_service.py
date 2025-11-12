@@ -15,7 +15,7 @@ def create_rating(resources, user_id: str, rating_data: RatingCreate) -> Rating:
             "user_id": user_id,
             "movie_id": rating_data.movie_id,
             "rating": rating_data.rating,
-        }
+        },
     )
 
     return Rating(**new_rating)
@@ -53,13 +53,14 @@ def update_rating(resources, rating_id: int, user_id: str, update_data: RatingUp
     return None
 
 
-def delete_rating(resources, rating_id: int, user_id: str, is_admin: bool = False) -> bool:
+def delete_rating(resources, rating_id: int, user_id: str, *, is_admin: bool = False) -> bool:
     """Delete a rating."""
     rating = resources.ratings_repo.get_by_id(rating_id)
     if not rating:
         return False
 
-    if rating["user_id"] != user_id and not is_admin:
+    if not is_admin and rating["user_id"] != user_id:
         return False
 
-    return resources.ratings_repo.delete(rating_id)
+    resources.ratings_repo.delete(rating_id)
+    return True

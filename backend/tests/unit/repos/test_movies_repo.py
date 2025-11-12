@@ -13,10 +13,10 @@ def setup_movie_data(tmp_path):
     movie_dir.mkdir()
     movie_csv = movie_dir / "movies.csv"
     movie_csv.write_text(
-        "movieId,title,genres\n"
+        "movie_id,title,genres\n"
         "1,The Matrix (1999),Action|Sci-Fi\n"
         "2,Toy Story (1995),Animation|Children|Comedy\n"
-        "3,Heat (1995),Action|Crime|Thriller\n"
+        "3,Heat (1995),Action|Crime|Thriller\n",
     )
 
     ratings_file = tmp_path / "ratings.json"
@@ -53,7 +53,7 @@ def test_load_movies(setup_movie_data):
     repo = MoviesRepository(movies_dir=movie_dir)
     assert repo.movies_df is not None
     assert len(repo.movies_df) == 3
-    assert list(repo.movies_df.columns) == ["movieId", "title", "genres", "year"]
+    assert list(repo.movies_df.columns) == ["movie_id", "title", "genres", "year"]
 
 
 def test_extract_year(setup_movie_data):
@@ -71,7 +71,7 @@ def test_get_by_id(setup_movie_data):
 
     movie = repo.get_by_id(1)
     assert movie is not None
-    assert movie["movieId"] == 1
+    assert movie["movie_id"] == 1
     assert movie["title"] == "The Matrix (1999)"
     assert set(movie["genres"]) == {"Action", "Sci-Fi"}
 
@@ -142,8 +142,8 @@ def test_get_all_with_offset(setup_movie_data):
 
     results = repo.get_all(limit=2, offset=1)
     assert len(results) == 2
-    assert results[0]["movieId"] == 2
-    assert results[1]["movieId"] == 3
+    assert results[0]["movie_id"] == 2
+    assert results[1]["movie_id"] == 3
 
 
 def test_get_paginated_movies(setup_movie_data):

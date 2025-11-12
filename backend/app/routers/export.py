@@ -1,15 +1,16 @@
 """Data export endpoints."""
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 
 from app.core.dependencies import get_current_user
-
 
 router = APIRouter()
 
 
 @router.get("/ratings")
-def export_my_ratings(current_user: dict = Depends(get_current_user)):
+def export_my_ratings(current_user: Annotated[dict, Depends(get_current_user)]):
     """Export user's ratings as JSON (Transaction 4)."""
     # TODO: Get user's ratings
     # Format as downloadable JSON
@@ -17,21 +18,21 @@ def export_my_ratings(current_user: dict = Depends(get_current_user)):
 
 
 @router.get("/watchlist")
-def export_my_watchlist(current_user: dict = Depends(get_current_user)):
+def export_my_watchlist(current_user: Annotated[dict, Depends(get_current_user)]):
     """Export user's watchlist as JSON."""
     # TODO: Get user's watchlist
     # Format as downloadable JSON
 
 
 @router.get("/recommendations")
-def export_my_recommendations(current_user: dict = Depends(get_current_user)):
+def export_my_recommendations(current_user: Annotated[dict, Depends(get_current_user)]):
     """Export user's recommendations as JSON."""
     # TODO: Get user's recommendations
     # Format as downloadable JSON
 
 
 @router.get("/all")
-def export_all_data(current_user: dict = Depends(get_current_user)):
+def export_all_data(current_user: Annotated[dict, Depends(get_current_user)]):
     """Export all user data as JSON."""
     # TODO: Compile all user data (ratings, watchlist, recommendations, profile)
     # Format as comprehensive JSON export

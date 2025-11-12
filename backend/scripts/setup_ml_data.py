@@ -7,10 +7,11 @@ Usage:
     python scripts/setup_ml_data.py
 """
 
-from pathlib import Path
+import logging
 import sys
-import traceback
+from pathlib import Path
 
+logger = logging.getLogger(__name__)
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -20,8 +21,7 @@ from app.ml.similarity_matrix import compute_and_save_similarity
 
 def main():
     """Generate all required ML artifacts."""
-    print("Movie Recommendation System - ML Data Setup")
-    print()
+    logger.info("Movie Recommendation System - ML Data Setup")
 
     raw_data_path = Path("app/static/movies")
     processed_data_path = Path("data/ml")
@@ -34,19 +34,17 @@ def main():
 
     missing_files = [f for f in required_files if not f.exists()]
     if missing_files:
-        print("ERROR: Missing required data files:")
+        logger.error("Missing required data files:")
         for f in missing_files:
-            print(f"  - {f}")
-        print()
-        print("Please download the MovieLens dataset first.")
-        print("See README.md for instructions.")
+            logger.error("  - %s", f)
+        logger.error("Please download the MovieLens dataset first. See README.md for instructions.")
         return 1
 
     try:
-        print("Step 1: Preprocessing data and creating feature matrices...")
-        print(f"  Input: {raw_data_path}")
-        print(f"  Output: {processed_data_path}")
-        print()
+        logger.info("-" * 40)
+        logger.info("Step 1: Preprocessing data and creating feature matrices...")
+        logger.info("  Input: %s", raw_data_path)
+        logger.info("  Output: %s", processed_data_path)
 
         preprocessor = MovieDataPreprocessor(
             data_path=str(raw_data_path),
@@ -56,57 +54,53 @@ def main():
         )
 
         preprocessor.run_preprocessing()
-        print("Feature matrices created successfully")
-        print()
+        logger.info("Feature matrices created successfully")
 
-        print("Step 2: Computing similarity matrix...")
+        logger.info("Step 2: Computing similarity matrix...")
         compute_and_save_similarity(processed_data_path)
-        print("Similarity matrix computed successfully")
-        print()
+        logger.info("Similarity matrix computed successfully")
 
         required_artifacts = [
             "movies_clean.csv",
             "combined_features.npy",
             "tfidf_vectorizer.pkl",
-            "movie_id_to_idx.pkl",
+            "movie_id_to_idx.json",
             "similarity_matrix.npy",
         ]
 
-        print("Verifying artifacts...")
+        logger.info("Verifying artifacts...")
         all_exist = True
         for artifact in required_artifacts:
             artifact_path = processed_data_path / artifact
             if artifact_path.exists():
                 size = artifact_path.stat().st_size / (1024 * 1024)  # Size in MB
-                print(f"   {artifact} ({size:.2f} MB)")
+                logger.info("  %s (%.2f MB)", artifact, size)
             else:
-                print(f"   {artifact} (MISSING)")
+                logger.error("  %s (MISSING)", artifact)
                 all_exist = False
 
         if not all_exist:
-            print()
-            print("ERROR: Some artifacts are missing!")
+            logger.error("ERROR: Some artifacts are missing!")
             return 1
 
-        print()
-        print("Setup completed successfully!")
-        print()
-        print("The recommendation system is now ready to use.")
-        print("You can start the backend server with:")
-        print("  uvicorn app.main:app --reload")
-        print()
+        logger.info("Setup completed successfully!")
+        logger.info("The recommendation system is now ready to use.")
+        logger.info("You can start the backend server with:")
+        logger.info("  uvicorn app.main:app --reload")
 
-        return 0
-
-    except Exception as e:
-        print()
-        print("ERROR: Setup failed!")
-        print(f"{type(e).__name__}: {e}")
-        print()
-
-        traceback.print_exc()
+    except FileNotFoundError:
+        logger.exception("Required file missing: %s")
         return 1
+    except OSError:
+        logger.exception("OS error during setup: %s")
+        return 1
+
+    else:
+        return 0
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s [%(levelname)-8s] %(name)s: %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+    )
     sys.exit(main())

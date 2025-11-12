@@ -1,9 +1,9 @@
 """Repository for penalty data operations."""
 
-from datetime import UTC, datetime
 import json
-from pathlib import Path
 import uuid
+from datetime import UTC, datetime
+from pathlib import Path
 
 from app.core.config import settings
 
@@ -105,3 +105,7 @@ class PenaltiesRepository:
             return False
         self._write(new_penalties)
         return True
+
+    def save_data(self, penalties: list[dict]):
+        """Overwrite the penalties file with the given list of penalties."""
+        self._write(penalties)

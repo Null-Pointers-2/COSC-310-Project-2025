@@ -68,7 +68,7 @@ This process takes a few minutes and creates the following artifacts in `data/ml
 - `combined_features.npy` - Combined genre + genome feature matrix
 - `similarity_matrix.npy` - Pre-computed movie similarity matrix
 - `tfidf_vectorizer.pkl` - Trained TF-IDF vectorizer for genres
-- `movie_id_to_idx.pkl` - Movie ID to matrix index mapping
+- `movie_id_to_idx.json` - Movie ID to matrix index mapping
 
 **Note:** This step only needs to be run once (or when the MovieLens dataset is updated). The artifacts are gitignored because they're large (~500MB total) and derived from the source data.
 

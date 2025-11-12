@@ -14,7 +14,7 @@ def get_movies(resources, page: int = 1, page_size: int = 30) -> MoviePage:
     total_pages = ceil(total / page_size) if total > 0 else 1
 
     for m in movies:
-        m["average_rating"] = resources.movies_repo.get_average_rating(m["movieId"])
+        m["average_rating"] = resources.movies_repo.get_average_rating(m["movie_id"])
 
     return MoviePage(
         movies=[Movie(**m) for m in movies],
@@ -49,7 +49,7 @@ def search_movies(resources, query: str, limit: int = 20) -> list[Movie]:
     """Search movies by title."""
     results = resources.movies_repo.search(query=query, limit=limit)
     for m in results:
-        m["average_rating"] = resources.movies_repo.get_average_rating(m["movieId"])
+        m["average_rating"] = resources.movies_repo.get_average_rating(m["movie_id"])
     return [Movie(**m) for m in results]
 
 
@@ -61,7 +61,7 @@ def filter_movies(resources, genre: str | None = None, limit: int = 20) -> list[
         results = resources.movies_repo.get_all(limit=limit)
 
     for m in results:
-        m["average_rating"] = resources.movies_repo.get_average_rating(m["movieId"])
+        m["average_rating"] = resources.movies_repo.get_average_rating(m["movie_id"])
 
     return [Movie(**m) for m in results]
 

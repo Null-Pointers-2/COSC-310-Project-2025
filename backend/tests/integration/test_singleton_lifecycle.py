@@ -1,27 +1,35 @@
 """Integration tests for SingletonResources lifecycle with FastAPI."""
 
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
 
 from app.main import SingletonResources, app
 
 
 @pytest.fixture
 def reset_singleton():
-    """Reset singleton state before and after test."""
     SingletonResources._instance = None
     SingletonResources._initialized = False
+    if hasattr(app.state, "resources"):
+        delattr(app.state, "resources")
+
     yield
+
     SingletonResources._instance = None
     SingletonResources._initialized = False
+    if hasattr(app.state, "resources"):
+        delattr(app.state, "resources")
 
 
 def test_singleton_initialized_on_startup(client):
+    assert hasattr(app.state, "resources")
     assert app.state.resources is not None
-    assert hasattr(app.state.resources, "users_repo")
-    assert hasattr(app.state.resources, "movies_repo")
+
+    resources = app.state.resources
+    assert hasattr(resources, "users_repo")
+    assert hasattr(resources, "movies_repo")
 
 
 def test_singleton_available_in_app_state(client):
@@ -29,19 +37,7 @@ def test_singleton_available_in_app_state(client):
     assert response.status_code == 200
 
     assert hasattr(app.state, "resources")
-    resources = app.state.resources
-    assert resources is not None
-
-
-def test_singleton_cleanup_called_on_shutdown(reset_singleton, test_data_dir):
-    mock_cleanup = Mock()
-
-    with TestClient(app) as test_client:
-        app.state.resources.cleanup = mock_cleanup
-        response = test_client.get("/health")
-        assert response.status_code == 200
-
-    mock_cleanup.assert_called_once()
+    assert app.state.resources is not None
 
 
 def test_singleton_persists_across_requests(client):
@@ -56,11 +52,6 @@ def test_singleton_persists_across_requests(client):
     assert first_resources is not None
 
 
-def test_global_resources_variable_set(client):
-    assert hasattr(app.state, "resources")
-    assert app.state.resources is not None
-
-
 def test_health_endpoint_works_with_singleton(client):
     response = client.get("/health")
     assert response.status_code == 200
@@ -73,3 +64,27 @@ def test_root_endpoint_works_with_singleton(client):
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Movie Recommendations API"
+
+
+def test_singleton_cleanup_called_on_shutdown(reset_singleton):
+    mock_cleanup = Mock()
+
+    with TestClient(app) as test_client:
+        app.state.resources = SingletonResources()
+        app.state.resources.cleanup = mock_cleanup
+
+        response = test_client.get("/health")
+        assert response.status_code == 200
+
+    mock_cleanup.assert_called_once()
+
+
+def test_singleton_reinitializes_after_reset(reset_singleton):
+    first_instance = SingletonResources()
+    SingletonResources._instance = None
+    SingletonResources._initialized = False
+
+    second_instance = SingletonResources()
+
+    assert first_instance is not second_instance
+    assert isinstance(second_instance, SingletonResources)

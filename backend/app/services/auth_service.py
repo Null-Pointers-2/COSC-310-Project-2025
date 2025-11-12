@@ -2,15 +2,14 @@
 
 from datetime import UTC, datetime, timedelta
 
+import jwt
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
-import jwt
 
 from app.core.config import settings
 from app.core.dependencies import decode_token
-
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -19,9 +18,11 @@ def verify_password(plain_password: str, hashed_password: str, password_hasher: 
     """Verify a password against its hash."""
     try:
         password_hasher.verify(hashed_password, plain_password)
-        return True
+
     except VerifyMismatchError:
         return False
+
+    return True
 
 
 def get_password_hash(password: str, password_hasher: PasswordHasher) -> str:
@@ -54,9 +55,11 @@ def get_user_from_token(token: str, resources) -> dict | None:
         user = resources.users_repo.get_by_username(token_data["username"])
         if not user:
             return None
-        return user
+
     except HTTPException:
         return None
+
+    return user
 
 
 def register_user(username: str, email: str, password: str, resources, role: str = "user") -> dict:

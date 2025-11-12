@@ -1,17 +1,23 @@
 """
 Orchestrates preprocessing of MovieLens data.
-Combines genre-based TF-IDF features with genome tag relevance scores.
 """
 
-from pathlib import Path
+import json
+import logging
 import pickle
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
+
+if TYPE_CHECKING:
+    from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
 
 from app.ml.feature_engineering import genome_processor, genre_processor
+
+logger = logging.getLogger(__name__)
 
 
 class MovieDataPreprocessor:
@@ -34,6 +40,7 @@ class MovieDataPreprocessor:
             output_dir: Path to save processed data
             genre_weight: Weight for genre features (0-1)
             genome_weight: Weight for genome features (0-1)
+
         """
         self.data_path = Path(data_path)
         self.output_dir = Path(output_dir)
@@ -48,11 +55,13 @@ class MovieDataPreprocessor:
 
         self.genre_weight = genre_weight / total
         self.genome_weight = genome_weight / total
-        print(f"Using weights: Genre={self.genre_weight:.2f}, Genome={self.genome_weight:.2f}")
+
+        logger.info("Using weights: Genre=%.2f, Genome=%.2f", self.genre_weight, self.genome_weight)
 
     def load_data(self) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Load movies, genome scores, and genome tags."""
-        print("Loading data...")
+        logger.info("Loading data...")
+
         movies_path = self.data_path / "movies.csv"
         if not movies_path.exists():
             raise FileNotFoundError(f"Movies file not found at {movies_path}")
@@ -73,35 +82,24 @@ class MovieDataPreprocessor:
     def combine_features(self, genre_matrix: np.ndarray, genome_matrix: np.ndarray) -> np.ndarray:
         """
         Combine genre and genome features with configured weights.
-
-        Args:
-            genre_matrix: TF-IDF genre features (n_movies x n_genre_features)
-            genome_matrix: Genome tag relevance scores
-
-        Returns:
-            Combined feature matrix
         """
-        print("Combining genre and genome features...")
-        print(f"  Genre matrix shape: {genre_matrix.shape}, dtype: {genre_matrix.dtype}")
-        print(f"  Genome matrix shape: {genome_matrix.shape}, dtype: {genome_matrix.dtype}")
+        logger.info("Combining genre and genome features...")
+        logger.debug("Genre matrix shape: %s, dtype: %s", genre_matrix.shape, genre_matrix.dtype)
+        logger.debug("Genome matrix shape: %s, dtype: %s", genome_matrix.shape, genome_matrix.dtype)
 
         if not isinstance(genre_matrix, np.ndarray):
             genre_matrix = np.array(genre_matrix.toarray() if hasattr(genre_matrix, "toarray") else genre_matrix)
         if not isinstance(genome_matrix, np.ndarray):
             genome_matrix = np.array(genome_matrix.toarray() if hasattr(genome_matrix, "toarray") else genome_matrix)
 
-        # Normalize each feature set
         genre_normalized = normalize(genre_matrix, norm="l2", axis=1)
         genome_normalized = normalize(genome_matrix, norm="l2", axis=1)
 
-        # Apply weights
         genre_weighted = genre_normalized * self.genre_weight
         genome_weighted = genome_normalized * self.genome_weight
 
-        # Combine features
         combined = np.hstack([genre_weighted, genome_weighted])
 
-        # Final normalization
         return normalize(combined, norm="l2", axis=1)
 
     def save_processed_data(
@@ -111,9 +109,8 @@ class MovieDataPreprocessor:
         tfidf_vectorizer: "TfidfVectorizer",
     ):
         """Save all processed data and models."""
-
         movies_clean_path = self.output_dir / "movies_clean.csv"
-        movies_df[["movieId", "title", "genres"]].to_csv(movies_clean_path, index=False)
+        movies_df[["movie_id", "title", "genres"]].to_csv(movies_clean_path, index=False)
 
         combined_path = self.output_dir / "combined_features.npy"
         np.save(combined_path, combined_matrix)
@@ -122,11 +119,11 @@ class MovieDataPreprocessor:
         with Path.open(vectorizer_path, "wb") as f:
             pickle.dump(tfidf_vectorizer, f)
 
-        movie_id_to_idx = pd.Series(range(len(movies_df)), index=movies_df["movieId"]).to_dict()
+        movie_id_to_idx = pd.Series(range(len(movies_df)), index=movies_df["movie_id"]).to_dict()
 
-        mapping_path = self.output_dir / "movie_id_to_idx.pkl"
-        with Path.open(mapping_path, "wb") as f:
-            pickle.dump(movie_id_to_idx, f)
+        mapping_path = self.output_dir / "movie_id_to_idx.json"
+        with Path.open(mapping_path, "w") as f:
+            json.dump(movie_id_to_idx, f)
 
     def run_preprocessing(self):
         """Run full preprocessing pipeline."""
@@ -139,16 +136,3 @@ class MovieDataPreprocessor:
         combined_matrix = self.combine_features(genre_matrix, genome_matrix)
 
         self.save_processed_data(movies_filtered_df, combined_matrix, tfidf_vectorizer)
-
-
-if __name__ == "__main__":
-    RAW_DATA_PATH = "app/static/movies"
-    PROCESSED_DATA_PATH = "data/ml"
-
-    preprocessor = MovieDataPreprocessor(
-        data_path=RAW_DATA_PATH,
-        output_dir=PROCESSED_DATA_PATH,
-        genre_weight=0.3,
-        genome_weight=0.7,
-    )
-    preprocessor.run_preprocessing()

@@ -6,13 +6,13 @@ from pydantic import BaseModel
 class Movie(BaseModel):
     """Complete movie schema."""
 
-    movieId: int
+    movie_id: int
     title: str
     genres: list[str] | None = None
     year: int | None = None
 
-    imdbId: int | None = None
-    tmdbId: int | None = None
+    imdb_id: int | None = None
+    tmdb_id: int | None = None
     average_rating: float | None = None
 
 

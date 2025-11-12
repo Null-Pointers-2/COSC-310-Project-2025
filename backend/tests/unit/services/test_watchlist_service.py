@@ -18,7 +18,7 @@ def mock_resources():
 
 @pytest.fixture
 def sample_movie():
-    return {"movieId": 1, "title": "The Matrix (1999)", "genres": ["Action", "Sci-Fi"]}
+    return {"movie_id": 1, "title": "The Matrix (1999)", "genres": ["Action", "Sci-Fi"]}
 
 
 def test_returns_empty_list_for_user_with_no_watchlist(mock_resources):
@@ -33,8 +33,8 @@ def test_returns_empty_list_for_user_with_no_watchlist(mock_resources):
 def test_returns_watchlist_with_valid_movies(mock_resources, sample_movie):
     mock_resources.watchlist_repo.get_by_user.return_value = [1, 2]
     mock_resources.movies_repo.get_by_id.side_effect = [
-        {"movieId": 1, "title": "Movie 1"},
-        {"movieId": 2, "title": "Movie 2"},
+        {"movie_id": 1, "title": "Movie 1"},
+        {"movie_id": 2, "title": "Movie 2"},
     ]
 
     result = watchlist_service.get_user_watchlist(mock_resources, "user123")
@@ -48,9 +48,9 @@ def test_returns_watchlist_with_valid_movies(mock_resources, sample_movie):
 def test_filters_out_invalid_movies(mock_resources):
     mock_resources.watchlist_repo.get_by_user.return_value = [1, 999, 2]
     mock_resources.movies_repo.get_by_id.side_effect = [
-        {"movieId": 1, "title": "Movie 1"},
+        {"movie_id": 1, "title": "Movie 1"},
         None,  # Movie 999 doesn't exist
-        {"movieId": 2, "title": "Movie 2"},
+        {"movie_id": 2, "title": "Movie 2"},
     ]
 
     result = watchlist_service.get_user_watchlist(mock_resources, "user123")
@@ -62,8 +62,8 @@ def test_filters_out_invalid_movies(mock_resources):
 def test_returns_items_for_correct_user(mock_resources):
     mock_resources.watchlist_repo.get_by_user.return_value = [1, 2]
     mock_resources.movies_repo.get_by_id.side_effect = [
-        {"movieId": 1, "title": "Movie 1"},
-        {"movieId": 2, "title": "Movie 2"},
+        {"movie_id": 1, "title": "Movie 1"},
+        {"movie_id": 2, "title": "Movie 2"},
     ]
 
     result = watchlist_service.get_user_watchlist(mock_resources, "user456")
@@ -196,7 +196,7 @@ def test_handles_mixed_valid_invalid_movies(mock_resources):
 
     def get_movie_side_effect(movie_id):
         if movie_id in [1, 2]:
-            return {"movieId": movie_id, "title": f"Movie {movie_id}"}
+            return {"movie_id": movie_id, "title": f"Movie {movie_id}"}
         return None
 
     mock_resources.movies_repo.get_by_id.side_effect = get_movie_side_effect

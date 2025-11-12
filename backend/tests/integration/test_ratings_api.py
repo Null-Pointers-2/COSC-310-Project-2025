@@ -5,8 +5,8 @@ Integration tests for ratings API endpoints.
 from datetime import UTC, datetime, timezone
 from unittest.mock import Mock, patch
 
-from fastapi import HTTPException
 import pytest
+from fastapi import HTTPException
 
 from app.routers import ratings
 from app.schemas.rating import Rating, RatingCreate, RatingUpdate

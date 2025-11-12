@@ -53,7 +53,7 @@ def test_get_for_user(mocker):
             "bob": {
                 "timestamp": datetime.now(UTC).isoformat(),
                 "recommendations": [{"movie_id": 7, "similarity_score": 0.8}],
-            }
+            },
         },
     )
 
@@ -120,11 +120,10 @@ def test_overwrites_existing_user(repo):
 
 def test_handles_corrupted_json(mocker):
     repo = RecommendationsRepository()
-    mocker.patch.object(repo, "_read", side_effect=Exception("bad json"))
-    try:
+    mocker.patch.object(repo, "_read", side_effect=OSError("bad json"))
+
+    with pytest.raises(OSError, match="bad json"):
         repo.get_for_user("x")
-    except Exception:
-        pytest.fail("get_for_user() raised despite _read() exception")
 
 
 def test_timestamp_format(repo):
@@ -133,5 +132,5 @@ def test_timestamp_format(repo):
 
     saved = repo._write.call_args[0][0]
     ts = saved["tim"]["timestamp"]
-    parsed = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    parsed = datetime.fromisoformat(ts)
     assert isinstance(parsed, datetime)

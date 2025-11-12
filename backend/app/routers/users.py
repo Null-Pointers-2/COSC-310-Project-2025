@@ -1,5 +1,7 @@
 """User management endpoints."""
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.core.dependencies import (
@@ -7,15 +9,18 @@ from app.core.dependencies import (
     get_current_user,
     get_resources,
 )
+from app.main import SingletonResources
 from app.schemas.user import User, UserDashboard, UserProfile, UserUpdate
 from app.services import users_service
-
 
 router = APIRouter()
 
 
 @router.get("/me", response_model=UserProfile)
-def get_my_profile(current_user: dict = Depends(get_current_user), resources=Depends(get_resources)):
+def get_my_profile(
+    current_user: Annotated[dict, Depends(get_current_user)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
+):
     """Get current user's profile."""
     user_id = current_user["id"]
     profile = users_service.get_user_profile(user_id=user_id, resources=resources)
@@ -25,7 +30,10 @@ def get_my_profile(current_user: dict = Depends(get_current_user), resources=Dep
 
 
 @router.get("/me/dashboard", response_model=UserDashboard)
-def get_my_dashboard(current_user: dict = Depends(get_current_user), resources=Depends(get_resources)):
+def get_my_dashboard(
+    current_user: Annotated[dict, Depends(get_current_user)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
+):
     """Get current user's dashboard."""
     user_id = current_user["id"]
     dashboard = users_service.get_user_dashboard(user_id=user_id, resources=resources)
@@ -37,8 +45,8 @@ def get_my_dashboard(current_user: dict = Depends(get_current_user), resources=D
 @router.put("/me", response_model=User)
 def update_my_profile(
     update_data: UserUpdate,
-    current_user: dict = Depends(get_current_user),
-    resources=Depends(get_resources),
+    current_user: Annotated[dict, Depends(get_current_user)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
     """Update current user's profile."""
     user_id = current_user["id"]
@@ -50,8 +58,8 @@ def update_my_profile(
 
 @router.get("", response_model=list[User])
 def get_all_users(
-    resources=Depends(get_resources),
-    _current_admin: dict = Depends(get_current_admin_user),
+    resources: Annotated[SingletonResources, Depends(get_resources)],
+    _current_admin: Annotated[dict, Depends(get_current_admin_user)],
 ):
     """Get all users (admin only)."""
     return users_service.get_all_users(resources)
@@ -60,8 +68,8 @@ def get_all_users(
 @router.get("/{user_id}", response_model=UserProfile)
 def get_user_profile(
     user_id: str,
-    resources=Depends(get_resources),
-    _current_admin: dict = Depends(get_current_admin_user),
+    resources: Annotated[SingletonResources, Depends(get_resources)],
+    _current_admin: Annotated[dict, Depends(get_current_admin_user)],
 ):
     """Get specific user's profile (admin only)."""
     profile = users_service.get_user_profile(user_id, resources)

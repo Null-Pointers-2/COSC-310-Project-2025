@@ -56,7 +56,7 @@ def test_get_by_id(repo):
             "reason": "Spam",
             "description": "Test",
             "issued_by": "admin1",
-        }
+        },
     )
 
     fetched = repo.get_by_id(created["id"])
@@ -74,7 +74,7 @@ def test_get_by_user(repo):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
     repo.create(
         {
@@ -82,7 +82,7 @@ def test_get_by_user(repo):
             "reason": "Inappropriate content",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
     repo.create(
         {
@@ -90,7 +90,7 @@ def test_get_by_user(repo):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
 
     user1_penalties = repo.get_by_user("user1")
@@ -105,7 +105,7 @@ def test_get_active_by_user(repo):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
     repo.create(
         {
@@ -113,7 +113,7 @@ def test_get_active_by_user(repo):
             "reason": "Harassment",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
 
     repo.resolve(p1["id"])
@@ -131,7 +131,7 @@ def test_get_all(repo):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
     repo.create(
         {
@@ -139,7 +139,7 @@ def test_get_all(repo):
             "reason": "Harassment",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
 
     all_penalties = repo.get_all()
@@ -153,7 +153,7 @@ def test_update_penalty(repo):
             "reason": "Spam",
             "description": "Original description",
             "issued_by": "admin1",
-        }
+        },
     )
 
     updated = repo.update(created["id"], {"description": "Updated description"})
@@ -174,7 +174,7 @@ def test_resolve_penalty(repo):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
 
     success = repo.resolve(created["id"])
@@ -197,7 +197,7 @@ def test_delete_penalty(repo):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
 
     success = repo.delete(created["id"])
@@ -220,7 +220,7 @@ def test_penalty_persistence(tmp_path):
             "reason": "Spam",
             "description": None,
             "issued_by": "admin1",
-        }
+        },
     )
 
     repo2 = PenaltiesRepository(penalties_file=test_file)

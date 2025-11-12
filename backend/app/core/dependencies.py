@@ -2,13 +2,12 @@
 FastAPI dependencies for authentication and authorization.
 """
 
+import jwt
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
-import jwt
 from jwt.exceptions import InvalidTokenError
 
 from app.core.config import settings
-
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
@@ -18,45 +17,29 @@ def get_resources(request: Request):
     return request.app.state.resources
 
 
-def decode_token(token: str, users_repo) -> dict:
+def raise_auth_exception(detail: str = "Could not validate credentials"):
+    """Raises the standard 401 Unauthorized exception."""
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=detail,
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+
+def decode_token_payload(token: str) -> str | None:
     """
-    Decode and validate a JWT token.
-
-    Args:
-        token: JWT token string
-        users_repo: Users repository instance
-
-    Returns:
-        Dictionary with user_id, username, and role
+    Decodes and validates a JWT token and returns the username (sub).
 
     Raises:
-        HTTPException: If token is invalid or expired
+        InvalidTokenError: If token is invalid or expired.
     """
-    try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+    payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    username: str = payload.get("sub")
 
-        user = users_repo.get_by_username(username)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User not found",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+    if not username:
+        raise InvalidTokenError("Token payload missing required subject.")
 
-        return {"user_id": user["id"], "username": username, "role": user["role"]}
-    except InvalidTokenError as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        ) from e
+    return username
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme), resources=Depends(get_resources)) -> dict:
@@ -72,30 +55,25 @@ async def get_current_user(token: str = Depends(oauth2_scheme), resources=Depend
 
     Raises:
         HTTPException: If token is invalid or user not found
+
     """
     try:
-        token_data = decode_token(token, resources.users_repo)
-        user = resources.users_repo.get_by_username(token_data["username"])
+        username = decode_token_payload(token)
+        user = resources.users_repo.get_by_username(username)
 
+    except InvalidTokenError:
+        raise_auth_exception()
+
+    else:
         if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        return user
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        ) from e
+            raise_auth_exception(detail="User not found")
+
+    return {"user_id": user["id"], "username": username, "role": user["role"]}
 
 
 async def get_current_active_user(
-    current_user: dict = Depends(get_current_user), resources=Depends(get_resources)
+    current_user: dict = Depends(get_current_user),
+    resources=Depends(get_resources),
 ) -> dict:
     """
     Dependency to get current user and check if they have active penalties.
@@ -109,6 +87,7 @@ async def get_current_active_user(
 
     Raises:
         HTTPException: If user has blocking penalties
+
     """
     active_penalties = resources.penalties_repo.get_active_by_user(current_user["id"])
 
@@ -136,6 +115,7 @@ async def get_current_admin_user(
 
     Raises:
         HTTPException: If user is not admin
+
     """
     if current_user.get("role") != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin privileges required")

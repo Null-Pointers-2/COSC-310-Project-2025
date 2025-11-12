@@ -1,20 +1,23 @@
 """Movie browsing endpoints."""
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.core.dependencies import get_resources
+from app.core.resources import SingletonResources
 from app.schemas.movie import Movie, MoviePage
 from app.services import movies_service
-
 
 router = APIRouter()
 
 
 @router.get("", response_model=MoviePage)
 def get_movies(
-    page: int = Query(1, ge=1, description="Page number"),
-    page_size: int = Query(30, ge=1, le=100, description="Movies per page"),
-    resources=Depends(get_resources),
+    page: Annotated[int, Query(ge=1, description="Page number")] = 1,
+    *,
+    page_size: Annotated[int, Query(ge=1, le=100, description="Movies per page")] = 30,
+    resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
     """Get paginated list of movies."""
     return movies_service.get_movies(resources, page=page, page_size=page_size)
@@ -22,9 +25,10 @@ def get_movies(
 
 @router.get("/search", response_model=list[Movie])
 def search_movies(
-    query: str = Query(..., min_length=1),
-    limit: int = Query(20, ge=1, le=100),
-    resources=Depends(get_resources),
+    query: Annotated[str, Query(min_length=1)],
+    *,
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+    resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
     """Search movies by title."""
     return movies_service.search_movies(resources, query=query, limit=limit)
@@ -33,8 +37,9 @@ def search_movies(
 @router.get("/filter", response_model=list[Movie])
 def filter_movies(
     genre: str | None = None,
-    limit: int = Query(20, ge=1, le=100),
-    resources=Depends(get_resources),
+    *,
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+    resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
     """Filter movies by genre."""
     return movies_service.filter_movies(resources, genre=genre, limit=limit)

@@ -25,7 +25,7 @@ def test_returns_cached_recommendations_when_fresh(mock_resources):
         "recommendations": [
             {"movie_id": 100, "similarity_score": 0.95},
             {"movie_id": 101, "similarity_score": 0.90},
-        ]
+        ],
     }
     mock_resources.recommendations_repo.get_for_user.return_value = cached_data
     mock_resources.recommendations_repo.is_fresh.return_value = True
@@ -47,7 +47,7 @@ def test_generates_new_recommendations_when_cache_stale(mocker, mock_resources):
         {"movie_id": 2, "rating": 4.0},
     ]
     mock_resources.movies_repo.get_by_id.side_effect = lambda mid: {
-        "movieId": mid,
+        "movie_id": mid,
         "title": f"Movie {mid}",
     }
 
@@ -82,8 +82,8 @@ def test_force_refresh_bypasses_cache(mocker, mock_resources):
 def test_returns_fallback_for_user_with_no_ratings(mock_resources):
     mock_resources.ratings_repo.get_by_user.return_value = []
     mock_resources.movies_repo.get_all.return_value = [
-        {"movieId": 1, "title": "Movie 1"},
-        {"movieId": 2, "title": "Movie 2"},
+        {"movie_id": 1, "title": "Movie 1"},
+        {"movie_id": 2, "title": "Movie 2"},
     ]
 
     result = recommendations_service.generate_recommendations(mock_resources, "user123", limit=10)
@@ -101,7 +101,7 @@ def test_uses_high_rated_movies_as_seeds(mocker, mock_resources):
         {"movie_id": 4, "rating": 5.0},
     ]
     mock_resources.movies_repo.get_by_id.side_effect = lambda mid: {
-        "movieId": mid,
+        "movie_id": mid,
         "title": f"Movie {mid}",
     }
 
@@ -125,7 +125,7 @@ def test_excludes_already_rated_movies(mocker, mock_resources):
         {"movie_id": 2, "rating": 4.0},
     ]
     mock_resources.movies_repo.get_by_id.return_value = {
-        "movieId": 1,
+        "movie_id": 1,
         "title": "Movie 1",
     }
 
@@ -149,7 +149,7 @@ def test_aggregates_scores_from_multiple_seeds(mocker, mock_resources):
         {"movie_id": 2, "rating": 5.0},
     ]
     mock_resources.movies_repo.get_by_id.side_effect = lambda mid: {
-        "movieId": mid,
+        "movie_id": mid,
         "title": f"Movie {mid}",
     }
 
@@ -173,11 +173,11 @@ def test_aggregates_scores_from_multiple_seeds(mocker, mock_resources):
 def test_returns_similar_movies_for_valid_movie(mock_resources):
     def mock_get_by_id(movie_id):
         if movie_id == 1:
-            return {"movieId": 1, "title": "The Matrix (1999)"}
+            return {"movie_id": 1, "title": "The Matrix (1999)"}
         if movie_id == 2:
-            return {"movieId": 2, "title": "The Matrix Reloaded (2003)"}
+            return {"movie_id": 2, "title": "The Matrix Reloaded (2003)"}
         if movie_id == 3:
-            return {"movieId": 3, "title": "Inception (2010)"}
+            return {"movie_id": 3, "title": "Inception (2010)"}
         return None
 
     mock_resources.movies_repo.get_by_id.side_effect = mock_get_by_id
@@ -216,7 +216,7 @@ def test_clear_cache_calls_repo(mock_resources):
 def test_fallback_respects_limit(mock_resources):
     def get_all_mock(limit=None):
         actual_limit = limit or 0
-        return [{"movieId": i, "title": f"Movie {i}"} for i in range(actual_limit)]
+        return [{"movie_id": i, "title": f"Movie {i}"} for i in range(actual_limit)]
 
     mock_resources.movies_repo.get_all.side_effect = get_all_mock
 

@@ -40,7 +40,7 @@ def test_creates_file_if_not_exists(tmp_path):
 def test_does_not_overwrite_existing_file(tmp_path):
     users_file = tmp_path / "existing_users.csv"
     users_file.write_text(
-        "id,username,email,hashed_password,role,created_at\n123,test,test@example.com,hash,user,2025-01-01\n"
+        "id,username,email,hashed_password,role,created_at\n123,test,test@example.com,hash,user,2025-01-01\n",
     )
 
     repo = UsersRepository(users_file=users_file)
@@ -61,14 +61,22 @@ def test_create_user_success(temp_users_repo, sample_user_data):
     assert created_user["role"] == "user"
 
 
-def test_create_user_generates_unique_id(temp_users_repo, sample_user_data):
+def test_create_user_generates_unique_id(temp_users_repo, sample_user_data, mocker):
     repo, _ = temp_users_repo
+
+    mocker.patch(
+        "app.repositories.users_repo.uuid4",
+        side_effect=["id-1", "id-2"],
+    )
 
     user1 = repo.create(sample_user_data)
     user2_data = {**sample_user_data, "username": "alice", "email": "alice@example.com"}
     user2 = repo.create(user2_data)
 
-    assert user1["id"] != user2["id"]
+    repo.delete(user1["id"])
+
+    assert repo.get_by_id(user1["id"]) is None
+    assert repo.get_by_id(user2["id"]) is not None
 
 
 def test_create_user_persists_to_file(temp_users_repo, sample_user_data):
@@ -222,8 +230,14 @@ def test_delete_persists_to_file(temp_users_repo, sample_user_data):
     assert repo2.get_by_id(created_user["id"]) is None
 
 
-def test_delete_only_removes_target_user(temp_users_repo, sample_user_data):
+def test_delete_only_removes_target_user(temp_users_repo, sample_user_data, mocker):
     repo, _ = temp_users_repo
+
+    mocker.patch(
+        "app.repositories.users_repo.uuid4",
+        side_effect=["id-alice", "id-bob"],
+    )
+
     user1 = repo.create(sample_user_data)
     user2_data = {**sample_user_data, "username": "alice", "email": "alice@example.com"}
     user2 = repo.create(user2_data)

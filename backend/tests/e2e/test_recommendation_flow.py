@@ -18,7 +18,7 @@ def check_ml_artifacts_exist():
     required_files = [
         "movies_clean.csv",
         "similarity_matrix.npy",
-        "movie_id_to_idx.pkl",
+        "movie_id_to_idx.json",
     ]
     missing = [f for f in required_files if not (ml_dir / f).exists()]
     return len(missing) == 0, missing
@@ -41,7 +41,6 @@ def test_complete_recommendation_flow(client, clean_test_data):
     4. User requests recommendations (gets personalized results)
     5. User refreshes recommendations after adding more ratings
     """
-
     users_repo = clean_test_data["users_repo"]
     ratings_repo = clean_test_data["ratings_repo"]
     recommendations_repo = clean_test_data["recommendations_repo"]
@@ -49,7 +48,7 @@ def test_complete_recommendation_flow(client, clean_test_data):
     ml_ready, missing = check_ml_artifacts_exist()
     if not ml_ready:
         pytest.skip(
-            f"ML artifacts not found. Run 'python scripts/setup_ml_data.py' first. Missing files: {', '.join(missing)}"
+            f"ML artifacts not found. Run 'python scripts/setup_ml_data.py' first. Missing files: {', '.join(missing)}",
         )
 
     force_recommender_initialization(app)
@@ -86,10 +85,10 @@ def test_complete_recommendation_flow(client, clean_test_data):
     movies = movies_data["movies"]
 
     first_movie = movies[0]
-    movie_detail_response = client.get(f"/movies/{first_movie['movieId']}")
+    movie_detail_response = client.get(f"/movies/{first_movie['movie_id']}")
     assert movie_detail_response.status_code == 200
     movie_detail = movie_detail_response.json()
-    assert movie_detail["movieId"] == first_movie["movieId"]
+    assert movie_detail["movie_id"] == first_movie["movie_id"]
 
     # Step 3: Rate movies
     rated_movies = []
@@ -102,18 +101,18 @@ def test_complete_recommendation_flow(client, clean_test_data):
         rating_response = client.post(
             "/ratings",
             headers=headers,
-            json={"movie_id": movie["movieId"], "rating": rating_value},
+            json={"movie_id": movie["movie_id"], "rating": rating_value},
         )
-        assert rating_response.status_code == 201, f"Rating creation should succeed for movie {movie['movieId']}"
+        assert rating_response.status_code == 201, f"Rating creation should succeed for movie {movie['movie_id']}"
         rating = rating_response.json()
         assert rating["rating"] == rating_value
-        assert rating["movie_id"] == movie["movieId"]
+        assert rating["movie_id"] == movie["movie_id"]
 
-        rated_movies.append(movie["movieId"])
+        rated_movies.append(movie["movie_id"])
         if rating_value >= 4.0:
-            high_rated_movies.append(movie["movieId"])
+            high_rated_movies.append(movie["movie_id"])
         else:
-            low_rated_movies.append(movie["movieId"])
+            low_rated_movies.append(movie["movie_id"])
 
     my_ratings_response = client.get("/ratings/me", headers=headers)
     assert my_ratings_response.status_code == 200
@@ -142,7 +141,7 @@ def test_complete_recommendation_flow(client, clean_test_data):
             "1. ML artifacts are corrupted - try running 'python scripts/setup_ml_data.py' again\n"
             "2. The rated movies aren't in the cleaned dataset\n"
             "3. The similarity matrix couldn't find similar movies\n"
-            f"Rated movie IDs: {rated_movies}"
+            f"Rated movie IDs: {rated_movies}",
         )
 
     assert len(recommendations) > 0, "Should receive recommendations"
@@ -181,10 +180,10 @@ def test_complete_recommendation_flow(client, clean_test_data):
         rating_response = client.post(
             "/ratings",
             headers=headers,
-            json={"movie_id": movie["movieId"], "rating": 4.0},
+            json={"movie_id": movie["movie_id"], "rating": 4.0},
         )
         assert rating_response.status_code == 201
-        additional_rated.append(movie["movieId"])
+        additional_rated.append(movie["movie_id"])
 
     all_rated_movies = rated_movies + additional_rated
 

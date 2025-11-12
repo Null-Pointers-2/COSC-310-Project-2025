@@ -3,12 +3,17 @@
 from datetime import UTC, datetime, timedelta
 from unittest.mock import Mock
 
-from fastapi import HTTPException
 import jwt
 import pytest
+from fastapi import HTTPException
 
 from app.core.config import settings
-from app.core.dependencies import decode_token, get_current_active_user, get_current_admin_user, get_current_user
+from app.core.dependencies import (
+    decode_token,
+    get_current_active_user,
+    get_current_admin_user,
+    get_current_user,
+)
 
 
 @pytest.fixture

@@ -4,8 +4,8 @@ Integration tests for watchlist API endpoints.
 
 from unittest.mock import Mock, patch
 
-from fastapi import HTTPException
 import pytest
+from fastapi import HTTPException
 
 from app.routers import watchlist
 from app.schemas.watchlist import WatchlistItem, WatchlistItemCreate
@@ -93,7 +93,8 @@ def test_add_to_watchlist_already_exists(mock_resources, mock_current_user):
     item_data = WatchlistItemCreate(movie_id=1)
 
     with patch(
-        "app.routers.watchlist.watchlist_service.add_to_watchlist", side_effect=ValueError("Already in watchlist")
+        "app.routers.watchlist.watchlist_service.add_to_watchlist",
+        side_effect=ValueError("Already in watchlist"),
     ):
         with pytest.raises(HTTPException) as exc_info:
             watchlist.add_to_watchlist(
@@ -129,7 +130,8 @@ def test_remove_from_watchlist_not_found(mock_resources, mock_current_user):
 
 def test_remove_from_watchlist_error(mock_resources, mock_current_user):
     with patch(
-        "app.routers.watchlist.watchlist_service.remove_from_watchlist", side_effect=Exception("Database error")
+        "app.routers.watchlist.watchlist_service.remove_from_watchlist",
+        side_effect=Exception("Database error"),
     ):
         with pytest.raises(HTTPException) as exc_info:
             watchlist.remove_from_watchlist(

@@ -56,6 +56,7 @@ def main():
         preprocessor.run_preprocessing()
         logger.info("Feature matrices created successfully")
 
+        logger.info("-" * 40)
         logger.info("Step 2: Computing similarity matrix...")
         compute_and_save_similarity(processed_data_path)
         logger.info("Similarity matrix computed successfully")

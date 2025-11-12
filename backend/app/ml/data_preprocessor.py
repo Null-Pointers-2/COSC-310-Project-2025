@@ -135,4 +135,6 @@ class MovieDataPreprocessor:
 
         combined_matrix = self.combine_features(genre_matrix, genome_matrix)
 
+        combined_matrix = combined_matrix.astype(np.float32)
+
         self.save_processed_data(movies_filtered_df, combined_matrix, tfidf_vectorizer)

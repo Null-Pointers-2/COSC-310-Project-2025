@@ -197,6 +197,7 @@ data/watchlist.json
 data/ml/*.pkl
 data/ml/*.npy
 data/ml/*.csv
+data/ml/*.json
 
 # Large static datasets (download separately)
 app/static/movies/genome-scores.csv

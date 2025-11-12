@@ -5,11 +5,11 @@ from datetime import UTC, datetime, timedelta
 import jwt
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from jwt.exceptions import InvalidTokenError
 
 from app.core.config import settings
-from app.core.dependencies import decode_token
+from app.core.dependencies import decode_token_payload
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -51,12 +51,14 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
 def get_user_from_token(token: str, resources) -> dict | None:
     """Get user information from a JWT token."""
     try:
-        token_data = decode_token(token, resources.users_repo)
-        user = resources.users_repo.get_by_username(token_data["username"])
+        username = decode_token_payload(token)
+
+        user = resources.users_repo.get_by_username(username)
+
         if not user:
             return None
 
-    except HTTPException:
+    except InvalidTokenError:
         return None
 
     return user

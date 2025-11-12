@@ -6,10 +6,11 @@ from unittest.mock import Mock
 import jwt
 import pytest
 from fastapi import HTTPException
+from jwt.exceptions import InvalidTokenError
 
 from app.core.config import settings
 from app.core.dependencies import (
-    decode_token,
+    decode_token_payload,
     get_current_active_user,
     get_current_admin_user,
     get_current_user,
@@ -52,52 +53,34 @@ def valid_token():
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
-def test_decode_token_success(mock_users_repo, valid_token):
-    result = decode_token(valid_token, mock_users_repo)
+def test_decode_token_payload_success(valid_token):
+    result = decode_token_payload(valid_token)
 
-    assert result["user_id"] == "user123"
-    assert result["username"] == "testuser"
-    assert result["role"] == "user"
+    assert result == "testuser"
 
 
-def test_decode_token_missing_sub(mock_users_repo):
+def test_decode_token_payload_missing_sub():
     payload = {"exp": datetime.now(UTC) + timedelta(hours=1)}
     token = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-    with pytest.raises(HTTPException) as exc_info:
-        decode_token(token, mock_users_repo)
-
-    assert exc_info.value.status_code == 401
+    with pytest.raises(InvalidTokenError):
+        decode_token_payload(token)
 
 
-def test_decode_token_user_not_found(mock_users_repo, valid_token):
-    mock_users_repo.get_by_username.return_value = None
-
-    with pytest.raises(HTTPException) as exc_info:
-        decode_token(valid_token, mock_users_repo)
-
-    assert exc_info.value.status_code == 401
-    assert "User not found" in str(exc_info.value.detail)
+def test_decode_token_payload_invalid_token():
+    with pytest.raises(InvalidTokenError):
+        decode_token_payload("invalid_token")
 
 
-def test_decode_token_invalid_token(mock_users_repo):
-    with pytest.raises(HTTPException) as exc_info:
-        decode_token("invalid_token", mock_users_repo)
-
-    assert exc_info.value.status_code == 401
-
-
-def test_decode_token_expired(mock_users_repo):
+def test_decode_token_payload_expired():
     payload = {
         "sub": "testuser",
         "exp": datetime.now(UTC) - timedelta(hours=1),  # Expired
     }
     token = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-    with pytest.raises(HTTPException) as exc_info:
-        decode_token(token, mock_users_repo)
-
-    assert exc_info.value.status_code == 401
+    with pytest.raises(InvalidTokenError):
+        decode_token_payload(token)
 
 
 @pytest.mark.asyncio
@@ -185,12 +168,6 @@ async def test_get_current_admin_user_not_admin():
 
     assert exc_info.value.status_code == 403
     assert "Admin privileges required" in str(exc_info.value.detail)
-
-
-def test_decode_token_verifies_username(mock_users_repo, valid_token):
-    decode_token(valid_token, mock_users_repo)
-
-    mock_users_repo.get_by_username.assert_called_once_with("testuser")
 
 
 @pytest.mark.asyncio

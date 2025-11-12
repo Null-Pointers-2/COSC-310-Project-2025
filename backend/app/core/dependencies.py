@@ -68,7 +68,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), resources=Depend
         if user is None:
             raise_auth_exception(detail="User not found")
 
-    return {"user_id": user["id"], "username": username, "role": user["role"]}
+    return {"id": user["id"], "username": username, "role": user["role"]}
 
 
 async def get_current_active_user(

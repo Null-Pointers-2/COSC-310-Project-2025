@@ -1,0 +1,109 @@
+# Ruff configuration for backend linting and formatting
+# See: https://docs.astral.sh/ruff/configuration/
+
+# Exclude common directories
+extend-exclude = [
+    "venv",
+    ".venv",
+    "env",
+    ".env",
+    "__pycache__",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    "htmlcov",
+    "dist",
+    "build",
+    "*.egg-info",
+    "testing-documents",
+]
+
+# Line length to match your codebase
+line-length = 120
+
+# Target Python 3.11
+target-version = "py311"
+
+[lint]
+# Enable pycodestyle (E, W), Pyflakes (F), isort (I), and other rules
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # Pyflakes
+    "I",     # isort
+    "N",     # pep8-naming
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "DTZ",   # flake8-datetimez
+    "T10",   # flake8-debugger
+    "ISC",   # flake8-implicit-str-concat
+    "ICN",   # flake8-import-conventions
+    "PIE",   # flake8-pie
+    "PT",    # flake8-pytest-style
+    "RSE",   # flake8-raise
+    "RET",   # flake8-return
+    "SIM",   # flake8-simplify
+    "ARG",   # flake8-unused-arguments
+    "PTH",   # flake8-use-pathlib
+    "PL",    # Pylint
+    "RUF",   # Ruff-specific rules
+]
+
+# Rules to ignore
+ignore = [
+    "E501",    # Line too long (handled by formatter)
+    "B008",    # Do not perform function call in argument defaults (FastAPI dependencies)
+    "PLR0913", # Too many arguments to function call
+    "PLR2004", # Magic value used in comparison
+    "RUF012",  # Mutable class attributes should be annotated
+    "N815",    # mixedCase variable in class scope (for Pydantic models)
+    "ISC001",  # Conflicts with formatter
+]
+
+# Allow autofix for all enabled rules
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[lint.per-file-ignores]
+# Test files can use assertions and have more relaxed rules
+"tests/**/*.py" = [
+    "S101",    # Use of assert
+    "ARG",     # Unused function arguments
+    "PLR2004", # Magic values in tests are fine
+]
+
+# __init__.py files can have unused imports
+"**/__init__.py" = [
+    "F401",    # Unused imports
+]
+
+[lint.isort]
+# Sort imports
+known-first-party = ["app"]
+force-single-line = false
+lines-after-imports = 2
+force-sort-within-sections = true
+
+[lint.mccabe]
+# Maximum complexity
+max-complexity = 10
+
+[format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Indent with spaces
+indent-style = "space"
+
+# Use \n line endings
+line-ending = "auto"
+
+# Skip magic trailing comma
+skip-magic-trailing-comma = false
+
+# Respect existing line breaks
+docstring-code-format = true

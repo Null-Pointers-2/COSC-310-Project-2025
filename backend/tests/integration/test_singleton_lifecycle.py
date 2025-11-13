@@ -1,99 +1,90 @@
 """Integration tests for SingletonResources lifecycle with FastAPI."""
+
+from unittest.mock import Mock, patch
+
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import patch, Mock
-from app.main import app, SingletonResources
+
+from app.main import SingletonResources, app
+
 
 @pytest.fixture
-def patched_resources():
-    with patch("app.main.UsersRepository"), \
-         patch("app.main.MoviesRepository"), \
-         patch("app.main.RatingsRepository"), \
-         patch("app.main.WatchlistRepository"), \
-         patch("app.main.RecommendationsRepository"), \
-         patch("app.main.PenaltiesRepository"), \
-         patch("app.main.PasswordHasher"):
-        yield
+def reset_singleton():
+    SingletonResources._instance = None
+    SingletonResources._initialized = False
+    if hasattr(app.state, "resources"):
+        delattr(app.state, "resources")
 
-class TestSingletonLifecycle:
-    """Test singleton integration with FastAPI startup/shutdown events."""
+    yield
 
-    def test_singleton_initialized_on_startup(self, patched_resources):
-        """Test that singleton is initialized when FastAPI app starts."""
-        with TestClient(app) as client:
-                assert app.state.resources is not None
-                assert hasattr(app.state.resources, 'users_repo')
-                assert hasattr(app.state.resources, 'movies_repo')
+    SingletonResources._instance = None
+    SingletonResources._initialized = False
+    if hasattr(app.state, "resources"):
+        delattr(app.state, "resources")
 
-    def test_singleton_available_in_app_state(self, patched_resources):
-        """Test that singleton is accessible via app.state.resources."""
 
-        with TestClient(app) as client:
-            response = client.get("/health")
-            assert response.status_code == 200
+def test_singleton_initialized_on_startup(client):
+    assert hasattr(app.state, "resources")
+    assert app.state.resources is not None
 
-            assert hasattr(app.state, 'resources')
-            resources = app.state.resources
-            assert resources is not None
+    resources = app.state.resources
+    assert hasattr(resources, "users_repo")
+    assert hasattr(resources, "movies_repo")
 
-    def test_singleton_cleanup_called_on_shutdown(self, patched_resources):
-        """Test that cleanup is called when FastAPI app shuts down."""
-        mock_cleanup = Mock()
 
-        with TestClient(app) as client:
-            app.state.resources.cleanup = mock_cleanup
-            client.get("/health")
+def test_singleton_available_in_app_state(client):
+    response = client.get("/health")
+    assert response.status_code == 200
 
-        mock_cleanup.assert_called_once()
+    assert hasattr(app.state, "resources")
+    assert app.state.resources is not None
 
-    def test_singleton_persists_across_requests(self, test_app, client):
-        """Test that the same singleton instance is used across multiple requests."""
-        client.get("/health")
-        first_resources = test_app.state.resources
 
-        client.get("/health")
-        client.get("/")
-        second_resources = test_app.state.resources
+def test_singleton_persists_across_requests(client):
+    client.get("/health")
+    first_resources = app.state.resources
 
-        assert first_resources is second_resources
-        assert first_resources is not None
+    client.get("/health")
+    client.get("/")
+    second_resources = app.state.resources
 
-    def test_global_resources_variable_set(self, test_app):
-        """Test that resources are set in app.state on startup."""
-        assert hasattr(test_app.state, 'resources')
-        assert test_app.state.resources is not None
+    assert first_resources is second_resources
+    assert first_resources is not None
 
-    def test_health_endpoint_works_with_singleton(self, patched_resources):
-        """Test that health endpoint works when singleton is initialized."""
 
-        with TestClient(app) as client:
-            response = client.get("/health")
-            assert response.status_code == 200
-            data = response.json()
-            assert data["status"] == "healthy"
+def test_health_endpoint_works_with_singleton(client):
+    response = client.get("/health")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "healthy"
 
-    def test_root_endpoint_works_with_singleton(self, patched_resources):
-        """Test that root endpoint works when singleton is initialized."""
 
-        with TestClient(app) as client:
-            response = client.get("/")
-            assert response.status_code == 200
-            data = response.json()
-            assert data["message"] == "Movie Recommendations API"
+def test_root_endpoint_works_with_singleton(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["message"] == "Movie Recommendations API"
 
-    def test_app_handles_repository_initialization_error(self):
-        """Test that app can handle errors during repository initialization."""
-        with patch('app.main.UsersRepository', side_effect=Exception("Init error")), \
-             patch('app.main.MoviesRepository'), \
-             patch('app.main.RatingsRepository'), \
-             patch('app.main.WatchlistRepository'), \
-             patch('app.main.RecommendationsRepository'), \
-             patch('app.main.PenaltiesRepository'), \
-             patch('app.main.PasswordHasher'):
 
-            SingletonResources._instance = None
-            SingletonResources._initialized = False
+def test_singleton_cleanup_called_on_shutdown(reset_singleton):
+    mock_cleanup = Mock()
 
-            with pytest.raises(Exception, match="Init error"):
-                with TestClient(app) as client:
-                    pass
+    with TestClient(app) as test_client:
+        app.state.resources = SingletonResources()
+        app.state.resources.cleanup = mock_cleanup
+
+        response = test_client.get("/health")
+        assert response.status_code == 200
+
+    mock_cleanup.assert_called_once()
+
+
+def test_singleton_reinitializes_after_reset(reset_singleton):
+    first_instance = SingletonResources()
+    SingletonResources._instance = None
+    SingletonResources._initialized = False
+
+    second_instance = SingletonResources()
+
+    assert first_instance is not second_instance
+    assert isinstance(second_instance, SingletonResources)

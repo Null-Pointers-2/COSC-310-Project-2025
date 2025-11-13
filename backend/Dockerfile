@@ -11,10 +11,16 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
+# Application code
 COPY app ./app
-COPY data ./data
 
-RUN chown -R appuser:appuser /app
+# Static data - read-only
+COPY app/static ./app/static
+
+# Mutable data (will be mounted as volumes)
+RUN mkdir -p /app/data/ml && \
+    chown -R appuser:appuser /app/data
+
 USER appuser
 
 EXPOSE 8000

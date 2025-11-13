@@ -1,6 +1,6 @@
 # Movie Recommendations Backend
 
-This is the backend service for the **Best Dataset System for Movies**, built with **FastAPI**.  
+This is the backend service for the **Best Dataset System for Movies**, built with **FastAPI**.
 It provides REST APIs for movie data, item management, and user interaction.
 
 ## Features

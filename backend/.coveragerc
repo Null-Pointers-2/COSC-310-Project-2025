@@ -1,13 +1,13 @@
 [run]
 source = app
-omit = 
+omit =
     */tests/*
     */test_*.py
     */__pycache__/*
     */venv/*
     */env/*
     */__init__.py
-    */schemas/*.py   
+    */schemas/*.py
 
 [report]
 precision = 2

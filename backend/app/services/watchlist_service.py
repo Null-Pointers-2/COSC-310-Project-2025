@@ -1,16 +1,15 @@
 """Watchlist service."""
-from datetime import datetime
-from typing import List
+
 from app.schemas.watchlist import WatchlistItem, WatchlistItemCreate
 
 
-def get_user_watchlist(resources, user_id: str) -> List[WatchlistItem]:
+def get_user_watchlist(resources, user_id: str) -> list[WatchlistItem]:
     """Get user's watchlist with movie details."""
     movie_ids = resources.watchlist_repo.get_by_user(user_id)
     if not movie_ids:
         return []
 
-    items: List[WatchlistItem] = []
+    items: list[WatchlistItem] = []
     for movie_id in movie_ids:
         movie = resources.movies_repo.get_by_id(movie_id)
         if movie:
@@ -18,8 +17,8 @@ def get_user_watchlist(resources, user_id: str) -> List[WatchlistItem]:
                 WatchlistItem(
                     user_id=user_id,
                     movie_id=movie_id,
-                #   added_at=datetime.now(), TODO: add datetime compatibility later
-                )
+                    #   added_at=datetime.now(), TODO: add datetime compatibility later
+                ),
             )
     return items
 
@@ -33,14 +32,15 @@ def add_to_watchlist(resources, user_id: str, item: WatchlistItemCreate) -> Watc
         raise ValueError(f"Movie with ID {movie_id} not found.")
 
     if resources.watchlist_repo.exists(user_id, movie_id):
-        raise ValueError("Movie already in watchlist.")
+        msg = "Movie already in watchlist."
+        raise ValueError(msg)
 
     resources.watchlist_repo.add(user_id, movie_id)
 
     return WatchlistItem(
         user_id=user_id,
         movie_id=movie_id,
-     #  added_at=datetime.now(), TODO: add datetime compatibility later
+        #  added_at=datetime.now(), TODO: add datetime compatibility later
     )
 
 

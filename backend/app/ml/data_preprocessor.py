@@ -1,57 +1,140 @@
+"""
+Orchestrates preprocessing of MovieLens data.
+"""
+
+import json
+import logging
 import pickle
-import pandas as pd
-import numpy as np
 from pathlib import Path
-from sklearn.feature_extraction.text import TfidfVectorizer
+from typing import TYPE_CHECKING
+
+import numpy as np
+import pandas as pd
+
+if TYPE_CHECKING:
+    from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import normalize
+
+from app.ml.feature_engineering import genome_processor, genre_processor
+
+logger = logging.getLogger(__name__)
+
 
 class MovieDataPreprocessor:
-    """Preprocess MovieLens data for content-based recommendations."""
+    """
+    Orchestrates preprocessing of MovieLens data.
+    """
 
-    def __init__(self, data_path: str = "backend/data/movies", output_dir: str = "backend/data/ml"):
+    def __init__(
+        self,
+        data_path: str = "app/static/movies",
+        output_dir: str = "data/ml",
+        genre_weight: float = 0.3,
+        genome_weight: float = 0.7,
+    ):
+        """
+        Initialize preprocessor.
+
+        Args:
+            data_path: Path to movie CSV files
+            output_dir: Path to save processed data
+            genre_weight: Weight for genre features (0-1)
+            genome_weight: Weight for genome features (0-1)
+
+        """
         self.data_path = Path(data_path)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-    def load_movies(self):
-        """Load movie data from CSV."""
-        movies_path = self.data_path / "movies.csv"
+        if not (0 <= genre_weight <= 1) or not (0 <= genome_weight <= 1):
+            raise ValueError("Weights must be between 0 and 1")
 
+        total = genre_weight + genome_weight
+        if total == 0:
+            raise ValueError("Total weight cannot be zero")
+
+        self.genre_weight = genre_weight / total
+        self.genome_weight = genome_weight / total
+
+        logger.info("Using weights: Genre=%.2f, Genome=%.2f", self.genre_weight, self.genome_weight)
+
+    def load_data(self) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """Load movies, genome scores, and genome tags."""
+        logger.info("Loading data...")
+
+        movies_path = self.data_path / "movies.csv"
         if not movies_path.exists():
             raise FileNotFoundError(f"Movies file not found at {movies_path}")
-        
         movies_df = pd.read_csv(movies_path, encoding="utf-8")
-        return movies_df
 
-    def preprocess_genres(self, movies_df: pd.DataFrame) -> pd.DataFrame:
-        """Preprocess the genres column."""
-        movies_df = movies_df.copy()
-        movies_df['genres_processed'] = (movies_df['genres'].fillna('').str.replace('|', ' ', regex=False))
-        movies_df = movies_df[movies_df['genres'] != '(no genres listed)']
-        return movies_df
+        genome_scores_path = self.data_path / "genome-scores.csv"
+        if not genome_scores_path.exists():
+            raise FileNotFoundError(f"Genome scores not found at {genome_scores_path}")
+        genome_scores_df = pd.read_csv(genome_scores_path, encoding="utf-8")
 
-    def create_tfidf_matrix(self, movies_df: pd.DataFrame) -> tuple[np.ndarray, TfidfVectorizer, pd.DataFrame]:
-        """Create TF-IDF matrix from genres."""
-        tfidf = TfidfVectorizer(stop_words='english')
-        tfidf_matrix = tfidf.fit_transform(movies_df['genres_processed'])
-        return tfidf_matrix, tfidf, movies_df
+        genome_tags_path = self.data_path / "genome-tags.csv"
+        if not genome_tags_path.exists():
+            raise FileNotFoundError(f"Genome tags not found at {genome_tags_path}")
+        genome_tags_df = pd.read_csv(genome_tags_path, encoding="utf-8")
 
-    def save_processed_data(self, movies_df: pd.DataFrame, tfidf_matrix: np.ndarray, tfidf_vectorizer: TfidfVectorizer):
-        """Save processed data and vectorizer."""
-        movies_df[['movieId', 'title', 'genres', 'genres_processed']].to_csv(self.output_dir / 'movies_clean.csv', index=False)
+        return movies_df, genome_scores_df, genome_tags_df
 
-        np.save(self.output_dir / 'tfidf_matrix.npy', tfidf_matrix.toarray())
+    def combine_features(self, genre_matrix: np.ndarray, genome_matrix: np.ndarray) -> np.ndarray:
+        """
+        Combine genre and genome features with configured weights.
+        """
+        logger.info("Combining genre and genome features...")
+        logger.debug("Genre matrix shape: %s, dtype: %s", genre_matrix.shape, genre_matrix.dtype)
+        logger.debug("Genome matrix shape: %s, dtype: %s", genome_matrix.shape, genome_matrix.dtype)
 
-        with open(self.output_dir / 'tfidf_vectorizer.pkl', 'wb') as f:
+        if not isinstance(genre_matrix, np.ndarray):
+            genre_matrix = np.array(genre_matrix.toarray() if hasattr(genre_matrix, "toarray") else genre_matrix)
+        if not isinstance(genome_matrix, np.ndarray):
+            genome_matrix = np.array(genome_matrix.toarray() if hasattr(genome_matrix, "toarray") else genome_matrix)
+
+        genre_normalized = normalize(genre_matrix, norm="l2", axis=1)
+        genome_normalized = normalize(genome_matrix, norm="l2", axis=1)
+
+        genre_weighted = genre_normalized * self.genre_weight
+        genome_weighted = genome_normalized * self.genome_weight
+
+        combined = np.hstack([genre_weighted, genome_weighted])
+
+        return normalize(combined, norm="l2", axis=1)
+
+    def save_processed_data(
+        self,
+        movies_df: pd.DataFrame,
+        combined_matrix: np.ndarray,
+        tfidf_vectorizer: "TfidfVectorizer",
+    ):
+        """Save all processed data and models."""
+        movies_clean_path = self.output_dir / "movies_clean.csv"
+        movies_df[["movie_id", "title", "genres"]].to_csv(movies_clean_path, index=False)
+
+        combined_path = self.output_dir / "combined_features.npy"
+        np.save(combined_path, combined_matrix)
+
+        vectorizer_path = self.output_dir / "tfidf_vectorizer.pkl"
+        with Path.open(vectorizer_path, "wb") as f:
             pickle.dump(tfidf_vectorizer, f)
 
-        movie_id_to_idx = pd.Series(movies_df.index, index=movies_df['movieId']).to_dict()
+        movie_id_to_idx = pd.Series(range(len(movies_df)), index=movies_df["movie_id"]).to_dict()
 
-        with open(self.output_dir / 'movie_id_to_idx.pkl', 'wb') as f:
-            pickle.dump(movie_id_to_idx, f)
+        mapping_path = self.output_dir / "movie_id_to_idx.json"
+        with Path.open(mapping_path, "w") as f:
+            json.dump(movie_id_to_idx, f)
 
     def run_preprocessing(self):
         """Run full preprocessing pipeline."""
-        movies_df = self.load_movies()
-        movies_df = self.preprocess_genres(movies_df)
-        tfidf_matrix, tfidf_vectorizer, movies_df = self.create_tfidf_matrix(movies_df)
-        self.save_processed_data(movies_df, tfidf_matrix, tfidf_vectorizer)
+        movies_df, genome_scores_df, _ = self.load_data()
+
+        genre_matrix, tfidf_vectorizer, movies_filtered_df = genre_processor.create_genre_features(movies_df)
+
+        genome_matrix = genome_processor.create_genome_features(movies_filtered_df, genome_scores_df)
+
+        combined_matrix = self.combine_features(genre_matrix, genome_matrix)
+
+        combined_matrix = combined_matrix.astype(np.float32)
+
+        self.save_processed_data(movies_filtered_df, combined_matrix, tfidf_vectorizer)

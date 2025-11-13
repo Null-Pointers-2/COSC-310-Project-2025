@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -9,8 +7,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend/data/users.csv:/app/data/users.csv
-      - ./backend/app/data:/app/app/data
+      - ./backend/data:/app/data
     environment:
       - PYTHONUNBUFFERED=1
       - ENV=production

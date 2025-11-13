@@ -1,64 +1,59 @@
+"""Main application entry point for the Movie Recommendations API."""
+
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-from app.routers import auth, users, movies, ratings, recommendations, watchlist, admin, export
-from app.repositories.users_repo import UsersRepository
-from app.repositories.movies_repo import MoviesRepository
-from app.repositories.ratings_repo import RatingsRepository
-from app.repositories.watchlist_repo import WatchlistRepository
-from app.repositories.recommendations_repo import RecommendationsRepository
-from app.repositories.penalties_repo import PenaltiesRepository
-from argon2 import PasswordHasher
-import threading
+from app.core.resources import SingletonResources
+from app.routers import (
+    admin,
+    auth,
+    export,
+    movies,
+    ratings,
+    recommendations,
+    users,
+    watchlist,
+)
+
+logger = logging.getLogger(__name__)
 
 
-class SingletonResources:
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     """
-    Singleton container for shared application resources.
-    Initialized once at startup and shared across the application.
+    Lifespan context manager for FastAPI application.
+    Initializes and cleans up singleton resources.
     """
-    _instance = None
-    _initialized = False
-    _lock = threading.Lock()
+    logger.info("Application starting up...")
 
-    def __new__(cls):
-        if cls._instance is None:
-            with cls._lock:
-                if cls._instance is None:
-                    cls._instance = super().__new__(cls)
-        return cls._instance
+    if not hasattr(app.state, "resources") or app.state.resources is None:
+        logger.info("Initializing new SingletonResources...")
+        app.state.resources = SingletonResources()
+    else:
+        logger.info("SingletonResources already initialized, skipping...")
 
-    def __init__(self):
-        with SingletonResources._lock:
-            if SingletonResources._initialized:
-                return
+    logger.info("Application startup complete")
+    try:
+        yield
+    finally:
+        logger.info("Application shutting down...")
+        if hasattr(app.state, "resources") and app.state.resources:
+            app.state.resources.cleanup()
+        logger.info("Application shutdown complete")
 
-            print("Initializing singleton resources...")
-            self.users_repo = UsersRepository()
-            self.movies_repo = MoviesRepository()
-            self.ratings_repo = RatingsRepository()
-            self.watchlist_repo = WatchlistRepository()
-            self.recommendations_repo = RecommendationsRepository()
-            self.penalties_repo = PenaltiesRepository()
-
-            self.password_hasher = PasswordHasher()
-
-            SingletonResources._initialized = True
-            print("Singleton resources initialized successfully")
-
-    def cleanup(self):
-        """Cleanup resources on shutdown."""
-        print("Cleaning up singleton resources...")
-        print("Singleton resources cleaned up")
 
 app = FastAPI(
     title="Movie Recommendations API",
     description="Backend API for personalized movie recommendations",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
-# Health check endpoint
+
 @app.get("/health", tags=["Health"])
 async def health_check():
     """
@@ -68,10 +63,10 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "movie-recommendations-backend",
-        "version": "1.0.0"
+        "version": "1.0.0",
     }
 
-# Root endpoint
+
 @app.get("/", tags=["Root"])
 async def root():
     """
@@ -82,10 +77,10 @@ async def root():
         "version": "1.0.0",
         "docs": "/docs",
         "redoc": "/redoc",
-        "health": "/health"
+        "health": "/health",
     }
 
-# Routers
+
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/users", tags=["Users"])
 app.include_router(movies.router, prefix="/movies", tags=["Movies"])
@@ -94,28 +89,3 @@ app.include_router(recommendations.router, prefix="/recommendations", tags=["Rec
 app.include_router(watchlist.router, prefix="/watchlist", tags=["Watchlist"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
 app.include_router(export.router, prefix="/export", tags=["Export"])
-
-# Startup event
-@app.on_event("startup")
-async def startup_event():
-    """
-    Execute on application startup.
-    Initialize singleton resources and load data.
-    """
-    print("Application starting up...")
-    app.state.resources = SingletonResources()
-    # TODO: Load/precompute similarity matrix for recommendations (still not sure how this will work...)
-    # TODO: Validate data files
-    print("Application startup complete")
-
-# Shutdown event
-@app.on_event("shutdown")
-async def shutdown_event():
-    """
-    Execute on application shutdown.
-    Cleanup resources and save state.
-    """
-    print("Application shutting down...")
-    if hasattr(app.state, 'resources') and app.state.resources:
-        app.state.resources.cleanup()
-    print("Application shutdown complete")

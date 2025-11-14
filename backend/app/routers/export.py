@@ -1,10 +1,11 @@
 """Data export endpoints."""
-from typing import Annotated
-from fastapi import APIRouter, Depends
-from fastapi.responses import StreamingResponse
-from fastapi.encoders import jsonable_encoder
 import json
 from io import BytesIO
+from typing import Annotated
+
+from fastapi import APIRouter, Depends
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import StreamingResponse
 
 from app.core.dependencies import get_current_user, get_resources
 from app.core.resources import SingletonResources
@@ -26,7 +27,7 @@ def as_download(data: dict | list, filename: str):
 @router.get("/profile")
 def export_my_profile(current_user: Annotated[dict, Depends(get_current_user)],
                       resources: Annotated[SingletonResources, Depends(get_resources)]):
-    '''Export user's profile as JSON'''
+    """Export user's profile as JSON"""
     user_id = current_user["id"]
     profile = users_service.get_user_profile(user_id, resources)
 
@@ -47,7 +48,6 @@ def export_my_ratings(current_user: Annotated[dict, Depends(get_current_user)],
 def export_my_watchlist(current_user: Annotated[dict, Depends(get_current_user)],
                         resources: Annotated[SingletonResources, Depends(get_resources)]):
     """Export user's watchlist as JSON."""
-
     user_id = current_user["id"]
     watchlist = watchlist_service.get_user_watchlist(resources, user_id)
 
@@ -58,7 +58,6 @@ def export_my_watchlist(current_user: Annotated[dict, Depends(get_current_user)]
 def export_my_recommendations(current_user: Annotated[dict, Depends(get_current_user)],
                               resources: Annotated[SingletonResources, Depends(get_resources)]):
     """Export user's recommendations as JSON."""
-
     user_id = current_user["id"]
     recommendations = recommendations_service.get_recommendations(resources, user_id, 1000).model_dump()
 

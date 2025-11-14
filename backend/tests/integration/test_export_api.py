@@ -1,6 +1,6 @@
 import pytest
-from fastapi.testclient import TestClient
 from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
 from app.routers import export
 
@@ -22,7 +22,7 @@ def test_app(mocker):
     app.include_router(export.router, prefix="/export")
 
     app.dependency_overrides[export.get_current_user] = mock_get_current_user
-    
+
     mock_res = mocker.MagicMock()
     app.dependency_overrides[export.get_resources] = lambda: mock_res
 
@@ -59,28 +59,28 @@ def empty_test_app(mocker):
     app = FastAPI()
     app.include_router(export.router, prefix="/export")
 
-  
+
     app.dependency_overrides[export.get_current_user] = mock_get_current_user
-    
+
     mock_res = mocker.MagicMock()
     app.dependency_overrides[export.get_resources] = lambda: mock_res
 
     mocker.patch.object(
-        export.users_service, 
-        "get_user_profile", 
-        return_value={} 
+        export.users_service,
+        "get_user_profile",
+        return_value={}
     )
 
     mocker.patch.object(
         export.ratings_service,
         "get_user_ratings",
-        return_value=[] 
+        return_value=[]
     )
 
     mocker.patch.object(
         export.watchlist_service,
         "get_user_watchlist",
-        return_value=[]  
+        return_value=[]
     )
 
     mock_reco_list = mocker.MagicMock()

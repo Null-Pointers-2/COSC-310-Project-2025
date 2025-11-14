@@ -31,27 +31,20 @@ def test_app(mocker):
     mocker.patch.object(
         export.ratings_service,
         "get_user_ratings",
-        return_value=[{"movie_id": 1, "rating": 5}, {"movie_id": 2, "rating": 3}]
+        return_value=[{"movie_id": 1, "rating": 5}, {"movie_id": 2, "rating": 3}],
     )
 
-    mocker.patch.object(
-        export.watchlist_service,
-        "get_user_watchlist",
-        return_value=[10, 20, 30]
-    )
+    mocker.patch.object(export.watchlist_service, "get_user_watchlist", return_value=[10, 20, 30])
 
     mock_reco_list = mocker.MagicMock()
     mock_reco_list.model_dump.return_value = {
         "user_id": "user123",
-        "recommendations": [{"movie_id": 99, "score": 0.87}]
+        "recommendations": [{"movie_id": 99, "score": 0.87}],
     }
-    mocker.patch.object(
-        export.recommendations_service,
-        "get_recommendations",
-        return_value=mock_reco_list
-    )
+    mocker.patch.object(export.recommendations_service, "get_recommendations", return_value=mock_reco_list)
 
     return app
+
 
 @pytest.fixture
 def empty_test_app(mocker):
@@ -59,44 +52,26 @@ def empty_test_app(mocker):
     app = FastAPI()
     app.include_router(export.router, prefix="/export")
 
-
     app.dependency_overrides[export.get_current_user] = mock_get_current_user
 
     mock_res = mocker.MagicMock()
     app.dependency_overrides[export.get_resources] = lambda: mock_res
 
-    mocker.patch.object(
-        export.users_service,
-        "get_user_profile",
-        return_value={}
-    )
+    mocker.patch.object(export.users_service, "get_user_profile", return_value={})
 
-    mocker.patch.object(
-        export.ratings_service,
-        "get_user_ratings",
-        return_value=[]
-    )
+    mocker.patch.object(export.ratings_service, "get_user_ratings", return_value=[])
 
-    mocker.patch.object(
-        export.watchlist_service,
-        "get_user_watchlist",
-        return_value=[]
-    )
+    mocker.patch.object(export.watchlist_service, "get_user_watchlist", return_value=[])
 
     mock_reco_list = mocker.MagicMock()
-    mock_reco_list.model_dump.return_value = {
-        "user_id": "user123",
-        "recommendations": []
-    }
-    mocker.patch.object(
-        export.recommendations_service,
-        "get_recommendations",
-        return_value=mock_reco_list
-    )
+    mock_reco_list.model_dump.return_value = {"user_id": "user123", "recommendations": []}
+    mocker.patch.object(export.recommendations_service, "get_recommendations", return_value=mock_reco_list)
 
     return app
 
+
 # --- Tests -----------------------------------------------------------------
+
 
 def test_export_profile(test_app):
     client = TestClient(test_app)
@@ -152,6 +127,7 @@ def test_export_all(test_app):
     assert data["watchlist"] == [10, 20, 30]
 
     # --- Empty Field Tests -----------------------------------------------------------------
+
 
 def test_export_profile_empty(empty_test_app):
     client = TestClient(empty_test_app)

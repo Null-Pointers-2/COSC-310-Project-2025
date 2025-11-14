@@ -1,4 +1,5 @@
 """Data export endpoints."""
+
 import json
 from io import BytesIO
 from typing import Annotated
@@ -13,20 +14,21 @@ from app.services import ratings_service, recommendations_service, users_service
 
 router = APIRouter()
 
+
 def as_download(data: dict | list, filename: str):
     json_bytes = json.dumps(jsonable_encoder(data)).encode("utf-8")
     return StreamingResponse(
         BytesIO(json_bytes),
         media_type="application/json",
-        headers={
-            "Content-Disposition": f"attachment; filename={filename}"
-        }
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
     )
 
 
 @router.get("/profile")
-def export_my_profile(current_user: Annotated[dict, Depends(get_current_user)],
-                      resources: Annotated[SingletonResources, Depends(get_resources)]):
+def export_my_profile(
+    current_user: Annotated[dict, Depends(get_current_user)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
+):
     """Export user's profile as JSON"""
     user_id = current_user["id"]
     profile = users_service.get_user_profile(user_id, resources)
@@ -35,8 +37,10 @@ def export_my_profile(current_user: Annotated[dict, Depends(get_current_user)],
 
 
 @router.get("/ratings")
-def export_my_ratings(current_user: Annotated[dict, Depends(get_current_user)],
-                      resources: Annotated[SingletonResources, Depends(get_resources)]):
+def export_my_ratings(
+    current_user: Annotated[dict, Depends(get_current_user)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
+):
     """Export user's ratings as JSON."""
     user_id = current_user["id"]
     ratings = ratings_service.get_user_ratings(resources, user_id)
@@ -45,8 +49,10 @@ def export_my_ratings(current_user: Annotated[dict, Depends(get_current_user)],
 
 
 @router.get("/watchlist")
-def export_my_watchlist(current_user: Annotated[dict, Depends(get_current_user)],
-                        resources: Annotated[SingletonResources, Depends(get_resources)]):
+def export_my_watchlist(
+    current_user: Annotated[dict, Depends(get_current_user)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
+):
     """Export user's watchlist as JSON."""
     user_id = current_user["id"]
     watchlist = watchlist_service.get_user_watchlist(resources, user_id)
@@ -55,8 +61,10 @@ def export_my_watchlist(current_user: Annotated[dict, Depends(get_current_user)]
 
 
 @router.get("/recommendations")
-def export_my_recommendations(current_user: Annotated[dict, Depends(get_current_user)],
-                              resources: Annotated[SingletonResources, Depends(get_resources)]):
+def export_my_recommendations(
+    current_user: Annotated[dict, Depends(get_current_user)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
+):
     """Export user's recommendations as JSON."""
     user_id = current_user["id"]
     recommendations = recommendations_service.get_recommendations(resources, user_id, 1000).model_dump()
@@ -65,8 +73,10 @@ def export_my_recommendations(current_user: Annotated[dict, Depends(get_current_
 
 
 @router.get("/export_all")
-def export_all_data(current_user: Annotated[dict, Depends(get_current_user)],
-                    resources: Annotated[SingletonResources, Depends(get_resources)]):
+def export_all_data(
+    current_user: Annotated[dict, Depends(get_current_user)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
+):
     """Export all user data as JSON."""
     user_id = current_user["id"]
 

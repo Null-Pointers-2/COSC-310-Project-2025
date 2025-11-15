@@ -1,3 +1,4 @@
+"""Integration tests for export API endpoints."""
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -69,10 +70,6 @@ def empty_test_app(mocker):
 
     return app
 
-
-# --- Tests -----------------------------------------------------------------
-
-
 def test_export_profile(test_app):
     client = TestClient(test_app)
 
@@ -125,9 +122,6 @@ def test_export_all(test_app):
     assert data["profile"]["name"] == "Test User"
     assert len(data["ratings"]) == 2
     assert data["watchlist"] == [10, 20, 30]
-
-    # --- Empty Field Tests -----------------------------------------------------------------
-
 
 def test_export_profile_empty(empty_test_app):
     client = TestClient(empty_test_app)

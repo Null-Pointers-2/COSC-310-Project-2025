@@ -1,13 +1,17 @@
 """Unit tests for watchlist repository."""
 
 import json
+
 import pytest
+
 from app.repositories.watchlist_repo import WatchlistRepository
+
 
 @pytest.fixture
 def mock_store():
     """A dictionary to act as the 'file' in memory."""
     return {}
+
 
 @pytest.fixture
 def mock_repo(mocker, mock_store):
@@ -15,12 +19,11 @@ def mock_repo(mocker, mock_store):
     Creates a repository with Path mocked out.
     Reads/Writes are redirected to the 'mock_store' dictionary.
     """
-   
     mock_path_cls = mocker.patch("app.repositories.watchlist_repo.Path")
     mock_path_instance = mock_path_cls.return_value
-    
+
     mock_path_instance.exists.return_value = True
-    
+
     mock_path_instance.read_text.side_effect = lambda: json.dumps(mock_store)
 
     def fake_dump(data, fp, indent=None):
@@ -30,9 +33,9 @@ def mock_repo(mocker, mock_store):
     mocker.patch("app.repositories.watchlist_repo.json.dump", side_effect=fake_dump)
 
     repo = WatchlistRepository(watchlist_file="dummy.json")
-    
+
     repo._mock_path = mock_path_instance
-    
+
     return repo, mock_store
 
 
@@ -40,10 +43,9 @@ def test_file_is_created_if_not_exists(mocker):
     """
     Test that checks if the file creation logic runs when exists() returns False.
     """
-
     mock_path_cls = mocker.patch("app.repositories.watchlist_repo.Path")
     mock_path_instance = mock_path_cls.return_value
-    
+
     mock_path_instance.exists.return_value = False
 
     WatchlistRepository(watchlist_file="new_file.json")
@@ -174,10 +176,11 @@ def test_persistence_across_instances(mocker, mock_store):
     mock_path_instance = mock_path_cls.return_value
     mock_path_instance.exists.return_value = True
     mock_path_instance.read_text.side_effect = lambda: json.dumps(mock_store)
-    
+
     def fake_dump(data, fp, indent=None):
         mock_store.clear()
         mock_store.update(data)
+
     mocker.patch("app.repositories.watchlist_repo.json.dump", side_effect=fake_dump)
 
     repo1 = WatchlistRepository("dummy.json")

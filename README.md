@@ -89,7 +89,7 @@ pre-commit install
 ## Running the Server
 
 ```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+fastapi dev app/main.py
 ```
 
 Then visit:

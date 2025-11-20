@@ -46,7 +46,7 @@ def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = auth_service.create_access_token({"sub": user["username"]})
-    return Token(access_token=access_token, token_type="bearer")  # ruff: noqa S106
+    return Token(access_token=access_token, token_type="bearer")
 
 
 @router.get("/me", response_model=User)

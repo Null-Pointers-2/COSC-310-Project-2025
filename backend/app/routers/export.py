@@ -4,7 +4,7 @@ import json
 from io import BytesIO
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import StreamingResponse
 
@@ -31,7 +31,14 @@ def export_my_profile(
 ):
     """Export user's profile as JSON"""
     user_id = current_user["id"]
-    profile = users_service.get_user_profile(user_id, resources)
+
+    try:
+        profile = users_service.get_user_profile(user_id, resources)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error exporting profile: {e!s}") from e
+
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
 
     return as_download(profile, f"user_{user_id}_profile.json")
 
@@ -43,9 +50,11 @@ def export_my_ratings(
 ):
     """Export user's ratings as JSON."""
     user_id = current_user["id"]
-    ratings = ratings_service.get_user_ratings(resources, user_id)
-
-    return as_download(ratings, f"user_{user_id}_ratings.json")
+    try:
+        ratings = ratings_service.get_user_ratings(resources, user_id)
+        return as_download(ratings, f"user_{user_id}_ratings.json")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error exporting ratings: {e!s}") from e
 
 
 @router.get("/watchlist")
@@ -55,9 +64,11 @@ def export_my_watchlist(
 ):
     """Export user's watchlist as JSON."""
     user_id = current_user["id"]
-    watchlist = watchlist_service.get_user_watchlist(resources, user_id)
-
-    return as_download(watchlist, f"user_{user_id}_watchlist.json")
+    try:
+        watchlist = watchlist_service.get_user_watchlist(resources, user_id)
+        return as_download(watchlist, f"user_{user_id}_watchlist.json")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error exporting watchlist: {e!s}") from e
 
 
 @router.get("/recommendations")
@@ -67,9 +78,11 @@ def export_my_recommendations(
 ):
     """Export user's recommendations as JSON."""
     user_id = current_user["id"]
-    recommendations = recommendations_service.get_recommendations(resources, user_id, 1000).model_dump()
-
-    return as_download(recommendations, f"user_{user_id}_recommendations.json")
+    try:
+        recommendations = recommendations_service.get_recommendations(resources, user_id, 1000).model_dump()
+        return as_download(recommendations, f"user_{user_id}_recommendations.json")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error exporting recommendations: {e!s}") from e
 
 
 @router.get("/export_all")
@@ -79,17 +92,19 @@ def export_all_data(
 ):
     """Export all user data as JSON."""
     user_id = current_user["id"]
+    try:
+        user_profile = users_service.get_user_profile(user_id, resources)
+        ratings = ratings_service.get_user_ratings(resources, user_id)
+        watchlist = watchlist_service.get_user_watchlist(resources, user_id)
+        recommendations = recommendations_service.get_recommendations(resources, user_id, 1000).model_dump()
 
-    user_profile = users_service.get_user_profile(user_id, resources)
-    ratings = ratings_service.get_user_ratings(resources, user_id)
-    watchlist = watchlist_service.get_user_watchlist(resources, user_id)
-    recommendations = recommendations_service.get_recommendations(resources, user_id, 1000).model_dump()
+        all_data = {
+            "profile": user_profile,
+            "ratings": ratings,
+            "watchlist": watchlist,
+            "recommendations": recommendations,
+        }
 
-    all_data = {
-        "profile": user_profile,
-        "ratings": ratings,
-        "watchlist": watchlist,
-        "recommendations": recommendations,
-    }
-
-    return as_download(all_data, f"user_{user_id}_full_export.json")
+        return as_download(all_data, f"user_{user_id}_full_export.json")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error exporting all data: {e!s}") from e

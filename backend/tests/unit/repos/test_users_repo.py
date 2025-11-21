@@ -23,9 +23,9 @@ def user_data():
     }
 
 
-def test_crud(repo, user_daa, mocker):
+def test_crud(repo, user_data, mocker):
     mocker.patch("app.repositories.users_repo.uuid4", return_value="uid-123")
-    
+
     user = repo.create(user_data)
     assert user["id"] == "uid-123"
     assert user["username"] == "bob"
@@ -50,6 +50,7 @@ def test_retrieval(repo, user_data):
     assert repo.get_by_username("ghost") is None
     assert repo.get_by_email("ghost@example.com") is None
     assert repo.delete("ghost-id") is False
+
 
 def test_persistence(tmp_path, user_data):
     file_path = tmp_path / "users.csv"

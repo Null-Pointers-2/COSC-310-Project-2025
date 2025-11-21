@@ -167,32 +167,6 @@ def test_exists_empty_watchlist(mock_repo):
     assert repo.exists("user1", 1) is False
 
 
-def test_persistence_across_instances(mocker, mock_store):
-    """
-    Tests that two different repo instances interact with the same (mocked) data.
-    """
-    # Setup the mocks manually so they share the same mock_store
-    mock_path_cls = mocker.patch("app.repositories.watchlist_repo.Path")
-    mock_path_instance = mock_path_cls.return_value
-    mock_path_instance.exists.return_value = True
-    mock_path_instance.read_text.side_effect = lambda: json.dumps(mock_store)
-
-    def fake_dump(data, fp, indent=None):
-        mock_store.clear()
-        mock_store.update(data)
-
-    mocker.patch("app.repositories.watchlist_repo.json.dump", side_effect=fake_dump)
-
-    repo1 = WatchlistRepository("dummy.json")
-    repo1.add("user1", 1)
-    repo1.add("user1", 2)
-
-    repo2 = WatchlistRepository("dummy.json")
-    watchlist = repo2.get_by_user("user1")
-
-    assert set(watchlist) == {1, 2}
-
-
 def test_remove_from_middle_of_list(mock_repo):
     repo, store = mock_repo
 

@@ -19,6 +19,8 @@ from app.routers import (
 
 logger = logging.getLogger(__name__)
 
+VERSION = "1.0.0"
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -47,7 +49,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Movie Recommendations API",
     description="Backend API for personalized movie recommendations",
-    version="1.0.0",
+    version=VERSION,
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
@@ -63,7 +65,7 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "movie-recommendations-backend",
-        "version": "1.0.0",
+        "version": VERSION,
     }
 
 
@@ -74,7 +76,7 @@ async def root():
     """
     return {
         "message": "Movie Recommendations API",
-        "version": "1.0.0",
+        "version": VERSION,
         "docs": "/docs",
         "redoc": "/redoc",
         "health": "/health",

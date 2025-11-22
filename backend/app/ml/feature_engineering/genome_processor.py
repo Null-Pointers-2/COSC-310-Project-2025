@@ -21,6 +21,8 @@ def create_genome_features(movies_df: pd.DataFrame, genome_scores_df: pd.DataFra
         index="movie_id", columns="tag_id", values="relevance", fill_value=0.0
     )
 
+    genome_pivot = genome_pivot.groupby(level=0).first()
+
     genome_pivot = genome_pivot.reindex(movie_ids, fill_value=0.0)
 
     return genome_pivot.to_numpy(dtype=np.float32)

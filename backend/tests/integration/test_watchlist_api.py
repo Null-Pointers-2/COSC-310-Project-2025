@@ -2,6 +2,7 @@
 Integration tests for watchlist API endpoints.
 """
 
+from datetime import UTC, datetime, timezone
 from unittest.mock import Mock, patch
 
 import pytest
@@ -23,7 +24,10 @@ def mock_current_user():
 
 @pytest.fixture
 def sample_watchlist_item():
-    return WatchlistItem(user_id="user123", movie_id=1)
+    """
+    Creates a valid WatchlistItem with the required added_at field.
+    """
+    return WatchlistItem(user_id="user123", movie_id=1, added_at=datetime.now(UTC))
 
 
 def test_get_my_watchlist_success(mock_resources, mock_current_user, sample_watchlist_item):
@@ -38,6 +42,7 @@ def test_get_my_watchlist_success(mock_resources, mock_current_user, sample_watc
         assert len(result) == 1
         assert result[0].user_id == "user123"
         assert result[0].movie_id == 1
+        assert result[0].added_at == sample_watchlist_item.added_at
 
 
 def test_get_my_watchlist_empty(mock_resources, mock_current_user):
@@ -48,17 +53,6 @@ def test_get_my_watchlist_empty(mock_resources, mock_current_user):
         )
 
         assert len(result) == 0
-
-
-def test_get_my_watchlist_not_found(mock_resources, mock_current_user):
-    with patch("app.routers.watchlist.watchlist_service.get_user_watchlist", return_value=None):
-        with pytest.raises(HTTPException) as exc_info:
-            watchlist.get_my_watchlist(
-                current_user=mock_current_user,
-                resources=mock_resources,
-            )
-
-        assert exc_info.value.status_code == 404
 
 
 def test_add_to_watchlist_success(mock_resources, mock_current_user, sample_watchlist_item):
@@ -73,6 +67,7 @@ def test_add_to_watchlist_success(mock_resources, mock_current_user, sample_watc
 
         assert result.movie_id == 1
         assert result.user_id == "user123"
+        assert result.added_at is not None
 
 
 def test_add_to_watchlist_movie_not_found(mock_resources, mock_current_user):
@@ -114,7 +109,7 @@ def test_remove_from_watchlist_success(mock_resources, mock_current_user):
             resources=mock_resources,
         )
 
-        assert result is True
+        assert result is None
 
 
 def test_remove_from_watchlist_not_found(mock_resources, mock_current_user):
@@ -125,7 +120,7 @@ def test_remove_from_watchlist_not_found(mock_resources, mock_current_user):
             resources=mock_resources,
         )
 
-        assert result is False
+        assert result is None
 
 
 def test_remove_from_watchlist_error(mock_resources, mock_current_user):

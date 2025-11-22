@@ -18,10 +18,7 @@ def get_my_watchlist(
     resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
     """Get current user's watchlist."""
-    watchlist = watchlist_service.get_user_watchlist(resources, user_id=current_user["id"])
-    if watchlist is None:
-        raise HTTPException(status_code=404, detail=f"Watchlist with ID {current_user['id']} not found")
-    return watchlist
+    return watchlist_service.get_user_watchlist(resources, user_id=current_user["id"])
 
 
 @router.post("", response_model=WatchlistItem, status_code=status.HTTP_201_CREATED)
@@ -33,8 +30,10 @@ def add_to_watchlist(
     """Add movie to watchlist."""
     try:
         return watchlist_service.add_to_watchlist(resources, user_id=current_user["id"], item=item)
-    except Exception as e:
+    except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal Server Error") from e
 
 
 @router.delete("/{movie_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -45,7 +44,7 @@ def remove_from_watchlist(
 ):
     """Remove movie from watchlist."""
     try:
-        return watchlist_service.remove_from_watchlist(resources, user_id=current_user["id"], movie_id=movie_id)
+        watchlist_service.remove_from_watchlist(resources, user_id=current_user["id"], movie_id=movie_id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
 
@@ -54,7 +53,7 @@ def remove_from_watchlist(
 def check_in_watchlist(
     movie_id: int,
     current_user: Annotated[dict, Depends(get_current_user)],
-    resources: Annotated[dict, Depends(get_resources)],
+    resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
     """Check if movie is in watchlist."""
     try:

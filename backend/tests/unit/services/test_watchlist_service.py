@@ -1,11 +1,14 @@
 """Unit tests for watchlist service."""
 
+from datetime import datetime, timezone
 from unittest.mock import Mock
 
 import pytest
 
 from app.schemas.watchlist import WatchlistItemCreate
 from app.services import watchlist_service
+
+TEST_TIMESTAMP = "2025-01-01T12:00:00+00:00"
 
 
 @pytest.fixture
@@ -31,7 +34,10 @@ def test_returns_empty_list_for_user_with_no_watchlist(mock_resources):
 
 
 def test_returns_watchlist_with_valid_movies(mock_resources, sample_movie):
-    mock_resources.watchlist_repo.get_by_user.return_value = [1, 2]
+    mock_resources.watchlist_repo.get_by_user.return_value = [
+        {"movie_id": 1, "added_at": TEST_TIMESTAMP, "user_id": "user123"},
+        {"movie_id": 2, "added_at": TEST_TIMESTAMP, "user_id": "user123"},
+    ]
     mock_resources.movies_repo.get_by_id.side_effect = [
         {"movie_id": 1, "title": "Movie 1"},
         {"movie_id": 2, "title": "Movie 2"},
@@ -42,14 +48,19 @@ def test_returns_watchlist_with_valid_movies(mock_resources, sample_movie):
     assert len(result) == 2
     assert result[0].user_id == "user123"
     assert result[0].movie_id == 1
+    assert result[0].added_at == datetime.fromisoformat(TEST_TIMESTAMP)
     assert result[1].movie_id == 2
 
 
 def test_filters_out_invalid_movies(mock_resources):
-    mock_resources.watchlist_repo.get_by_user.return_value = [1, 999, 2]
+    mock_resources.watchlist_repo.get_by_user.return_value = [
+        {"movie_id": 1, "added_at": TEST_TIMESTAMP, "user_id": "user123"},
+        {"movie_id": 999, "added_at": TEST_TIMESTAMP, "user_id": "user123"},
+        {"movie_id": 2, "added_at": TEST_TIMESTAMP, "user_id": "user123"},
+    ]
     mock_resources.movies_repo.get_by_id.side_effect = [
         {"movie_id": 1, "title": "Movie 1"},
-        None,  # Movie 999 doesn't exist
+        None,
         {"movie_id": 2, "title": "Movie 2"},
     ]
 
@@ -60,7 +71,10 @@ def test_filters_out_invalid_movies(mock_resources):
 
 
 def test_returns_items_for_correct_user(mock_resources):
-    mock_resources.watchlist_repo.get_by_user.return_value = [1, 2]
+    mock_resources.watchlist_repo.get_by_user.return_value = [
+        {"movie_id": 1, "added_at": TEST_TIMESTAMP, "user_id": "user456"},
+        {"movie_id": 2, "added_at": TEST_TIMESTAMP, "user_id": "user456"},
+    ]
     mock_resources.movies_repo.get_by_id.side_effect = [
         {"movie_id": 1, "title": "Movie 1"},
         {"movie_id": 2, "title": "Movie 2"},
@@ -75,16 +89,15 @@ def test_returns_items_for_correct_user(mock_resources):
 def test_successfully_adds_movie_to_watchlist(mock_resources, sample_movie):
     mock_resources.movies_repo.get_by_id.return_value = sample_movie
     mock_resources.watchlist_repo.exists.return_value = False
-    mock_resources.watchlist_repo.add.return_value = {
-        "user_id": "user123",
-        "movie_id": 1,
-    }
+
+    mock_resources.watchlist_repo.add.return_value = {"user_id": "user123", "movie_id": 1, "added_at": TEST_TIMESTAMP}
 
     item_create = WatchlistItemCreate(movie_id=1)
     result = watchlist_service.add_to_watchlist(mock_resources, "user123", item_create)
 
     assert result.user_id == "user123"
     assert result.movie_id == 1
+    assert result.added_at == datetime.fromisoformat(TEST_TIMESTAMP)
     mock_resources.watchlist_repo.add.assert_called_once_with("user123", 1)
 
 
@@ -114,10 +127,7 @@ def test_raises_error_when_movie_already_in_watchlist(mock_resources, sample_mov
 def test_checks_movie_existence_before_adding(mock_resources, sample_movie):
     mock_resources.movies_repo.get_by_id.return_value = sample_movie
     mock_resources.watchlist_repo.exists.return_value = False
-    mock_resources.watchlist_repo.add.return_value = {
-        "user_id": "user123",
-        "movie_id": 1,
-    }
+    mock_resources.watchlist_repo.add.return_value = {"user_id": "user123", "movie_id": 1, "added_at": TEST_TIMESTAMP}
 
     item_create = WatchlistItemCreate(movie_id=1)
     watchlist_service.add_to_watchlist(mock_resources, "user123", item_create)
@@ -128,10 +138,7 @@ def test_checks_movie_existence_before_adding(mock_resources, sample_movie):
 def test_checks_duplicate_before_adding(mock_resources, sample_movie):
     mock_resources.movies_repo.get_by_id.return_value = sample_movie
     mock_resources.watchlist_repo.exists.return_value = False
-    mock_resources.watchlist_repo.add.return_value = {
-        "user_id": "user123",
-        "movie_id": 1,
-    }
+    mock_resources.watchlist_repo.add.return_value = {"user_id": "user123", "movie_id": 1, "added_at": TEST_TIMESTAMP}
 
     item_create = WatchlistItemCreate(movie_id=1)
     watchlist_service.add_to_watchlist(mock_resources, "user123", item_create)
@@ -183,7 +190,11 @@ def test_handles_empty_watchlist_gracefully(mock_resources):
 
 
 def test_handles_all_invalid_movies_in_watchlist(mock_resources):
-    mock_resources.watchlist_repo.get_by_user.return_value = [999, 888, 777]
+    mock_resources.watchlist_repo.get_by_user.return_value = [
+        {"movie_id": 999, "added_at": TEST_TIMESTAMP},
+        {"movie_id": 888, "added_at": TEST_TIMESTAMP},
+        {"movie_id": 777, "added_at": TEST_TIMESTAMP},
+    ]
     mock_resources.movies_repo.get_by_id.return_value = None
 
     result = watchlist_service.get_user_watchlist(mock_resources, "user123")
@@ -192,7 +203,12 @@ def test_handles_all_invalid_movies_in_watchlist(mock_resources):
 
 
 def test_handles_mixed_valid_invalid_movies(mock_resources):
-    mock_resources.watchlist_repo.get_by_user.return_value = [1, 999, 2, 888]
+    mock_resources.watchlist_repo.get_by_user.return_value = [
+        {"movie_id": 1, "added_at": TEST_TIMESTAMP},
+        {"movie_id": 999, "added_at": TEST_TIMESTAMP},
+        {"movie_id": 2, "added_at": TEST_TIMESTAMP},
+        {"movie_id": 888, "added_at": TEST_TIMESTAMP},
+    ]
 
     def get_movie_side_effect(movie_id):
         if movie_id in [1, 2]:
@@ -210,10 +226,7 @@ def test_handles_mixed_valid_invalid_movies(mock_resources):
 def test_add_movie_with_integer_conversion(mock_resources, sample_movie):
     mock_resources.movies_repo.get_by_id.return_value = sample_movie
     mock_resources.watchlist_repo.exists.return_value = False
-    mock_resources.watchlist_repo.add.return_value = {
-        "user_id": "user123",
-        "movie_id": 1,
-    }
+    mock_resources.watchlist_repo.add.return_value = {"user_id": "user123", "movie_id": 1, "added_at": TEST_TIMESTAMP}
 
     item_create = WatchlistItemCreate(movie_id=1)
     result = watchlist_service.add_to_watchlist(mock_resources, "user123", item_create)

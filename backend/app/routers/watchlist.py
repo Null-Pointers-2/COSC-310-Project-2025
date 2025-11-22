@@ -9,7 +9,7 @@ from app.main import SingletonResources
 from app.schemas.watchlist import WatchlistItem, WatchlistItemCreate
 from app.services import watchlist_service
 
-router = APIRouter(prefix="/watchlist")
+router = APIRouter()
 
 
 @router.get("", response_model=list[WatchlistItem])

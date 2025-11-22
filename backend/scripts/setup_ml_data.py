@@ -87,7 +87,7 @@ def main():
         logger.info("Setup completed successfully!")
         logger.info("The recommendation system is now ready to use.")
         logger.info("You can start the backend server with:")
-        logger.info("  uvicorn app.main:app --reload")
+        logger.info("  fastapi dev app/main.py")
 
     except FileNotFoundError:
         logger.exception("Required file missing: %s")

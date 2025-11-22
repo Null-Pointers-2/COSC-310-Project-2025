@@ -1,5 +1,7 @@
 """Watchlist schemas."""
 
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -14,4 +16,4 @@ class WatchlistItem(BaseModel):
 
     user_id: str
     movie_id: int
-    # added_at: datetime TODO: add datetime compatibility
+    added_at: datetime

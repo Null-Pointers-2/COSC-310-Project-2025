@@ -1,6 +1,7 @@
 """Repository for user watchlist operations."""
 
 import json
+from datetime import UTC, datetime
 from pathlib import Path
 
 from app.core.config import settings
@@ -21,19 +22,19 @@ class WatchlistRepository:
         try:
             if not self.watchlist_file.exists():
                 self.watchlist_file.parent.mkdir(parents=True, exist_ok=True)
-                self.watchlist_file.write_text("{}")
+                self.watchlist_file.write_text("[]")
         except OSError as e:
             raise OSError(f"Failed to initialize watchlist file: {e}") from e
 
-    def _read(self) -> dict[str, list[int]]:
+    def _read(self) -> list[dict]:
         """Read all watchlist items."""
         try:
             content = self.watchlist_file.read_text()
             return json.loads(content)
         except (OSError, json.JSONDecodeError):
-            return {}
+            return []
 
-    def _write(self, data: dict[str, list[int]]):
+    def _write(self, data: list[dict]):
         """Write all watchlist items to file."""
         try:
             with self.watchlist_file.open("w") as f:
@@ -41,44 +42,49 @@ class WatchlistRepository:
         except OSError as e:
             raise OSError(f"Failed to write watchlist file: {e}") from e
 
-    def get_by_user(self, user_id: str) -> list[int]:
+    def get_by_user(self, user_id: str) -> list[dict]:
         """Get user's watchlist."""
         data = self._read()
-        return data.get(str(user_id), [])
+        return [item for item in data if item["user_id"] == user_id]
 
     def add(self, user_id: str, movie_id: int) -> dict:
         """Add movie to user's watchlist."""
         data = self._read()
-        user_key = str(user_id)
+        user_id = str(user_id)
         movie_id = int(movie_id)
 
-        if user_key not in data:
-            data[user_key] = []
+        existing = next((item for item in data if item["user_id"] == user_id and item["movie_id"] == movie_id), None)
 
-        if movie_id not in data[user_key]:
-            data[user_key].append(movie_id)
-            self._write(data)
+        if existing:
+            return existing
 
-        return {"user_id": user_id, "movie_id": movie_id}
+        new_item = {"user_id": user_id, "movie_id": movie_id, "added_at": datetime.now(UTC).isoformat()}
+
+        data.append(new_item)
+        self._write(data)
+
+        return new_item
 
     def remove(self, user_id: str, movie_id: int) -> bool:
         """Remove movie from user's watchlist."""
         data = self._read()
-        user_key = str(user_id)
+        user_id = str(user_id)
         movie_id = int(movie_id)
 
-        if user_key in data and movie_id in data[user_key]:
-            data[user_key].remove(movie_id)
-            self._write(data)
+        new_data = [item for item in data if not (item["user_id"] == user_id and item["movie_id"] == movie_id)]
+
+        if len(new_data) < len(data):
+            self._write(new_data)
             return True
+
         return False
 
     def exists(self, user_id: str, movie_id: int) -> bool:
         """Check if movie is in user's watchlist."""
         data = self._read()
         movie_id = int(movie_id)
-        return movie_id in data.get(str(user_id), [])
+        return any(item["user_id"] == user_id and item["movie_id"] == movie_id for item in data)
 
-    def save_data(self, data: dict[str, list[int]]):
-        """Overwrite the watchlist file with the given dictionary."""
+    def save_data(self, data: list[dict]):
+        """Overwrite the watchlist file with the given list."""
         self._write(data)

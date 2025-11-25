@@ -14,8 +14,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Application code
 COPY app ./app
 
-# Static data - read-only
-COPY app/static ./app/static
+# Setup Scripts
+COPY scripts ./scripts
 
 # Mutable data (will be mounted as volumes)
 RUN mkdir -p /app/data/ml && \

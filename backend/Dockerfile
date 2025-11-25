@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Application code
 COPY app ./app
 
-# Setup Scripts
+# Setup scripts
 COPY scripts ./scripts
 
 # Mutable data (will be mounted as volumes)

@@ -1,7 +1,7 @@
 """Admin service for managing users and penalties."""
 
 from collections import Counter
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from app.core.config import settings
 from app.schemas.penalty import Penalty, PenaltyCreate
@@ -110,7 +110,7 @@ def check_user_violations(resources, user_id: str) -> list[str]:
         return violations
 
     # Spam (too many ratings in last hour)
-    now = datetime.now(UTC)
+    now = datetime.now(timezone.utc)
     one_hour_ago = now - timedelta(hours=1)
 
     recent_ratings = [r for r in user_ratings if datetime.fromisoformat(r["timestamp"]) > one_hour_ago]

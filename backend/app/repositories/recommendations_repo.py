@@ -1,7 +1,7 @@
 """Repository for cached recommendations."""
 
 import json
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from app.core.config import settings
@@ -52,8 +52,8 @@ class RecommendationsRepository:
         data = self._read()
         data[str(user_id)] = {
             "recommendations": recommendations,
-            "timestamp": datetime.now(UTC).isoformat(),
-            "generated_at": datetime.now(UTC).isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
         }
         self._write(data)
 
@@ -73,7 +73,7 @@ class RecommendationsRepository:
 
         try:
             cached_time = datetime.fromisoformat(cached["timestamp"])
-            age = datetime.now(UTC) - cached_time
+            age = datetime.now(timezone.utc) - cached_time
             return age < timedelta(hours=max_age_hours)
         except (ValueError, KeyError):
             return False

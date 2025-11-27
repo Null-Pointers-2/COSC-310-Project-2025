@@ -2,7 +2,7 @@
 
 import json
 import uuid
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from app.core.config import settings
@@ -66,7 +66,7 @@ class PenaltiesRepository:
             "reason": penalty_data["reason"],
             "description": penalty_data.get("description"),
             "status": "active",
-            "issued_at": datetime.now(UTC).isoformat(),
+            "issued_at": datetime.now(timezone.utc).isoformat(),
             "resolved_at": None,
             "issued_by": penalty_data["issued_by"],
         }
@@ -92,7 +92,7 @@ class PenaltiesRepository:
         for i, p in enumerate(penalties):
             if p["id"] == penalty_id:
                 penalties[i]["status"] = "resolved"
-                penalties[i]["resolved_at"] = datetime.now(UTC).isoformat()
+                penalties[i]["resolved_at"] = datetime.now(timezone.utc).isoformat()
                 self._write(penalties)
                 return True
         return False

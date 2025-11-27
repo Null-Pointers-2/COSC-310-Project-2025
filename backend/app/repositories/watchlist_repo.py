@@ -1,7 +1,7 @@
 """Repository for user watchlist operations."""
 
 import json
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from app.core.config import settings
@@ -58,7 +58,7 @@ class WatchlistRepository:
         if existing:
             return existing
 
-        new_item = {"user_id": user_id, "movie_id": movie_id, "added_at": datetime.now(UTC).isoformat()}
+        new_item = {"user_id": user_id, "movie_id": movie_id, "added_at": datetime.now(timezone.utc).isoformat()}
 
         data.append(new_item)
         self._write(data)

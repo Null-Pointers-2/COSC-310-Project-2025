@@ -1,7 +1,7 @@
 """Repository for ratings data operations."""
 
 import json
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from app.core.config import settings
@@ -86,7 +86,7 @@ class RatingsRepository:
             "user_id": rating_data["user_id"],
             "movie_id": int(rating_data["movie_id"]),
             "rating": rating_data["rating"],
-            "timestamp": datetime.now(UTC).isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
         ratings.append(new_rating)
@@ -101,7 +101,7 @@ class RatingsRepository:
                 updated = {
                     **r,
                     **rating_data,
-                    "timestamp": datetime.now(UTC).isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 }
                 ratings[i] = updated
                 self._write(ratings)

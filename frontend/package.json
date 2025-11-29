@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "setup:env": "node -e \"const fs = require('fs'); if (!fs.existsSync('.env.local')) { fs.copyFileSync('.env.local.example', '.env.local'); console.log('Created .env.local'); } else { console.log('.env.local already exists, skipping overwrite.'); }\""
   },
   "dependencies": {
     "next": "^15.5.4",

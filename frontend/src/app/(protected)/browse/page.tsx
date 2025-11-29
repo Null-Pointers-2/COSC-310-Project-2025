@@ -25,7 +25,6 @@ export default function BrowsePage() {
     page: page 
   });
 
-  // 3. Fetch Personal Recommendations
   const { recommendations } = useRecommendations();
 
   const isFiltering = activeQuery.length > 0 || selectedGenre.length > 0;

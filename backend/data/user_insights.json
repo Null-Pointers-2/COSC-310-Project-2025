@@ -1,0 +1,282 @@
+[
+    {
+        "user_id": "8991d520-8d9f-49d2-88ff-bea64704f29f",
+        "generated_at": "2025-11-30T06:33:04.495532Z",
+        "top_genre": "Crime",
+        "top_3_genres": [
+            "Crime",
+            "Drama",
+            "Comedy"
+        ],
+        "genre_insights": [
+            {
+                "genre": "Crime",
+                "total_rated": 2,
+                "watchlist_rated": 2,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 5.0,
+                "preference_score": 76.0
+            },
+            {
+                "genre": "Drama",
+                "total_rated": 2,
+                "watchlist_rated": 2,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 5.0,
+                "preference_score": 76.0
+            },
+            {
+                "genre": "Comedy",
+                "total_rated": 3,
+                "watchlist_rated": 3,
+                "average_rating": 4.33,
+                "watchlist_average_rating": 4.33,
+                "preference_score": 75.11
+            },
+            {
+                "genre": "Thriller",
+                "total_rated": 1,
+                "watchlist_rated": 1,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 5.0,
+                "preference_score": 68.0
+            },
+            {
+                "genre": "Adventure",
+                "total_rated": 2,
+                "watchlist_rated": 2,
+                "average_rating": 4.25,
+                "watchlist_average_rating": 4.25,
+                "preference_score": 66.0
+            },
+            {
+                "genre": "Children",
+                "total_rated": 2,
+                "watchlist_rated": 2,
+                "average_rating": 4.25,
+                "watchlist_average_rating": 4.25,
+                "preference_score": 66.0
+            },
+            {
+                "genre": "Fantasy",
+                "total_rated": 2,
+                "watchlist_rated": 2,
+                "average_rating": 4.25,
+                "watchlist_average_rating": 4.25,
+                "preference_score": 66.0
+            },
+            {
+                "genre": "Animation",
+                "total_rated": 1,
+                "watchlist_rated": 1,
+                "average_rating": 4.5,
+                "watchlist_average_rating": 4.5,
+                "preference_score": 61.33
+            },
+            {
+                "genre": "Romance",
+                "total_rated": 1,
+                "watchlist_rated": 1,
+                "average_rating": 3.5,
+                "watchlist_average_rating": 3.5,
+                "preference_score": 48.0
+            }
+        ],
+        "top_theme": "original",
+        "top_5_themes": [
+            "original",
+            "great movie",
+            "good",
+            "story",
+            "great"
+        ],
+        "theme_insights": [
+            {
+                "tag": "original",
+                "tag_id": 742,
+                "movies_count": 4,
+                "average_relevance": 0.858,
+                "average_rating": 4.62,
+                "preference_score": 95.0
+            },
+            {
+                "tag": "great movie",
+                "tag_id": 469,
+                "movies_count": 4,
+                "average_relevance": 0.811,
+                "average_rating": 4.62,
+                "preference_score": 95.0
+            },
+            {
+                "tag": "good",
+                "tag_id": 445,
+                "movies_count": 4,
+                "average_relevance": 0.777,
+                "average_rating": 4.62,
+                "preference_score": 95.0
+            },
+            {
+                "tag": "story",
+                "tag_id": 971,
+                "movies_count": 4,
+                "average_relevance": 0.745,
+                "average_rating": 4.62,
+                "preference_score": 95.0
+            },
+            {
+                "tag": "great",
+                "tag_id": 464,
+                "movies_count": 4,
+                "average_relevance": 0.736,
+                "average_rating": 4.62,
+                "preference_score": 95.0
+            },
+            {
+                "tag": "mentor",
+                "tag_id": 646,
+                "movies_count": 4,
+                "average_relevance": 0.705,
+                "average_rating": 4.62,
+                "preference_score": 95.0
+            },
+            {
+                "tag": "entertaining",
+                "tag_id": 355,
+                "movies_count": 4,
+                "average_relevance": 0.699,
+                "average_rating": 4.62,
+                "preference_score": 95.0
+            },
+            {
+                "tag": "action",
+                "tag_id": 19,
+                "movies_count": 4,
+                "average_relevance": 0.624,
+                "average_rating": 4.62,
+                "preference_score": 95.0
+            },
+            {
+                "tag": "imdb top 250",
+                "tag_id": 536,
+                "movies_count": 3,
+                "average_relevance": 0.968,
+                "average_rating": 4.83,
+                "preference_score": 87.78
+            },
+            {
+                "tag": "storytelling",
+                "tag_id": 972,
+                "movies_count": 3,
+                "average_relevance": 0.896,
+                "average_rating": 4.83,
+                "preference_score": 87.78
+            },
+            {
+                "tag": "highly quotable",
+                "tag_id": 504,
+                "movies_count": 3,
+                "average_relevance": 0.856,
+                "average_rating": 4.83,
+                "preference_score": 87.78
+            },
+            {
+                "tag": "great ending",
+                "tag_id": 468,
+                "movies_count": 3,
+                "average_relevance": 0.84,
+                "average_rating": 4.83,
+                "preference_score": 87.78
+            },
+            {
+                "tag": "interesting",
+                "tag_id": 554,
+                "movies_count": 3,
+                "average_relevance": 0.822,
+                "average_rating": 4.83,
+                "preference_score": 87.78
+            },
+            {
+                "tag": "masterpiece",
+                "tag_id": 634,
+                "movies_count": 3,
+                "average_relevance": 0.821,
+                "average_rating": 4.83,
+                "preference_score": 87.78
+            },
+            {
+                "tag": "excellent script",
+                "tag_id": 365,
+                "movies_count": 3,
+                "average_relevance": 0.811,
+                "average_rating": 4.83,
+                "preference_score": 87.78
+            },
+            {
+                "tag": "original plot",
+                "tag_id": 743,
+                "movies_count": 3,
+                "average_relevance": 0.806,
+                "average_rating": 4.83,
+                "preference_score": 87.78
+            },
+            {
+                "tag": "good soundtrack",
+                "tag_id": 452,
+                "movies_count": 3,
+                "average_relevance": 0.8,
+                "average_rating": 4.83,
+                "preference_score": 87.78
+            },
+            {
+                "tag": "redemption",
+                "tag_id": 844,
+                "movies_count": 3,
+                "average_relevance": 0.8,
+                "average_rating": 4.83,
+                "preference_score": 87.78
+            },
+            {
+                "tag": "oscar (best directing)",
+                "tag_id": 750,
+                "movies_count": 3,
+                "average_relevance": 0.792,
+                "average_rating": 4.83,
+                "preference_score": 87.78
+            },
+            {
+                "tag": "adventure",
+                "tag_id": 29,
+                "movies_count": 3,
+                "average_relevance": 0.809,
+                "average_rating": 4.5,
+                "preference_score": 83.33
+            }
+        ],
+        "watchlist_metrics": {
+            "total_watchlist_items": 7,
+            "items_rated": 5,
+            "items_not_rated": 2,
+            "completion_rate": 71.43,
+            "average_rating": 4.4,
+            "average_time_to_rate_hours": 0.01,
+            "genres_in_watchlist": [
+                "Action",
+                "Adventure",
+                "Animation",
+                "Children",
+                "Comedy",
+                "Crime",
+                "Drama",
+                "Fantasy",
+                "Romance",
+                "Sci-Fi",
+                "Thriller",
+                "War"
+            ],
+            "most_common_watchlist_genre": "Comedy"
+        },
+        "total_ratings": 5,
+        "average_rating": 4.4,
+        "rating_consistency": 0.65
+    }
+]

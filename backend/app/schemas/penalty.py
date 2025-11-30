@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class PenaltyBase(BaseModel):
@@ -20,11 +20,10 @@ class PenaltyCreate(PenaltyBase):
 class Penalty(PenaltyBase):
     """Complete penalty schema."""
 
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     status: str  # "active", "resolved"
     issued_at: datetime
     resolved_at: datetime | None = None
     issued_by: str  # admin user_id
-
-    class Config:
-        from_attributes = True

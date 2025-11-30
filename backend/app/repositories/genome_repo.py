@@ -32,8 +32,12 @@ class GenomeRepository:
         else:
             self.tags_df = pd.DataFrame(columns=["tag_id", "tag"])
 
-        # Don't load all scores by default (15M+ rows), load on demand
-        self.scores_df = None
+        # Load all scores into memory for fast lookups (~500MB RAM)
+        # This matches what the ML recommender does for performance
+        if self.genome_scores_path.exists():
+            self.scores_df = pd.read_csv(self.genome_scores_path, encoding="utf-8")
+        else:
+            self.scores_df = pd.DataFrame(columns=["movie_id", "tag_id", "relevance"])
 
     def get_tag_name(self, tag_id: int) -> str | None:
         """Get tag name by tag_id."""
@@ -118,22 +122,11 @@ class GenomeRepository:
         Returns:
             List of dicts with tag_id, tag, avg_relevance, movie_count
         """
-        if not self.genome_scores_path.exists() or not movie_ids:
+        if self.scores_df is None or self.scores_df.empty or not movie_ids:
             return []
 
-        # Load scores for these movies (chunked reading)
-        chunks = []
-        for chunk in pd.read_csv(
-            self.genome_scores_path, encoding="utf-8", chunksize=100000, usecols=["movie_id", "tag_id", "relevance"]
-        ):
-            movie_chunk = chunk[chunk["movie_id"].isin(movie_ids)]
-            if not movie_chunk.empty:
-                chunks.append(movie_chunk)
-
-        if not chunks:
-            return []
-
-        scores = pd.concat(chunks)
+        # Filter preloaded scores for these movies (FAST - in-memory lookup)
+        scores = self.scores_df[self.scores_df["movie_id"].isin(movie_ids)].copy()
         scores = scores[scores["relevance"] >= min_relevance]
 
         if scores.empty:

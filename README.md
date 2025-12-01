@@ -78,7 +78,7 @@ This process takes a few minutes and creates the following artifacts in `data/ml
 python -c "import secrets; f = open('.env', 'w', encoding='utf-8'); f.write('SECRET_KEY=' + secrets.token_urlsafe(48) + '\n'); f.close()"
 ```
 
-### 6.b Create .env.local in frontend/
+### 7. Create .env.local in frontend/
 
 From project root:
 ```bash
@@ -86,9 +86,9 @@ cd frontend
 npm run setup:env
 ```
 
-**Note:** Once your .env.local file is created, you will need to add your TMDB api key. More info about the api can be found [here](https://developer.themoviedb.org/docs/getting-started).
+**Note:** Once your .env.local file is created, you will need to add your TMDB API key. More info about the API can be found [here](https://developer.themoviedb.org/docs/getting-started).
 
-### 7. (Optional) Install pre-commit hooks for automatic linting/formatting
+### 8. (Optional) Install pre-commit hooks for automatic linting/formatting
 Once installed, pre-commit will automatically run before every git commit, to ensure code quality.
 
 ```bash
@@ -96,7 +96,7 @@ pre-commit install
 ```
 ---
 
-## Running the Server
+## Running the Backend Server
 
 ```bash
 fastapi dev app/main.py

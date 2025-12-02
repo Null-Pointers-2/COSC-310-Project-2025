@@ -36,7 +36,7 @@ def test_get_movies_endpoint(mock_resources):
         assert result.page == 1
 
 
-def test_get_movies_with_custom_pagination():
+def test_get_movies_with_custom_pagination(mock_resources):
     mock_page = MoviePage(
         movies=[Movie(movie_id=1, title="Test", genres=[])],
         total=100,
@@ -53,52 +53,45 @@ def test_get_movies_with_custom_pagination():
         assert result.total_pages == 10
 
 
-def test_search_movies_endpoint():
-    mock_movies = [
-        Movie(movie_id=1, title="Matrix", genres=["Action", "Sci-Fi"]),
-        Movie(movie_id=2, title="Matrix Reloaded", genres=["Action", "Sci-Fi"]),
-    ]
+def test_search_movies_via_get_movies(mock_resources):
+    """Test searching via the main get_movies endpoint."""
+    mock_page = MoviePage(
+        movies=[
+            Movie(movie_id=1, title="Matrix", genres=["Action", "Sci-Fi"]),
+        ],
+        total=1,
+        page=1,
+        page_size=20,
+        total_pages=1,
+    )
 
-    with patch("app.routers.movies.movies_service.search_movies", return_value=mock_movies):
-        result = movies.search_movies(query="Matrix", limit=20, resources=mock_resources)
+    with patch("app.routers.movies.movies_service.get_movies", return_value=mock_page) as mock_service:
+        result = movies.get_movies(query="Matrix", page=1, page_size=20, resources=mock_resources)
 
-        assert len(result) == 2
-        assert all("Matrix" in movie.title for movie in result)
-
-
-def test_search_movies_with_limit():
-    mock_movies = [Movie(movie_id=i, title=f"Movie {i}", genres=[]) for i in range(5)]
-
-    with patch("app.routers.movies.movies_service.search_movies", return_value=mock_movies) as mock_search:
-        movies.search_movies(query="test", limit=5, resources=mock_resources)
-
-        mock_search.assert_called_once_with(mock_resources, query="test", limit=5)
+        assert len(result.movies) == 1
+        mock_service.assert_called_once_with(mock_resources, page=1, page_size=20, query="Matrix", genre=None)
 
 
-def test_filter_movies_endpoint():
-    mock_movies = [
-        Movie(movie_id=1, title="Action Movie 1", genres=["Action"]),
-        Movie(movie_id=2, title="Action Movie 2", genres=["Action"]),
-    ]
+def test_filter_movies_via_get_movies(mock_resources):
+    """Test filtering via the main get_movies endpoint."""
+    mock_page = MoviePage(
+        movies=[
+            Movie(movie_id=1, title="Action Movie 1", genres=["Action"]),
+        ],
+        total=1,
+        page=1,
+        page_size=20,
+        total_pages=1,
+    )
 
-    with patch("app.routers.movies.movies_service.filter_movies", return_value=mock_movies):
-        result = movies.filter_movies(genre="Action", limit=20, resources=mock_resources)
+    with patch("app.routers.movies.movies_service.get_movies", return_value=mock_page) as mock_service:
+        result = movies.get_movies(genre="Action", page=1, page_size=20, resources=mock_resources)
 
-        assert len(result) == 2
-        assert all(movie.genres and "Action" in movie.genres for movie in result)
-
-
-def test_filter_movies_without_genre():
-    mock_movies = [Movie(movie_id=i, title=f"Movie {i}", genres=[]) for i in range(3)]
-
-    with patch("app.routers.movies.movies_service.filter_movies", return_value=mock_movies) as mock_filter:
-        result = movies.filter_movies(genre=None, limit=20, resources=mock_resources)
-
-        assert len(result) == 3
-        mock_filter.assert_called_once_with(mock_resources, genre=None, limit=20)
+        assert len(result.movies) == 1
+        mock_service.assert_called_once_with(mock_resources, page=1, page_size=20, query=None, genre="Action")
 
 
-def test_get_genres_endpoint():
+def test_get_genres_endpoint(mock_resources):
     mock_genres = ["Action", "Adventure", "Animation", "Comedy", "Drama"]
 
     with patch("app.routers.movies.movies_service.get_all_genres", return_value=mock_genres):
@@ -108,7 +101,7 @@ def test_get_genres_endpoint():
         assert len(result) == 5
 
 
-def test_get_movie_by_id_success():
+def test_get_movie_by_id_success(mock_resources):
     mock_movie = Movie(movie_id=1, title="Test Movie", genres=["Action"], average_rating=4.5)
 
     with patch("app.routers.movies.movies_service.get_movie_by_id", return_value=mock_movie):
@@ -119,7 +112,7 @@ def test_get_movie_by_id_success():
         assert result.average_rating == 4.5
 
 
-def test_get_movie_by_id_not_found():
+def test_get_movie_by_id_not_found(mock_resources):
     with patch("app.routers.movies.movies_service.get_movie_by_id", return_value=None):
         with pytest.raises(HTTPException) as exc_info:
             movies.get_movie(movie_id=999, resources=mock_resources)
@@ -128,7 +121,7 @@ def test_get_movie_by_id_not_found():
         assert "not found" in str(exc_info.value.detail).lower()
 
 
-def test_get_movie_ratings_success():
+def test_get_movie_ratings_success(mock_resources):
     mock_ratings = [
         {"id": 1, "user_id": "u1", "movie_id": 1, "rating": 5.0},
         {"id": 2, "user_id": "u2", "movie_id": 1, "rating": 4.0},
@@ -146,7 +139,7 @@ def test_get_movie_ratings_success():
         assert len(result) == 2
 
 
-def test_get_movie_ratings_movie_not_found():
+def test_get_movie_ratings_movie_not_found(mock_resources):
     with patch("app.routers.movies.movies_service.get_movie_by_id", return_value=None):
         with pytest.raises(HTTPException) as exc_info:
             movies.get_movie_ratings(movie_id=999, resources=mock_resources)

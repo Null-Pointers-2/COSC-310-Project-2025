@@ -40,7 +40,7 @@ def sample_movies():
 
 
 def test_get_movies_with_pagination(mock_resources, sample_movies):
-    mock_resources.movies_repo.get_all.return_value = sample_movies
+    mock_resources.movies_repo.get_movies.return_value = (sample_movies, 3)
     mock_resources.movies_repo.movies_df = pd.DataFrame(sample_movies)
     mock_resources.movies_repo.get_average_rating.return_value = 4.5
 
@@ -55,7 +55,7 @@ def test_get_movies_with_pagination(mock_resources, sample_movies):
 
 
 def test_get_movies_calculates_total_pages(mock_resources, sample_movies):
-    mock_resources.movies_repo.get_all.return_value = sample_movies[:2]
+    mock_resources.movies_repo.get_movies.return_value = (sample_movies[:2], 30)
     mock_resources.movies_repo.movies_df = pd.DataFrame(sample_movies * 10)  # 30 movies
     mock_resources.movies_repo.get_average_rating.return_value = 4.0
 
@@ -66,7 +66,7 @@ def test_get_movies_calculates_total_pages(mock_resources, sample_movies):
 
 
 def test_get_movies_adds_average_ratings(mock_resources, sample_movies):
-    mock_resources.movies_repo.get_all.return_value = sample_movies
+    mock_resources.movies_repo.get_movies.return_value = (sample_movies, 3)
     mock_resources.movies_repo.movies_df = pd.DataFrame(sample_movies)
 
     def mock_get_rating(movie_id):
@@ -112,47 +112,27 @@ def test_get_movie_by_id_invalid_id(mock_resources):
     mock_resources.movies_repo.get_by_id.assert_not_called()
 
 
-def test_search_movies(mock_resources, sample_movies):
-    mock_resources.movies_repo.search.return_value = [sample_movies[0]]
+def test_get_movies_with_query(mock_resources, sample_movies):
+    mock_resources.movies_repo.get_movies.return_value = ([sample_movies[0]], 1)
     mock_resources.movies_repo.get_average_rating.return_value = 4.5
 
-    result = movies_service.search_movies(mock_resources, "Toy Story", limit=20)
+    result = movies_service.get_movies(mock_resources, query="Toy Story", page_size=20)
 
-    assert len(result) == 1
-    assert result[0].title == "Toy Story (1995)"
-    mock_resources.movies_repo.search.assert_called_once_with(query="Toy Story", limit=20)
-
-
-def test_search_movies_adds_ratings(mock_resources, sample_movies):
-    mock_resources.movies_repo.search.return_value = sample_movies[:2]
-    mock_resources.movies_repo.get_average_rating.return_value = 4.2
-
-    result = movies_service.search_movies(mock_resources, "1995")
-
-    assert all(movie.average_rating == 4.2 for movie in result)
+    assert result.total == 1
+    assert result.movies[0].title == "Toy Story (1995)"
+    mock_resources.movies_repo.get_movies.assert_called_once_with(page=1, limit=20, query="Toy Story", genre=None)
 
 
-def test_filter_movies_by_genre(mock_resources, sample_movies):
+def test_get_movies_with_genre(mock_resources, sample_movies):
     comedy_movies = [m for m in sample_movies if "Comedy" in m["genres"]]
-    mock_resources.movies_repo.filter_by_genre.return_value = comedy_movies
+    mock_resources.movies_repo.get_movies.return_value = (comedy_movies, 2)
     mock_resources.movies_repo.get_average_rating.return_value = 4.0
 
-    result = movies_service.filter_movies(mock_resources, genre="Comedy", limit=20)
+    result = movies_service.get_movies(mock_resources, genre="Comedy", page_size=20)
 
-    assert len(result) == 2
-    assert all(movie.genres and "Comedy" in movie.genres for movie in result)
-    mock_resources.movies_repo.filter_by_genre.assert_called_once_with(genre="Comedy", limit=20)
-
-
-def test_filter_movies_without_genre(mock_resources, sample_movies):
-    mock_resources.movies_repo.get_all.return_value = sample_movies
-    mock_resources.movies_repo.get_average_rating.return_value = 4.0
-
-    result = movies_service.filter_movies(mock_resources, genre=None, limit=20)
-
-    assert len(result) == 3
-    mock_resources.movies_repo.get_all.assert_called_once_with(limit=20)
-    mock_resources.movies_repo.filter_by_genre.assert_not_called()
+    assert result.total == 2
+    assert all(movie.genres and "Comedy" in movie.genres for movie in result.movies)
+    mock_resources.movies_repo.get_movies.assert_called_once_with(page=1, limit=20, query=None, genre="Comedy")
 
 
 def test_get_all_genres(mock_resources):
@@ -179,7 +159,7 @@ def test_get_movie_ratings(mock_resources):
 
 
 def test_get_movies_empty_result(mock_resources):
-    mock_resources.movies_repo.get_all.return_value = []
+    mock_resources.movies_repo.get_movies.return_value = ([], 0)
     mock_resources.movies_repo.movies_df = pd.DataFrame()
 
     result = movies_service.get_movies(mock_resources, page=1, page_size=30)
@@ -190,7 +170,7 @@ def test_get_movies_empty_result(mock_resources):
 
 
 def test_get_movies_with_different_page_sizes(mock_resources, sample_movies):
-    mock_resources.movies_repo.get_all.return_value = sample_movies[:2]
+    mock_resources.movies_repo.get_movies.return_value = (sample_movies[:2], 60)
     mock_resources.movies_repo.movies_df = pd.DataFrame(sample_movies * 20)  # 60 movies
     mock_resources.movies_repo.get_average_rating.return_value = 4.0
 
@@ -199,4 +179,4 @@ def test_get_movies_with_different_page_sizes(mock_resources, sample_movies):
     assert result.page == 2
     assert result.page_size == 20
     assert result.total_pages == 3
-    mock_resources.movies_repo.get_all.assert_called_once_with(limit=20, offset=20)
+    mock_resources.movies_repo.get_movies.assert_called_once_with(page=2, limit=20, query=None, genre=None)

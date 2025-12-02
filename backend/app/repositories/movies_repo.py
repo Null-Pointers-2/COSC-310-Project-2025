@@ -50,15 +50,38 @@ class MoviesRepository:
             self.movies_df["imdb_id"] = self.movies_df["imdb_id"].astype("Int64")
             self.movies_df["tmdb_id"] = self.movies_df["tmdb_id"].astype("Int64")
 
-    def get_paginated_movies(self, page: int, page_size: int) -> tuple[list[dict[str, Any]], int]:
-        """Get paginated list of movies and total count."""
+    def get_movies(
+        self, page: int = 1, limit: int = 20, query: str | None = None, genre: str | None = None
+    ) -> tuple[list[dict[str, Any]], int]:
+        """Get movies with optional search and genre filtering."""
         if self.movies_df is None or self.movies_df.empty:
             return [], 0
 
-        total = len(self.movies_df)
-        start_idx = (page - 1) * page_size
-        end_idx = start_idx + page_size
-        paginated_df = self.movies_df.iloc[start_idx:end_idx]
+        df = self.movies_df
+
+        if genre and genre.lower() != "all":
+            mask = df["genres"].apply(lambda g: genre.lower() in [x.lower() for x in g])
+            df = df[mask]
+
+        if query:
+            query_tokens = query.lower().split()
+
+            def fuzzy_match(title: str) -> bool:
+                title_lower = title.lower()
+                return all(token in title_lower for token in query_tokens)
+
+            mask = df["title"].apply(fuzzy_match)
+            df = df[mask]
+
+        df = df.sort_values(by="movie_id")
+
+        total = len(df)
+        start_idx = (page - 1) * limit
+        end_idx = start_idx + limit
+        paginated_df = df.iloc[start_idx:end_idx]
+
+        paginated_df = paginated_df.replace({float("nan"): None})
+
         return cast("list[dict[str, Any]]", paginated_df.to_dict(orient="records")), total
 
     def get_by_id(self, movie_id: int) -> dict[str, Any] | None:
@@ -69,34 +92,9 @@ class MoviesRepository:
         match = self.movies_df[self.movies_df["movie_id"] == movie_id]
         if match.empty:
             return None
-        return match.iloc[0].to_dict()
 
-    def get_all(self, limit: int = 100, offset: int = 0) -> list[dict[str, Any]]:
-        """Get all movies with pagination."""
-        if self.movies_df is None or self.movies_df.empty:
-            return []
-
-        sliced = self.movies_df.iloc[offset : offset + limit]
-        return cast("list[dict[str, Any]]", sliced.to_dict(orient="records"))
-
-    def search(self, query: str, limit: int = 20) -> list[dict[str, Any]]:
-        """Search movies by title."""
-        if self.movies_df is None or self.movies_df.empty:
-            return []
-
-        mask = self.movies_df["title"].str.contains(query, case=False, na=False)
-        results = self.movies_df[mask].head(limit)
-        return cast("list[dict[str, Any]]", results.to_dict(orient="records"))
-
-    def filter_by_genre(self, genre: str, limit: int = 20) -> list[dict[str, Any]]:
-        """Filter movies by genre."""
-        if self.movies_df is None or self.movies_df.empty:
-            return []
-
-        results = self.movies_df[
-            self.movies_df["genres"].apply(lambda g: genre.lower() in [x.lower() for x in g])
-        ].head(limit)
-        return cast("list[dict[str, Any]]", results.to_dict(orient="records"))
+        result = match.iloc[0].replace({float("nan"): None})
+        return result.to_dict()
 
     def get_genres(self) -> list[str]:
         """Get list of all unique genres."""

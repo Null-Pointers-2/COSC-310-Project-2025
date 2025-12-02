@@ -14,35 +14,14 @@ router = APIRouter()
 
 @router.get("", response_model=MoviePage)
 def get_movies(
+    resources: Annotated[SingletonResources, Depends(get_resources)],
     page: Annotated[int, Query(ge=1, description="Page number")] = 1,
-    *,
-    page_size: Annotated[int, Query(ge=1, le=100, description="Movies per page")] = 30,
-    resources: Annotated[SingletonResources, Depends(get_resources)],
-):
-    """Get paginated list of movies."""
-    return movies_service.get_movies(resources, page=page, page_size=page_size)
-
-
-@router.get("/search", response_model=list[Movie])
-def search_movies(
-    query: Annotated[str, Query(min_length=1)],
-    *,
-    limit: Annotated[int, Query(ge=1, le=100)] = 20,
-    resources: Annotated[SingletonResources, Depends(get_resources)],
-):
-    """Search movies by title."""
-    return movies_service.search_movies(resources, query=query, limit=limit)
-
-
-@router.get("/filter", response_model=list[Movie])
-def filter_movies(
+    page_size: Annotated[int, Query(ge=1, le=100, description="Movies per page")] = 20,
+    query: str | None = None,
     genre: str | None = None,
-    *,
-    limit: Annotated[int, Query(ge=1, le=100)] = 20,
-    resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
-    """Filter movies by genre."""
-    return movies_service.filter_movies(resources, genre=genre, limit=limit)
+    """Get list of movies with optional search, filter, and pagination."""
+    return movies_service.get_movies(resources, page=page, page_size=page_size, query=query, genre=genre)
 
 
 @router.get("/genres", response_model=list[str])

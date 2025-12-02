@@ -129,7 +129,7 @@ export default function RatingsPage() {
             </div>
             <h3 className="text-lg font-medium text-gray-900">No ratings yet</h3>
             <p className="mt-2 text-gray-500 max-w-sm mx-auto">
-              Start rating movies to get personalized recommendations and track what you've watched.
+              Start rating movies to get personalized recommendations and track what you&apos;ve watched.
             </p>
             <div className="mt-6">
               <Link href="/browse" className="text-indigo-600 hover:text-indigo-500 font-medium">

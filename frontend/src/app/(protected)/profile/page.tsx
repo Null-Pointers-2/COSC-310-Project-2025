@@ -29,10 +29,10 @@ export default function DashboardPage() {
     router.push("/login");
   }
 
-  const { 
-    data: dashboardData, 
-    loading: dashLoading, 
-    error: dashError 
+  const {
+    data: dashboardData,
+    loading: dashLoading,
+    error: dashError
   } = useFetch<DashboardData>("/users/me/dashboard");
 
   const { data: ratingsList } = useFetch<unknown[]>("/ratings/me");
@@ -62,15 +62,15 @@ export default function DashboardPage() {
 
   const ratingsCount = stats?.ratings_count ?? ratingsList?.length ?? 0;
   const watchlistCount = stats?.watchlist_count ?? watchlistList?.length ?? 0;
-  
-  const joinDate = user.created_at 
+
+  const joinDate = user.created_at
     ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
     : 'Unknown';
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-8">
-        
+
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="h-32 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
           <div className="px-8 pb-8">
@@ -81,7 +81,7 @@ export default function DashboardPage() {
                     {user.username?.[0]?.toUpperCase() || "U"}
                   </div>
                 </div>
-                <div className="ml-4 mb-1">
+                <div className="ml-4 mb-1 pt-15">
                   <h1 className="text-2xl font-bold text-gray-900">{user.username}</h1>
                   <p className="text-sm text-gray-500">{user.email}</p>
                 </div>
@@ -93,21 +93,31 @@ export default function DashboardPage() {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-6 border-t border-gray-100">
               <div className="text-center sm:text-left">
- 
-                <div className="text-2xl font-bold text-gray-900">{ratingsCount}</div>
-                <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">Ratings</div>
+                <Link href="/ratings" className="group block">
+                  <div className="text-2xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                    {ratingsCount}
+                  </div>
+                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wide group-hover:text-indigo-500 transition-colors">
+                    Ratings
+                  </div>
+                </Link>
               </div>
               <div className="text-center sm:text-left">
-
-                <div className="text-2xl font-bold text-gray-900">{watchlistCount}</div>
-                <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">Watchlist</div>
+                <Link href="/watchlist" className="group block">
+                  <div className="text-2xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                    {watchlistCount}
+                  </div>
+                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wide group-hover:text-indigo-500 transition-colors">
+                    Watchlist
+                  </div>
+                </Link>
               </div>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between">
             <div>
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600 mb-4">
@@ -120,7 +130,7 @@ export default function DashboardPage() {
                 Get a copy of your ratings, watchlist, and profile information.
               </p>
             </div>
-            <Link 
+            <Link
               href="/export"
               className="mt-6 block w-full text-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
@@ -141,7 +151,7 @@ export default function DashboardPage() {
                 Update your username, email, or change your password.
               </p>
             </div>
-            <button 
+            <button
               disabled
               className="mt-6 block w-full text-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-not-allowed opacity-60"
             >

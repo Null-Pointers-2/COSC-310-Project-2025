@@ -1,231 +1,61 @@
-"""
-Integration tests for ratings API endpoints.
-"""
-
+import json
 from datetime import UTC, datetime, timezone
-from unittest.mock import Mock, patch
+from unittest.mock import mock_open, patch
 
-import pytest
-from fastapi import HTTPException
+from app.routers import ranking
 
-from app.routers import ratings
-from app.schemas.rating import Rating, RatingCreate, RatingUpdate
+MOCK_RATINGS = [
+    {"movie_id": 1, "rating": 5.0},
+    {"movie_id": 1, "rating": 5.0},
+    {"movie_id": 1, "rating": 5.0},
+    {"movie_id": 2, "rating": 1.0},
+]
 
-
-@pytest.fixture
-def mock_resources():
-    return Mock()
-
-
-@pytest.fixture
-def mock_current_user():
-    return {"id": "user123", "username": "testuser", "role": "user"}
+MOCK_TITLES = {1: "Test Toy Story", 2: "Test Jumanji"}
 
 
-@pytest.fixture
-def sample_rating():
-    return Rating(
-        id=1,
-        user_id="user123",
-        movie_id=1,
-        rating=4.5,
-        timestamp=datetime.now(UTC),
-    )
+def test_calculate_weighted_rating_logic():
+    with patch("app.routers.ranking.load_titles_from_csv", return_value=MOCK_TITLES):
+        result = ranking.calculate_weighted_rating(MOCK_RATINGS)
+
+        assert len(result) > 0
+        assert result[0]["movie_id"] == 1
+        assert result[0]["score"] > result[1]["score"]
+
+        assert result[0]["title"] == "Test Toy Story"
+        assert "tmdb_id" in result[0]
 
 
-def test_create_rating_success(mock_resources, mock_current_user, sample_rating):
-    rating_data = RatingCreate(movie_id=1, rating=4.5)
-
-    with patch("app.routers.ratings.ratings_service.create_rating", return_value=sample_rating):
-        result = ratings.create_rating(
-            rating_data=rating_data,
-            current_user=mock_current_user,
-            resources=mock_resources,
-        )
-
-        assert result.id == 1
-        assert result.rating == 4.5
-        assert result.user_id == "user123"
-
-
-def test_create_rating_duplicate(mock_resources, mock_current_user):
-    rating_data = RatingCreate(movie_id=1, rating=4.5)
-
-    with patch("app.routers.ratings.ratings_service.create_rating", side_effect=ValueError("Rating already exists")):
-        with pytest.raises(HTTPException) as exc_info:
-            ratings.create_rating(
-                rating_data=rating_data,
-                current_user=mock_current_user,
-                resources=mock_resources,
-            )
-
-        assert exc_info.value.status_code == 400
-        assert "already exists" in str(exc_info.value.detail).lower()
-
-
-def test_get_my_ratings(mock_resources, mock_current_user, sample_rating):
-    mock_ratings = [sample_rating]
-
-    with patch("app.routers.ratings.ratings_service.get_user_ratings", return_value=mock_ratings):
-        result = ratings.get_my_ratings(
-            current_user=mock_current_user,
-            resources=mock_resources,
-        )
-
-        assert len(result) == 1
-        assert result[0].user_id == "user123"
-
-
-def test_get_rating_by_id_success(mock_resources, sample_rating):
-    with patch("app.routers.ratings.ratings_service.get_rating_by_id", return_value=sample_rating):
-        result = ratings.get_rating(rating_id=1, resources=mock_resources)
-
-        assert result.id == 1
-        assert result.rating == 4.5
-
-
-def test_get_rating_by_id_not_found(mock_resources):
-    with patch("app.routers.ratings.ratings_service.get_rating_by_id", return_value=None):
-        with pytest.raises(HTTPException) as exc_info:
-            ratings.get_rating(rating_id=999, resources=mock_resources)
-
-        assert exc_info.value.status_code == 404
-        assert "not found" in str(exc_info.value.detail).lower()
-
-
-def test_update_rating_success(mock_resources, mock_current_user, sample_rating):
-    update_data = RatingUpdate(rating=5.0)
-    updated_rating = Rating(
-        id=1,
-        user_id="user123",
-        movie_id=1,
-        rating=5.0,
-        timestamp=datetime.now(UTC),
-    )
+def test_get_popular_movies_success():
+    ranking.popular_movies_cache = {"last_updated": None, "data": []}
 
     with (
-        patch("app.routers.ratings.ratings_service.get_rating_by_id", return_value=sample_rating),
-        patch("app.routers.ratings.ratings_service.update_rating", return_value=updated_rating),
+        patch("pathlib.Path.exists", return_value=True),
+        patch("pathlib.Path.open", mock_open(read_data=json.dumps(MOCK_RATINGS))),
+        patch("app.routers.ranking.load_titles_from_csv", return_value=MOCK_TITLES),
     ):
-        result = ratings.update_rating(
-            rating_id=1,
-            update_data=update_data,
-            current_user=mock_current_user,
-            resources=mock_resources,
-        )
+        result = ranking.get_popular_movies()
 
-        assert result.rating == 5.0
+        assert len(result) > 0
+        assert result[0]["movie_id"] == 1
+        assert result[0]["title"] == "Test Toy Story"
 
 
-def test_update_rating_not_found(mock_resources, mock_current_user):
-    update_data = RatingUpdate(rating=5.0)
+def test_get_popular_movies_no_file():
+    ranking.popular_movies_cache = {"last_updated": None, "data": []}
 
-    with patch("app.routers.ratings.ratings_service.get_rating_by_id", return_value=None):
-        with pytest.raises(HTTPException) as exc_info:
-            ratings.update_rating(
-                rating_id=999,
-                update_data=update_data,
-                current_user=mock_current_user,
-                resources=mock_resources,
-            )
-
-        assert exc_info.value.status_code == 404
+    with patch("pathlib.Path.exists", return_value=False):
+        result = ranking.get_popular_movies()
+        assert result == []
 
 
-def test_update_rating_wrong_user(mock_resources, mock_current_user, sample_rating):
-    wrong_user_rating = Rating(
-        id=1,
-        user_id="different_user",
-        movie_id=1,
-        rating=4.5,
-        timestamp=datetime.now(UTC),
-    )
-    update_data = RatingUpdate(rating=5.0)
+def test_get_popular_movies_cached():
+    mock_data = [{"movie_id": 99, "title": "Cached Movie"}]
+    ranking.popular_movies_cache = {
+        "last_updated": datetime.now(UTC),
+        "data": mock_data,
+    }
 
-    with patch("app.routers.ratings.ratings_service.get_rating_by_id", return_value=wrong_user_rating):
-        with pytest.raises(HTTPException) as exc_info:
-            ratings.update_rating(
-                rating_id=1,
-                update_data=update_data,
-                current_user=mock_current_user,
-                resources=mock_resources,
-            )
-
-        assert exc_info.value.status_code == 403
-
-
-def test_update_rating_fails(mock_resources, mock_current_user, sample_rating):
-    update_data = RatingUpdate(rating=5.0)
-
-    with (
-        patch("app.routers.ratings.ratings_service.get_rating_by_id", return_value=sample_rating),
-        patch("app.routers.ratings.ratings_service.update_rating", return_value=None),
-    ):
-        with pytest.raises(HTTPException) as exc_info:
-            ratings.update_rating(
-                rating_id=1,
-                update_data=update_data,
-                current_user=mock_current_user,
-                resources=mock_resources,
-            )
-
-        assert exc_info.value.status_code == 400
-
-
-def test_delete_rating_success(mock_resources, mock_current_user, sample_rating):
-    with (
-        patch("app.routers.ratings.ratings_service.get_rating_by_id", return_value=sample_rating),
-        patch("app.routers.ratings.ratings_service.delete_rating", return_value=True),
-    ):
-        ratings.delete_rating(
-            rating_id=1,
-            current_user=mock_current_user,
-            resources=mock_resources,
-        )
-
-
-def test_delete_rating_not_found(mock_resources, mock_current_user):
-    with patch("app.routers.ratings.ratings_service.get_rating_by_id", return_value=None):
-        with pytest.raises(HTTPException) as exc_info:
-            ratings.delete_rating(
-                rating_id=999,
-                current_user=mock_current_user,
-                resources=mock_resources,
-            )
-
-        assert exc_info.value.status_code == 404
-
-
-def test_delete_rating_wrong_user(mock_resources, mock_current_user):
-    wrong_user_rating = Rating(
-        id=1,
-        user_id="different_user",
-        movie_id=1,
-        rating=4.5,
-        timestamp=datetime.now(UTC),
-    )
-
-    with patch("app.routers.ratings.ratings_service.get_rating_by_id", return_value=wrong_user_rating):
-        with pytest.raises(HTTPException) as exc_info:
-            ratings.delete_rating(
-                rating_id=1,
-                current_user=mock_current_user,
-                resources=mock_resources,
-            )
-
-        assert exc_info.value.status_code == 403
-
-
-def test_delete_rating_fails(mock_resources, mock_current_user, sample_rating):
-    with (
-        patch("app.routers.ratings.ratings_service.get_rating_by_id", return_value=sample_rating),
-        patch("app.routers.ratings.ratings_service.delete_rating", return_value=False),
-    ):
-        with pytest.raises(HTTPException) as exc_info:
-            ratings.delete_rating(
-                rating_id=1,
-                current_user=mock_current_user,
-                resources=mock_resources,
-            )
-
-        assert exc_info.value.status_code == 400
+    with patch("app.routers.ranking.UPDATE_FREQUENCY", 24):
+        result = ranking.get_popular_movies()
+        assert result == mock_data

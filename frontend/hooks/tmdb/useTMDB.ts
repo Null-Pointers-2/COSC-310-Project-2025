@@ -12,7 +12,7 @@ export function useTMDB(title: string, tmdbId?: number | string) {
         setLoading(false);
         return;
       }
-      
+
       try {
         setLoading(true);
         const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
@@ -60,4 +60,5 @@ export function useTMDB(title: string, tmdbId?: number | string) {
   }, [title, tmdbId]);
 
   return { posterUrl, loading };
+
 }

@@ -145,7 +145,7 @@ export default function MovieDetailsPage() {
                  <RecommendationCardWrapper
                     key={item.movie_id}
                     movieId={item.movie_id}
-                    score={item.score || 0}
+                    score={item.similarity_score || 0}
                  />
               ))}
             </div>

@@ -148,7 +148,7 @@ export function RatingForm({ movieId, onRateSuccess }: RatingFormProps) {
           <button
             onClick={handleDelete}
             disabled={isSubmitting}
-            className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50"
+            className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50 cursor-pointer"
             title="Remove rating"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">

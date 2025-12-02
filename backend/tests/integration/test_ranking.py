@@ -1,12 +1,6 @@
-"""
-(Unit) and Integration tests for ranking API endpoints.
-"""
-
 import json
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import mock_open, patch
-
-import pytest
 
 from app.routers import ranking
 
@@ -36,8 +30,8 @@ def test_get_popular_movies_success():
     ranking.popular_movies_cache = {"last_updated": None, "data": []}
 
     with (
-        patch("os.path.exists", return_value=True),
-        patch("builtins.open", mock_open(read_data=json.dumps(MOCK_RATINGS))),
+        patch("pathlib.Path.exists", return_value=True),
+        patch("pathlib.Path.open", mock_open(read_data=json.dumps(MOCK_RATINGS))),
         patch("app.routers.ranking.load_titles_from_csv", return_value=MOCK_TITLES),
     ):
         result = ranking.get_popular_movies()
@@ -50,18 +44,18 @@ def test_get_popular_movies_success():
 def test_get_popular_movies_no_file():
     ranking.popular_movies_cache = {"last_updated": None, "data": []}
 
-    with patch("os.path.exists", return_value=False):
+    with patch("pathlib.Path.exists", return_value=False):
         result = ranking.get_popular_movies()
         assert result == []
 
 
 def test_get_popular_movies_cached():
-    # Manually set cache
-
     mock_data = [{"movie_id": 99, "title": "Cached Movie"}]
-    ranking.popular_movies_cache = {"last_updated": datetime.now(UTC), "data": mock_data}
+    ranking.popular_movies_cache = {
+        "last_updated": datetime.now(UTC),
+        "data": mock_data,
+    }
 
-    # Patch the update frequency for testing purposes
     with patch("app.routers.ranking.UPDATE_FREQUENCY", 24):
         result = ranking.get_popular_movies()
         assert result == mock_data

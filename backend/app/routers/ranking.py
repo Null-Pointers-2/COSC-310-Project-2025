@@ -2,6 +2,7 @@ import csv
 import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
@@ -16,7 +17,7 @@ MIN_METRICS_COUNT = 5
 popular_movies_cache = {"last_updated": None, "data": []}
 
 
-def load_titles_from_csv() -> dict[int, str]:
+def load_titles_from_csv() -> dict[int, Any]:
     if not METADATA_PATH.exists():
         return {}
 
@@ -28,7 +29,10 @@ def load_titles_from_csv() -> dict[int, str]:
             for row in reader:
                 try:
                     m_id = int(row["movie_id"])
-                    titles[m_id] = row["title"]
+                    titles[m_id] = {
+                        "title": row["title"],
+                        "tmdb_id": row.get("tmdb_id"),
+                    }
                 except (ValueError, KeyError):
                     continue
 
@@ -59,11 +63,7 @@ def calculate_weighted_rating(ratings_list: list[dict]) -> list[dict]:
     mean_vote = total_rating_sum / total_count if total_count > 0 else 0
 
     all_counts = sorted([stats["count"] for stats in movie_stats.values()])
-    m = (
-        all_counts[int(len(all_counts) * NOISE_FILTER)]
-        if len(all_counts) > MIN_METRICS_COUNT
-        else 1
-    )
+    m = all_counts[int(len(all_counts) * NOISE_FILTER)] if len(all_counts) > MIN_METRICS_COUNT else 1
 
     weighted_movies = []
     for m_id, stats in movie_stats.items():
@@ -73,7 +73,17 @@ def calculate_weighted_rating(ratings_list: list[dict]) -> list[dict]:
         if v >= m:
             score = (v / (v + m) * avg_val) + (m / (v + m) * mean_vote)
 
-            real_title = csv_titles.get(m_id, f"Movie {m_id}")
+            # Handle testing data as well
+            metadata = csv_titles.get(m_id)
+            real_title = f"Movie {m_id}"
+            tmdb_id = None
+
+            if metadata:
+                if isinstance(metadata, str):
+                    real_title = metadata
+                elif isinstance(metadata, dict):
+                    real_title = metadata.get("title", real_title)
+                    tmdb_id = metadata.get("tmdb_id")
 
             weighted_movies.append(
                 {
@@ -82,6 +92,7 @@ def calculate_weighted_rating(ratings_list: list[dict]) -> list[dict]:
                     "vote_count": v,
                     "avg_rating": round(avg_val, 2),
                     "title": real_title,
+                    "tmdb_id": tmdb_id,
                 }
             )
 

@@ -5,19 +5,19 @@ from math import ceil
 from app.schemas.movie import Movie, MoviePage
 
 
-def get_movies(resources, page: int = 1, page_size: int = 30) -> MoviePage:
-    """Get paginated list of movies."""
-    offset = (page - 1) * page_size
-    movies = resources.movies_repo.get_all(limit=page_size, offset=offset)
+def get_movies(
+    resources, page: int = 1, page_size: int = 20, query: str | None = None, genre: str | None = None
+) -> MoviePage:
+    """Get paginated list of movies with optional filters."""
+    movies_data, total = resources.movies_repo.get_movies(page=page, limit=page_size, query=query, genre=genre)
 
-    total = len(resources.movies_repo.movies_df) if resources.movies_repo.movies_df is not None else 0
     total_pages = ceil(total / page_size) if total > 0 else 1
 
-    for m in movies:
+    for m in movies_data:
         m["average_rating"] = resources.movies_repo.get_average_rating(m["movie_id"])
 
     return MoviePage(
-        movies=[Movie(**m) for m in movies],
+        movies=[Movie(**m) for m in movies_data],
         total=total,
         page=page,
         page_size=page_size,
@@ -43,30 +43,6 @@ def get_movie_by_id(resources, movie_id: int) -> Movie | None:
     movie_data["average_rating"] = avg_rating
 
     return Movie(**movie_data)
-
-
-def search_movies(resources, query: str, page: int = 1, limit: int = 20) -> list[Movie]:
-    """Search movies by title."""
-    offset = (page - 1) * limit
-    results = resources.movies_repo.search(query=query, limit=limit, offset=offset)
-    for m in results:
-        m["average_rating"] = resources.movies_repo.get_average_rating(m["movie_id"])
-    return [Movie(**m) for m in results]
-
-
-def filter_movies(resources, genre: str | None = None, page: int = 1, limit: int = 20) -> list[Movie]:
-    """Filter movies by genre."""
-    offset = (page - 1) * limit
-
-    if genre and genre != "All":
-        results, _ = resources.movies_repo.filter_by_genre(genre=genre, limit=limit, offset=offset)
-    else:
-        results = resources.movies_repo.get_all(limit=limit, offset=offset)
-
-    for m in results:
-        m["average_rating"] = resources.movies_repo.get_average_rating(m["movie_id"])
-
-    return [Movie(**m) for m in results]
 
 
 def get_all_genres(resources) -> list[str]:

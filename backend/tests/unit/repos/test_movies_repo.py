@@ -100,21 +100,23 @@ def test_get_average_rating_no_ratings(setup_movie_data):
     assert avg is None
 
 
-def test_search_movies(setup_movie_data):
+def test_get_movies_search(setup_movie_data):
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
-    results = repo.search("Matrix")
+    results, total = repo.get_movies(query="Matrix")
     assert len(results) == 1
+    assert total == 1
     assert results[0]["title"] == "The Matrix (1999)"
 
 
-def test_filter_by_genre(setup_movie_data):
+def test_get_movies_filter(setup_movie_data):
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
-    results = repo.filter_by_genre("Action")
+    results, total = repo.get_movies(genre="Action")
     assert len(results) == 2
+    assert total == 2
     assert all("Action" in movie["genres"] for movie in results)
 
 
@@ -136,23 +138,24 @@ def test_get_genres(setup_movie_data):
     assert genres == sorted(genres)
 
 
-def test_get_all_with_offset(setup_movie_data):
+def test_get_movies_pagination(setup_movie_data):
     movie_dir, _ = setup_movie_data
     repo = MoviesRepository(movies_dir=movie_dir)
 
-    results = repo.get_all(limit=2, offset=1)
-    assert len(results) == 2
-    assert results[0]["movie_id"] == 2
-    assert results[1]["movie_id"] == 3
-
-
-def test_get_paginated_movies(setup_movie_data):
-    movie_dir, _ = setup_movie_data
-    repo = MoviesRepository(movies_dir=movie_dir)
-
-    movies, total = repo.get_paginated_movies(page=1, page_size=2)
-    assert len(movies) == 2
+    results, total = repo.get_movies(page=2, limit=1)
+    assert len(results) == 1
     assert total == 3
+    assert results[0]["movie_id"] == 2
+
+
+def test_get_movies_combined_filter(setup_movie_data):
+    movie_dir, _ = setup_movie_data
+    repo = MoviesRepository(movies_dir=movie_dir)
+
+    results, total = repo.get_movies(query="Toy", genre="Animation")
+    assert len(results) == 1
+    assert total == 1
+    assert results[0]["title"] == "Toy Story (1995)"
 
 
 def test_genres_split_correctly(setup_movie_data):

@@ -47,6 +47,7 @@ export function Navbar() {
     { name: "Browse Movies", href: "/browse" },
     { name: "My Watchlist", href: "/watchlist" },
     { name: "Leaderboard", href: "/leaderboard" },
+    { name: "Play Game", href: "/game" },
   ];
 
   const isActive = (path: string) => pathname === path;

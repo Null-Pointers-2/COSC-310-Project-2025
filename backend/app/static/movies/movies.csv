@@ -16573,7 +16573,7 @@ movie_id,title,genres
 83763,My Wife's Relations (1922),Comedy
 83765,The Blacksmith (1922),Comedy
 83767,The Naked Edge (1961),Thriller
-83773,Away with Words (San tiao ren) (1999),(no genres listed)
+83773,Away with Words (San tiao ren) (1999),Comedy|Drama
 83777,The Strongest Man in the World (1975),Comedy|Fantasy
 83789,Siete minutos (Seven Minutes) (2009),Comedy
 83791,Gung Ho! (Gung Ho!: The Story of Carlson's Makin Island Raiders) (1943),Drama|War
@@ -16588,7 +16588,7 @@ movie_id,title,genres
 83823,Visit to a Small Planet (1960),Comedy|Sci-Fi
 83825,Kismet (1944),Adventure|Fantasy
 83827,Marwencol (2010),Documentary
-83829,Scorpio Rising (1964),(no genres listed)
+83829,Scorpio Rising (1964),Musical
 83831,The Story of Dr. Wassell (1944),Action|Adventure|Drama|Romance|War
 83833,Street Angel (1928),Drama
 83835,The Frozen North (1922),Comedy
@@ -16763,7 +16763,7 @@ movie_id,title,genres
 84740,Open House (2010),Crime|Drama|Thriller
 84764,Werewolves on Wheels (1971),Horror
 84766,Fantasma (2006),Drama
-84768,Glitterbug (1994),(no genres listed)
+84768,Glitterbug (1994),Musical|Documentary
 84770,Client 9: The Rise and Fall of Eliot Spitzer (2010),Documentary
 84772,Paul (2011),Adventure|Comedy|Sci-Fi
 84775,Submarino (2010),Drama
@@ -17079,7 +17079,7 @@ movie_id,title,genres
 86487,Mildred Pierce (2011),Drama
 86489,Nothing About Robert (Rien sur Robert) (1999),Comedy|Drama
 86491,Stranded: I've Come from a Plane That Crashed on the Mountains (2007),Documentary
-86493,The Age of the Earth (A Idade da Terra) (1980),(no genres listed)
+86493,The Age of the Earth (A Idade da Terra) (1980),Drama|Fantasy
 86495,Blind Mountain (Mang shan) (2007),Drama
 86497,15 (2005),Action|Drama
 86500,Service (Serbis) (2008),Drama
@@ -17242,7 +17242,7 @@ movie_id,title,genres
 87055,Tomorrow We Move (Demain on déménage) (2004),Comedy
 87057,Dealer (2004),Drama
 87059,No Rest for the Brave (Pas de repos pour les braves) (2003),Comedy|Drama|Romance
-87061,Trails (Veredas) (1978),(no genres listed)
+87061,Trails (Veredas) (1978),Fantasy|Drama
 87063,Bis zum Ellenbogen (2007),Comedy
 87065,8:28 am (8 Uhr 28) (2010),Drama|Romance|Thriller
 87069,Ossos (1997),Drama
@@ -18245,7 +18245,7 @@ movie_id,title,genres
 91235,Living Will... (2010),Comedy
 91241,Singham (2011),Action|Drama|Romance
 91243,Shanghai (2010),Drama|Mystery|Romance
-91246,Milky Way (Tejút) (2007),(no genres listed)
+91246,Milky Way (Tejút) (2007),Documentary
 91248,The Silence Before Bach (Die Stille vor Bach) (2007) ,Musical
 91250,Chandni Chowk to China (2009),Action|Comedy
 91253,Stage Struck (1936),Comedy|Musical
@@ -18565,7 +18565,7 @@ movie_id,title,genres
 92422,The Woman in Black (2012),Drama|Horror|Thriller
 92424,Dottie Gets Spanked (1993),Drama
 92427,Woman in Love (Rubbeldiekatz) (2011),Comedy
-92435,The Dancing Hawk (Tanczacy jastrzab) (1978),(no genres listed)
+92435,The Dancing Hawk (Tanczacy jastrzab) (1978),Drama
 92437,Toast (2010),Comedy|Drama
 92439,The Art of Getting By (2011),Drama|Romance
 92441,The Human Resources Manager (2010),Drama
@@ -18605,7 +18605,7 @@ movie_id,title,genres
 92635,At Home by Myself... with You (2009),Comedy|Romance
 92637,Pitfall (Otoshiana) (1962),Crime|Drama|Fantasy
 92639,Casual Relations (1973),Drama
-92641,Warsaw Bridge (Pont de Varsòvia) (1990),(no genres listed)
+92641,Warsaw Bridge (Pont de Varsòvia) (1990),Drama
 92643,Monsieur Lazhar (2011),Children|Comedy|Drama
 92646,Tin Pan Alley (1940),Drama|Musical|Romance
 92648,BookWars (2000),Comedy|Crime|Documentary
@@ -18983,7 +18983,7 @@ movie_id,title,genres
 94425,Kept Husbands (1931),Comedy|Drama
 94427,Shadow Kill (2002),Drama
 94429,The Swell Season (2011),Documentary|Romance
-94431,"Ella Lola, a la Trilby (1898)",(no genres listed)
+94431,"Ella Lola, a la Trilby (1898)",Documentary
 94433,Guilty Hands (1931),Crime|Drama
 94435,The Over-Eater (L'outremangeur) (2003),Crime|Drama
 94439,Jumping the Broom (2011),Comedy
@@ -19014,7 +19014,7 @@ movie_id,title,genres
 94649,The Clown (2011),Comedy|Drama
 94653,Creature (2011),Horror
 94655,Thawing Out (La fonte des neiges) (2009),Comedy|Drama
-94657,"Turkish Dance, Ella Lola (1898)",(no genres listed)
+94657,"Turkish Dance, Ella Lola (1898)",Documentary
 94659,Walking with Prehistoric Beasts (2001),Animation|Documentary
 94661,Rocket Singh: Salesman of the Year (2009),Comedy|Drama
 94663,Vicky Donor (2012),Comedy|Romance
@@ -19212,7 +19212,7 @@ movie_id,title,genres
 95531,Koruto wa ore no pasupooto (A Colt Is My Passport) (1967),Action|Crime|Drama
 95533,Coup de grâce (Der Fangschuß) (1976),Drama|War
 95539,Wrong Turn 3: Left for Dead (2009),Horror
-95541,Blacksmith Scene (1893),(no genres listed)
+95541,Blacksmith Scene (1893),Documentary
 95543,Ice Age 4: Continental Drift (2012),Adventure|Animation|Comedy
 95558,Beasts of the Southern Wild (2012),Drama|Fantasy
 95560,Dangerous Davies: The Last Detective (1981),Comedy|Crime
@@ -19259,7 +19259,7 @@ movie_id,title,genres
 95744,2 Days in New York (2012),Comedy
 95746,Radio On (1980),Drama
 95748,2010: Moby Dick (2010),Action|Adventure|Thriller
-95750,Promise of the Flesh (Yukcheui yaksok) (1975),(no genres listed)
+95750,Promise of the Flesh (Yukcheui yaksok) (1975),Drama
 95752,Terminal USA (1993),Comedy
 95754,From Beginning to End (Do Começo ao Fim) (2009),Drama|Romance
 95756,The Cat in the Hat (1971),Animation|Children
@@ -19428,7 +19428,7 @@ movie_id,title,genres
 96469,Dara Ó Briain Talks Funny: Live in London (2008),Comedy
 96471,Prime Suspect 3 (1993),Crime|Drama|Mystery
 96473,Prime Suspect: Inner Circles (1995),Drama|Mystery
-96479,Nocturno 29 (1968),(no genres listed)
+96479,Nocturno 29 (1968),
 96481,American Mullet (2001),Documentary
 96486,Prime Suspect 7: The Final Act (2006),Crime|Drama|Mystery|Thriller
 96488,Searching for Sugar Man (2012),Documentary
@@ -19484,7 +19484,7 @@ movie_id,title,genres
 96640,Kinyarwanda (2011),Drama|Romance
 96642,Nobody's Children (I figli di nessuno) (1952),Drama|Romance
 96644,Patriotism (Yûkoku) (1966),Drama
-96651,Les hautes solitudes (1974),(no genres listed)
+96651,Les hautes solitudes (1974),
 96653,"Vampir (Cuadecuc, vampir) (1971)",Documentary|Horror
 96655,Robot & Frank (2012),Comedy|Drama|Sci-Fi
 96662,The Punk Syndrome (Kovasikajuttu) (2012),Documentary
@@ -20457,7 +20457,7 @@ movie_id,title,genres
 100287,Head Games (2012),Documentary
 100289,"Pink Ribbons, Inc. (2011)",Documentary
 100291,Ballplayer: Pelotero (2011),Documentary|Drama
-100294,Désiré (1992),(no genres listed)
+100294,Désiré (1992),
 100296,Den sommeren jeg fylte 15 (1976),Drama
 100298,The Erotic Man (2010),Drama
 100300,"Wszystko, co kocham (2009)",Comedy|Drama
@@ -23891,7 +23891,7 @@ movie_id,title,genres
 113464,My Way to Olympia (Mein Weg nach Olympia) (2013),Documentary
 113466,Far Out Isn't Far Enough: The Tomi Ungerer Story (2012),Documentary
 113470,The Necessary War (2014),Documentary
-113472,Direct from Brooklyn (1999),(no genres listed)
+113472,Direct from Brooklyn (1999),
 113474,The Autobiography of Miss Jane Pittman (1974),Drama
 113476,The Strangler (1964),Horror
 113478,You and Me (Ty i ya) (1971),Drama
@@ -23911,7 +23911,7 @@ movie_id,title,genres
 113539,The First Man (Le Premier Homme) (2011),Drama
 113541,Sarraounia (1986),Drama|War
 113543,Buud Yam (1997),Drama
-113545,Primus Hallucino-Genetics Live 2004 (2004),(no genres listed)
+113545,Primus Hallucino-Genetics Live 2004 (2004),
 113555,It Runs in the Family (My Summer Story) (1994),Comedy
 113557,Age of Tomorrow (2014),Action|Sci-Fi|Thriller
 113559,Osaka Elegy (Naniwa erejî) (1936),Drama
@@ -24115,7 +24115,7 @@ movie_id,title,genres
 114329,What We Did on Our Holiday (2014),Comedy
 114331,Fall of the Republic: The Presidency of Barack H. Obama (2009),Documentary
 114333,Kivski Freski (1966),Drama
-114335,La cravate (1957),(no genres listed)
+114335,La cravate (1957),
 114337,Dead Within (2014),Drama|Horror|Thriller
 114340,Free Range (Ballaad maailma heakskiitmisest) (2013),Drama
 114342,Force Majeure (Turist) (2014),Drama
@@ -24166,7 +24166,7 @@ movie_id,title,genres
 114577,Africa: Texas Style (1967),Adventure|Western
 114583,How Wang-Fo Was Saved (Comment Wang-Fo fut sauvé) (1987),Animation|Fantasy
 114585,The Captive (La Prisonnière) (1988),Animation|Fantasy
-114587,Glumov's Diary (Dnevnik Glumova) (1923),(no genres listed)
+114587,Glumov's Diary (Dnevnik Glumova) (1923),
 114591,Nine Lives (Ni liv) (1957),Action|Adventure|War
 114593,The Chasers (Jakten) (1959),Drama|Romance|Thriller
 114595,The Bridal Party in Hardanger (Brudeferden i Hardanger) (1926),Drama|Romance
@@ -24204,8 +24204,8 @@ movie_id,title,genres
 114713,Annabelle (2014),Horror
 114715,American Promise (2013),Documentary
 114721,Bugs Bunny's 3rd Movie: 1001 Rabbit Tales (1982),Adventure|Animation|Children|Comedy
-114723,At Land (1944),(no genres listed)
-114725,A Study in Choreography for Camera (1945),(no genres listed)
+114723,At Land (1944),
+114725,A Study in Choreography for Camera (1945),
 114752,Bloody Pit of Horror (Il boia scarlatto) (Virgins for the Hangman) (1965),Horror
 114754,Fangs of the Living Dead (Malenka) (1969),Horror
 114756,Blood Moon (2001),Drama|Horror
@@ -24237,7 +24237,7 @@ movie_id,title,genres
 114861,Charlie Chan at the Opera (1936),Comedy|Musical|Mystery|Thriller
 114873,Stereo (1969),Sci-Fi
 114875,Crimes of the Future (1970),Comedy|Sci-Fi
-114877,Guernica (1950),(no genres listed)
+114877,Guernica (1950),
 114883,Gold of Rome (L'oro di Roma) (1961),Drama
 114886,Entity (2012),Drama|Horror|Thriller
 114888,House III: The Horror Show (1989),Horror
@@ -24262,8 +24262,8 @@ movie_id,title,genres
 114980,Grace Unplugged (2013),Drama|Musical
 114984,The Return of Dracula (1958),Horror
 114995,Podwórka (2009),Documentary
-115004,It's My Mother's Birthday Today (2008),(no genres listed)
-115006,Spare Bed-Room (1969),(no genres listed)
+115004,It's My Mother's Birthday Today (2008),
+115006,Spare Bed-Room (1969),
 115008,Skhizein (2008),Animation|Drama
 115011,No Time for Nuts (2006),Adventure|Animation|Comedy
 115017,A Christmas Memory (Truman Capote's 'A Christmas Memory') (1997),Children|Drama
@@ -24356,12 +24356,12 @@ movie_id,title,genres
 115412,El malvado Carabel (1956),Comedy
 115414,Left Behind (2014),Action|Sci-Fi|Thriller
 115417,"Presentation, or Charlotte and Her Steak (Présentation ou Charlotte et son steak) (1960)",Comedy|Romance
-115419,Maria (Mariya) (1989),(no genres listed)
+115419,Maria (Mariya) (1989),
 115421,"Pleasure Party (Partie de plaisir, Une) (A Piece of Pleasure) (1975)",Drama
 115423,My Father and the Man in Black (2012),Documentary
 115437,Blind (2014),Drama
 115439,10 minutes (10 minuta) (2002),Drama|War
-115441,(Absolutions) Pipilotti's Mistakes ((Entlastungen) Pipilottis Fehler) (1988),(no genres listed)
+115441,(Absolutions) Pipilotti's Mistakes ((Entlastungen) Pipilottis Fehler) (1988),
 115460,Motivational Growth (2013),Comedy|Horror
 115463,"Dance Party, USA (2006)",Drama
 115465,Tour De Force (Hin und weg) (2014),Drama
@@ -24377,7 +24377,7 @@ movie_id,title,genres
 115522,The Creeping Terror (The Crawling Monster) (1964),Horror|Sci-Fi
 115524,Why Me? (1990),Action|Adventure|Comedy|Crime
 115526,Blood from the Mummy's Tomb (1971),Horror
-115529,Judgement Day (1983),(no genres listed)
+115529,Judgement Day (1983),
 115531,Violette (Violette Nozière) (1978),Crime|Drama|Thriller
 115534,Ouija (2014),Horror
 115538,Stop at Nothing: The Lance Armstrong Story (2014),Documentary|Thriller
@@ -24391,7 +24391,7 @@ movie_id,title,genres
 115574,Child of God (2013),Crime|Drama|Thriller
 115598,Blondie on a Budget (1940),Comedy
 115600,The Breaktime (Zang-e Tafrih) (Recess) (1972),Drama
-115602,Two Solutions for One Problem (Dow Rahehal Baraye yek Massaleh) (1975),(no genres listed)
+115602,Two Solutions for One Problem (Dow Rahehal Baraye yek Massaleh) (1975),
 115604,The Chorus (Hamsarayan) (1982),Drama
 115607,The Seventh Brother (A hetedik testvér) (1995),Animation|Children
 115611,Felix the Cat: The Movie (1988),Adventure|Animation|Children|Fantasy|Musical|Sci-Fi
@@ -24522,15 +24522,15 @@ movie_id,title,genres
 116090,A Night in the Show (1915),Comedy
 116092,By the Sea (1915),Comedy
 116094,Mabel's Married Life (1914),Comedy
-116096,Lettera Amorosa (1995),(no genres listed)
-116098,Passeio com Johnny Guitar (1996),(no genres listed)
-116100,Conserva Acabada (1990),(no genres listed)
+116096,Lettera Amorosa (1995),
+116098,Passeio com Johnny Guitar (1996),
+116100,Conserva Acabada (1990),
 116102,O Amor das Três Romãs (1979),Drama
 116104,Sophia de Mello Breyner Andresen (1969),Documentary
 116106,Death of a Nation - The Timor Conspiracy (1994),Documentary
 116108,The Secret Country: The First Australians Fight Back (1986),Documentary
 116118,Colt Comrades (1943),Western
-116126,Complicit (2013),(no genres listed)
+116126,Complicit (2013),
 116128,Compulsion (2013),Drama|Thriller
 116136,Olive Kitteridge (2014),Drama
 116138,Leviathan (2014),Drama
@@ -24605,7 +24605,7 @@ movie_id,title,genres
 116419,Drive Hard (2014),Action|Comedy|Crime
 116421,The Ghost Story of Oiwa's Spirit (1961),Horror
 116423,An Apology to Elephants (2013),Documentary
-116425,Ecstasy in Entropy (1999),(no genres listed)
+116425,Ecstasy in Entropy (1999),
 116427,Air Raid Wardens (1943),Children|Comedy
 116429,Alias the Doctor (1932),Drama
 116431,Now! (1967),Documentary
@@ -24666,7 +24666,7 @@ movie_id,title,genres
 116698,Dead Men Tell (1941),Comedy|Crime|Drama|Mystery|Thriller
 116700,Elle: A Modern Cinderella Tale (2011),Children|Drama|Fantasy|Sci-Fi
 116702,Zatoichi (1989),Action|Drama
-116704,Zanjeer (1973),(no genres listed)
+116704,Zanjeer (1973),
 116710,Young Man with a Horn (1950),Drama|Musical|Romance
 116716,Young Cassidy (1965),Drama
 116718,Volga - Volga (1938),Comedy|Musical
@@ -24734,9 +24734,9 @@ movie_id,title,genres
 116911,"Yobi, The Five-Tailed Fox (2007)",Animation|Fantasy
 116913,The Savior (1971),Drama
 116915,Arcana (1972),Drama|Horror|Mystery
-116917,Whoregasm (1988),(no genres listed)
+116917,Whoregasm (1988),
 116921,Police State (1987),Drama
-116923,Kiss Me Goodbye (1986),(no genres listed)
+116923,Kiss Me Goodbye (1986),
 116927,Rio Rita (1942),Comedy|Musical|Romance
 116933,The Fighting 69th (1940),Action|Adventure|Drama|War
 116935,Riley Rewind (2013),Drama|Sci-Fi
@@ -24746,10 +24746,10 @@ movie_id,title,genres
 116943,Thesis on a Homicide (2013),Crime|Mystery|Thriller
 116945,Freedom (2009),Drama
 116947,Stand Off (2012),Comedy|Drama
-116949,Thrust in Me (1985),(no genres listed)
+116949,Thrust in Me (1985),
 116951,Bo Burnham: what. (2013),Comedy
 116953,Magic Camp (2012),Children|Documentary
-116955,The Wild World of Lydia Lunch (1983),(no genres listed)
+116955,The Wild World of Lydia Lunch (1983),
 116957,The Reunion (2013),Drama
 116959,Embracing (1992),Documentary
 116961,Katatsumori (1994),Documentary
@@ -24800,7 +24800,7 @@ movie_id,title,genres
 117182,Double Tide (2010),Documentary
 117186,Brigham Young (1940),Romance|Western
 117188,Johnny Apollo (1940),Crime|Drama|Film-Noir|Romance
-117192,Doctor Who: The Time of the Doctor (2013),(no genres listed)
+117192,Doctor Who: The Time of the Doctor (2013),Science Fiction|Drama
 117194,Dolphin Tale 2 (2014),Children|Drama
 117198,You're Missing the Point (1940),Comedy
 117300,Demoted (2011),Comedy
@@ -24939,7 +24939,7 @@ movie_id,title,genres
 117712,My Friend Irma Goes West (1950),Comedy|Crime|Musical
 117714,Enemies Closer (2013),Action|Thriller
 117716,Enter Arsene Lupin (1944),Crime|Drama
-117722,The Forgotten Faces (1961),(no genres listed)
+117722,The Forgotten Faces (1961),
 117726,Russell Brand: Messiah Complex (2013),Comedy
 117728,Moving Violations (1985),Comedy
 117732,So Much Water (2013),Comedy|Drama
@@ -24952,8 +24952,8 @@ movie_id,title,genres
 117838,Lucia (2013),Drama|Romance|Sci-Fi|Thriller
 117840,Dancing Outlaw II: Jesco Goes to Hollywood (1999),Documentary
 117843,Oppressed Majority (2010),Drama
-117845,"T,O,U,C,H,I,N,G (1969)",(no genres listed)
-117847,Little Hamlet (1960),(no genres listed)
+117845,"T,O,U,C,H,I,N,G (1969)",
+117847,Little Hamlet (1960),
 117849,La Belle Verte (1996),Comedy
 117851,Penguins of Madagascar (2014),Adventure|Animation|Children|Comedy
 117853,Bill Bailey: Qualmpeddler (2013),Comedy
@@ -24962,7 +24962,7 @@ movie_id,title,genres
 117859,Fugly! (2013),Comedy
 117861,Black or White (2014),Drama
 117863,Ragamuffin (2014),Drama
-117865,The Menacing Eye (1960),(no genres listed)
+117865,The Menacing Eye (1960),
 117867,'71 (2014),Action|Drama|Thriller|War
 117869,Bastards (2014),Documentary
 117871,The Water Diviner (2014),Action|Drama|War
@@ -25063,7 +25063,7 @@ movie_id,title,genres
 118286,Eat (1963),Documentary
 118288,"Jonathan Rosenbaum, Present (2013)",Documentary
 118290,Omega Doom (1996),Sci-Fi
-118292,Blow Job (1963),(no genres listed)
+118292,Blow Job (1963),
 118294,A Justified Life: Sam Peckinpah and the High Country (2006),Documentary
 118296,The Diary of an Unknown Soldier (1959),War
 118298,Float (2007),Drama|Romance
@@ -25076,7 +25076,7 @@ movie_id,title,genres
 118334,Omen IV: The Awakening (1991),Horror|Mystery|Thriller
 118336,Ninjas vs. Zombies (2008),Action|Comedy|Fantasy|Horror
 118338,Hard to Be a God (2013),Sci-Fi
-118340,In Order Not to Be Here (2002),(no genres listed)
+118340,In Order Not to Be Here (2002),
 118342,Mortuary (2005),Horror|Mystery|Thriller
 118344,Spontaneous Combustion (1990),Horror|Sci-Fi|Thriller
 118346,Night Terrors (1993),Horror
@@ -25089,7 +25089,7 @@ movie_id,title,genres
 118392,Street Fighter: Assassin's Fist (2014),Action|Adventure|Drama|Thriller
 118426,Touch the Top of the World (2006),Drama
 118446,Journey Beyond Three Seas (1957),Adventure
-118448,The Hearts of Age (1934),(no genres listed)
+118448,The Hearts of Age (1934),
 118458,H6: Diario de un asesino (2005),Horror|Thriller
 118460,Sallah (1964),Comedy
 118462,Grant Morrison: Talking with Gods (2010),Documentary
@@ -25129,7 +25129,7 @@ movie_id,title,genres
 118686,The Face of Love (2013),Drama|Romance
 118688,Every Girl Should Be Married (1948),Comedy|Romance
 118690,Eight Iron Men (1952),Drama|War
-118692,A True Mob Story (1998),(no genres listed)
+118692,A True Mob Story (1998),
 118694,In the Folds of the Flesh (1970),Drama|Horror|Thriller
 118696,The Hobbit: The Battle of the Five Armies (2014),Adventure|Fantasy
 118700,Selma (2014),Drama
@@ -25178,7 +25178,7 @@ movie_id,title,genres
 118872,Free the Nipple (2014),Comedy|Drama
 118874,Bachelor Night (2014),Comedy
 118876,Khumba (2013),Adventure|Animation|Children
-118878,Sekirei (2008),(no genres listed)
+118878,Sekirei (2008),
 118880,A Girl Walks Home Alone at Night (2014),Horror|Romance|Thriller
 118882,1981 (2009),Comedy|Drama|Romance
 118884,1987 (2014),Comedy|Drama|Romance
@@ -25274,7 +25274,7 @@ movie_id,title,genres
 119186,Fear Island (2009),Horror|Mystery|Thriller
 119188,The Big Flame (1969),Drama
 119190,Walking on Sunshine (2014),Musical|Romance
-119192,In Two Minds (1967),(no genres listed)
+119192,In Two Minds (1967),
 119194,Cathy Come Home (1966),Drama
 119196,Heartbeat (1938),Comedy
 119198,Saving Otter 501 (2013),Documentary
@@ -25374,7 +25374,7 @@ movie_id,title,genres
 119850,"Acapulco, First Beach... To the Left (1983)",Comedy
 119858,Casablanca Express (1989),Action|War
 119874,Trainer on the Beach 2 (2008),Comedy
-119878,Solomon Northup's Odyssey (1984),(no genres listed)
+119878,Solomon Northup's Odyssey (1984),
 119901,Sharpe's Gold (1995),Action|Adventure|War
 119904,Sharpe's Battle (1995),Action|Adventure|War
 119907,Sharpe's Sword (1995),Action|Adventure|War
@@ -25431,7 +25431,7 @@ movie_id,title,genres
 120290,My Rainy Days (2009),Drama|Romance
 120292,Bird People (2014),Drama|Fantasy|Romance
 120294,It Felt Like Love (2013),Drama
-120299,Eye for an Eye (1966),(no genres listed)
+120299,Eye for an Eye (1966),
 120301,Miss Granny (2014),Comedy|Fantasy
 120311,Drishyam (2013),Children|Drama|Thriller
 120313,Otakus in Love (2004),Comedy|Drama|Romance
@@ -25708,11 +25708,11 @@ movie_id,title,genres
 121495,Garbage Prince (2011),Comedy|Drama|Romance
 121545,Lisztomania (1975),Comedy|Fantasy|Musical
 121575,The Magnificent Gladiator (1964),Action|Adventure|Drama
-121581,Blablablá (1975),(no genres listed)
+121581,Blablablá (1975),
 121583,The Uninvited Guest (2004),Drama|Horror|Mystery|Thriller
 121586,Paradise (2013),Romance
 121588,The (Dead Mothers) Club (2014),Documentary
-121590,Confessor Caressor (1989),(no genres listed)
+121590,Confessor Caressor (1989),
 121592,The Studio Murder Mystery (1932),Mystery
 121594,Midnight Mary (1933),Crime|Drama|Romance
 121596,Born to Fight (2011),Action|Children|Drama
@@ -25854,7 +25854,7 @@ movie_id,title,genres
 122683,Nancy Drew and the Hidden Staircase (1939),Comedy|Crime|Mystery
 122693,Nancy Drew: Detective (1938),Comedy|Mystery
 122699,The Little Rascals Save the Day (2014),Comedy
-122711,Oliver Twist (1999),(no genres listed)
+122711,Oliver Twist (1999),
 122733,Mosquito Squadron (1969),Action
 122735,Night of Dark Shadows (1971),Drama|Horror|Mystery|Romance|Thriller
 122749,The Thirteen Assassins (1963),Action|Adventure
@@ -25869,7 +25869,7 @@ movie_id,title,genres
 122799,The New Centurions (1972),Action|Crime|Drama
 122807,Just 4 Kicks (2003),Children
 122819,"If It's Tuesday, This Must Be Belgium (1969)",Comedy|Drama
-122825,Starlift (1951),(no genres listed)
+122825,Starlift (1951),
 122849,Naked Violence (1969),Crime|Drama
 122851,The Italian Connection (1972),Crime|Drama
 122855,Colpo in canna (1975),Action
@@ -25887,7 +25887,7 @@ movie_id,title,genres
 122938,Melbourne (2014),Drama
 122940,Clear History (2013),Comedy
 122942,The Identical (2014),Drama
-122944,The Trans-Atlantic Mystery (1932),(no genres listed)
+122944,The Trans-Atlantic Mystery (1932),
 122946,The Gamers: Hands of Fate (2013),Comedy|Fantasy|Romance
 122948,Love at First Fight (2014),Comedy|Romance
 122950,Mare Nostrum (1926),War
@@ -25901,7 +25901,7 @@ movie_id,title,genres
 123115,Why Be Good? (1929),Comedy|Romance
 123119,The Expedition to the End of the World (2014),Documentary
 123121,Jealousy (2013),Drama
-123139,The Divine Woman (1928),(no genres listed)
+123139,The Divine Woman (1928),
 123155,Russkies (1987),Children|Drama
 123159,Hercules and the Lost Kingdom (1994),Action|Adventure|Fantasy|Sci-Fi
 123172,Winter Break (2003),Comedy|Drama
@@ -25923,7 +25923,7 @@ movie_id,title,genres
 123314,Mischief Night (2013),Drama|Horror|Thriller
 123316,Saratoga (1937),Comedy|Drama|Romance
 123326,The Man From The Alamo (1953),Western
-123333,Lucrèce Borgia (1935),(no genres listed)
+123333,Lucrèce Borgia (1935),
 123337,I Accuse (1938),Drama|Horror|Sci-Fi|War
 123347,Call Me Savage (1975),Adventure|Comedy|Drama|Romance
 123351,Invitation to a Gunfighter (1964),Action|Western
@@ -25934,7 +25934,7 @@ movie_id,title,genres
 123407,Man Of The Moment (1935),Comedy
 123419,Private Detective 62 (1933),Comedy|Crime|Drama
 123431,Three Guys Named Mike (1951),Comedy|Romance
-123439,Wuthering Heights (2003),(no genres listed)
+123439,Wuthering Heights (2003),
 123465,The Derby Stallion (2005),Children|Drama
 123467,Jewtopia (2012),Comedy|Romance
 123477,The Land Before Time XII: The Great Day of the Flyers (2006),Animation|Children|Sci-Fi
@@ -25949,13 +25949,13 @@ movie_id,title,genres
 123587,The Twilight of the Golds (1997),Drama
 123596,One Spy Too Many (1966),Adventure|Crime
 123600,Tribes (1970),Drama
-123607,The Night That Panicked America (1975),(no genres listed)
-123609,Goldengirl (1979),(no genres listed)
+123607,The Night That Panicked America (1975),
+123609,Goldengirl (1979),
 123613,Playing for Time (1980),Drama
 123621,Space (1985),Drama
-123625,The Karen Carpenter Story (1989),(no genres listed)
+123625,The Karen Carpenter Story (1989),
 123627,The Incident (1990),Drama
-123629,Caroline? (1990),(no genres listed)
+123629,Caroline? (1990),
 123639,Skylark (1993),Children|Drama
 123645,A Lesson Before Dying (1999),Drama
 123655,Sybil (2008),Drama
@@ -25966,7 +25966,7 @@ movie_id,title,genres
 123816,Highly Dangerous (1950),Action|Thriller
 123824,The Casino Murder Case (1935),Action|Drama|Mystery
 123911,Zouzou (1934),Comedy
-123939,Women Aren't Funny (2014),(no genres listed)
+123939,Women Aren't Funny (2014),
 123941,The Last Outpost (1951),Western
 123943,Shun Li and the Poet (2011),Drama
 123945,Basara: Princess Goh (1992),Drama
@@ -25982,7 +25982,7 @@ movie_id,title,genres
 124077,The Trip to Bountiful (2014),Drama
 124131,Lewis Black: Stark Raving Black (2009),Comedy
 124178,The King and Four Queens (1956),Adventure|Comedy|Mystery|Western
-124182,The Gallant Hours (1960),(no genres listed)
+124182,The Gallant Hours (1960),
 124213,Whistling in the Dark (1941),Comedy|Mystery
 124220,Whistling in Dixie (1942),Comedy|Crime|Mystery
 124224,Whistling in Brooklyn (1943),Comedy|Crime|Mystery|Romance
@@ -25999,12 +25999,12 @@ movie_id,title,genres
 124332,Snow Queen (2012),Animation|Fantasy
 124348,The Land Before Time XIII: The Wisdom of Friends (2007),Animation|Children
 124352,I Was Monty's Double (1958),Drama|War
-124358,The Lone Wolf Spy Hunt (1939),(no genres listed)
+124358,The Lone Wolf Spy Hunt (1939),
 124368,Escape Me Never (1947),Drama
 124394,If Winter Comes (1947),Drama
 124412,Ski Party (1965),Comedy
 124414,The Secret of Convict Lake (1951),Western
-124430,Viva Max! (1969),(no genres listed)
+124430,Viva Max! (1969),
 124442,"No God, No Master (2014)",Crime|Drama|Thriller
 124446,The Very Thought of You (1944),Drama|Romance
 124450,Lady Killer (1937),Drama|Romance|War
@@ -26013,7 +26013,7 @@ movie_id,title,genres
 124470,One Sunday Afternoon (1933),Comedy|Romance
 124490,The Sea Hawk (1924),Adventure|Drama|Romance
 124507,Journey to the Center of the Earth (1989),Action|Children|Fantasy|Sci-Fi
-124531,The Last of the Finest (1990),(no genres listed)
+124531,The Last of the Finest (1990),
 124533,Tarzan's Greatest Adventure (1959),Adventure
 124537,Lifeguard (1976),Comedy|Drama
 124544,Perfume (2001),Comedy|Drama
@@ -26022,7 +26022,7 @@ movie_id,title,genres
 124607,One Night of Love (1934),Romance
 124611,Great Day in the Morning (1956),Western
 124627,The Smiling Ghost (1941),Comedy|Mystery
-124639,Onionhead (1958),(no genres listed)
+124639,Onionhead (1958),
 124647,Spark: A Burning Man Story (2013),Action|Documentary|Drama
 124657,There's Always A Woman (1938),Comedy|Mystery
 124691,Hollidaysburg (2014),Comedy
@@ -26032,9 +26032,9 @@ movie_id,title,genres
 124725,The Big Cube (1969),Mystery|Thriller
 124735,Love Bites (1993),Comedy|Romance
 124751,The Mysterious Island (1973),Adventure|Sci-Fi
-124765,The Mysterious Island (1929),(no genres listed)
+124765,The Mysterious Island (1929),
 124769,Stolen Face (1952),Thriller
-124775,The Lost Squadron (1932),(no genres listed)
+124775,The Lost Squadron (1932),
 124779,Home of the Brave (1949),Drama
 124793,The Crowded Sky (1960),Action|Adventure|Drama
 124807,Jay-Z: Made in America (2013),Documentary
@@ -26049,26 +26049,26 @@ movie_id,title,genres
 124859,The Gambler (2014),Crime|Drama|Thriller
 124861,Dinosaur 13 (2014),Adventure|Documentary|Drama|Thriller
 124867,Justice League: Throne of Atlantis (2015),Action|Animation
-124869,Jay And Silent Bob's Super Groovy Cartoon Movie (2013),(no genres listed)
+124869,Jay And Silent Bob's Super Groovy Cartoon Movie (2013),
 124871,Love and Other Troubles (2012),Comedy|Romance
 124889,The Adventures of Tom Thumb & Thumbelina (2002),Animation
 124919,The Wind in the Willows (1995),Adventure|Animation|Children|Comedy
 124943,Murder on a Honeymoon (1935),Comedy|Mystery
-124963,House Party: Tonight's the Night (2013),(no genres listed)
+124963,House Party: Tonight's the Night (2013),
 124965,Miracles (1986),Comedy
 124971,This Woman Is Dangerous (1952),Crime|Drama
 124983,Impy's Island (2006),Animation|Children|Fantasy
 125005,This Could Be The Night (1957),Comedy
 125065,The Fuller Brush Girl (1950),Comedy
 125077,Eddie Izzard: Force Majeure Live (2013),Comedy
-125079,Sittin' on a Backyard Fence (1933),(no genres listed)
+125079,Sittin' on a Backyard Fence (1933),
 125081,Mars (1968),Documentary|Sci-Fi
 125085,Killer Holiday (2013),Horror|Thriller
-125091,The Feminine Touch (1941),(no genres listed)
+125091,The Feminine Touch (1941),
 125095,Topaze (1933),Comedy|Drama
 125133,Prairie Fever (2008),Action|Western
 125155,The Pee-Wee Herman Show on Broadway (2011),Comedy
-125159,Safety Patrol (1998),(no genres listed)
+125159,Safety Patrol (1998),
 125169,Shadows Over Chinatown (1946),Comedy|Crime|Mystery|Thriller
 125173,Tom Sawyer (2011),Adventure
 125183,Venus and Serena (2012),Documentary
@@ -26081,12 +26081,12 @@ movie_id,title,genres
 125267,The Bride Wore Red (1937),Comedy|Drama|Romance
 125271,The Roots of Heaven (1958),Adventure|Drama
 125277,Station West (1948),Action|Mystery|Romance|Western
-125305,Opposing Force (1986),(no genres listed)
+125305,Opposing Force (1986),
 125345,Un Piede in paradiso (1991),Comedy
 125353,In the Line of Duty: The F.B.I. Murders (1988),Action|Crime|Drama
 125359,Lovesick (1983),Comedy|Fantasy|Romance
 125381,Silent Partner (2005),Action|Mystery|Thriller
-125385,Trust Me (2010),(no genres listed)
+125385,Trust Me (2010),
 125387,Hail Caesar (1994),Comedy
 125397,The Virginian (1946),Romance|Western
 125399,The Story of Alexander Graham Bell (1939),Drama
@@ -26103,9 +26103,9 @@ movie_id,title,genres
 125517,The D.I. (1957),Drama
 125521,Walking Tall Part II (1975),Action|Adventure|Crime|Drama
 125523,Time Limit (1957),Drama|Mystery|War
-125531,Fun on a Weekend (1947),(no genres listed)
+125531,Fun on a Weekend (1947),
 125533,Almost 18 (2012),Comedy|Drama
-125535,Fist of Jesus (2012),(no genres listed)
+125535,Fist of Jesus (2012),
 125537,Print the Legend (2014),Documentary
 125539,He Who Dares (2014),Action
 125543,Against The Sun (2015),Adventure
@@ -26114,48 +26114,48 @@ movie_id,title,genres
 125563,Tasting Menu (2014),Comedy
 125565,Night Will Fall (2014),Documentary
 125569,The Amazing Catfish (2013),Comedy|Drama
-125571,The Court-Martial of Jackie Robinson,(no genres listed)
-125574,The Perils of Pauline (1967),(no genres listed)
+125571,The Court-Martial of Jackie Robinson,
+125574,The Perils of Pauline (1967),
 125596,Parade (1974),Children|Comedy
-125599,Always for Pleasure (1978),(no genres listed)
-125601,Port of Flowers (1943),(no genres listed)
-125603,The Living Magoroku (1943),(no genres listed)
-125605,Jubilation Street (1943),(no genres listed)
+125599,Always for Pleasure (1978),
+125601,Port of Flowers (1943),
+125603,The Living Magoroku (1943),
+125605,Jubilation Street (1943),
 125607,The Army (1944),Drama
-125609,Morning for the Osone Family (1946),(no genres listed)
+125609,Morning for the Osone Family (1946),
 125623,That Night's Wife (1930),Drama
 125628,Citizen Koch (2013),Documentary
 125630,We Still Kill the Old Way (2014),Crime
-125632,In Our Garden,(no genres listed)
+125632,In Our Garden,
 125634,Giuseppe Makes a Movie (2014),Documentary
 125636,Youth of the Son (1952),Drama
 125638,The Arrival of Wang (2012),Mystery|Sci-Fi|Thriller
-125640,Walker (2012),(no genres listed)
-125642,One Step Ahead of My Shadow (1933),(no genres listed)
+125640,Walker (2012),
+125642,One Step Ahead of My Shadow (1933),
 125644,Amuck! (1972),Drama|Horror|Mystery
-125646,Lad: A Dog (1962),(no genres listed)
-125652,Season For Assassins (1975),(no genres listed)
+125646,Lad: A Dog (1962),
+125652,Season For Assassins (1975),
 125656,"Another Day, Another Time: Celebrating the Music of Inside Llewyn Davis (2013)",Documentary
 125658,Margaret (2009),Comedy|Drama|Romance
 125661,Paper Planes (2015),Children
 125782,Body Fat Index of Love (2012),Comedy
 125786,Burning Blue (2013),Drama|Romance|War
 125854,The Diary of Anne Frank (1980),Drama
-125864,Red Ensign (1934),(no genres listed)
+125864,Red Ensign (1934),
 125868,"Aquí llega Condemor, el pecador de la pradera (1996)",Comedy|Western
-125872,El asombroso mundo de Borjamari y Pocholo (2004),(no genres listed)
-125876,FBI: Frikis buscan incordiar (2004),(no genres listed)
-125878,Isi & Disi: Amor a lo bestia (2004),(no genres listed)
+125872,El asombroso mundo de Borjamari y Pocholo (2004),
+125876,FBI: Frikis buscan incordiar (2004),
+125878,Isi & Disi: Amor a lo bestia (2004),
 125882,Red Salute (1935),Comedy|Romance
 125884,The Case of the Curious Bride (1935),Comedy|Crime|Drama|Mystery
 125886,The Case of the Lucky Legs (1935),Comedy|Crime|Mystery
-125888,La Bandera (1935),(no genres listed)
+125888,La Bandera (1935),
 125894,Doubting Thomas (1935),Comedy
 125898,The Phantom Light (1935),Mystery|Thriller
 125902,Seven Alone (1974),Children|Drama
 125904,Pretty Cool (2001),Action|Comedy|Thriller
-125908,Time in the Minors (2010),(no genres listed)
-125910,Stars Above (2012),(no genres listed)
+125908,Time in the Minors (2010),
+125910,Stars Above (2012),
 125912,Not Another Happy Ending (2013),Comedy|Drama|Romance
 125914,Mortdecai (2015),Adventure|Comedy
 125916,Fifty Shades of Grey (2015),Drama
@@ -26164,22 +26164,22 @@ movie_id,title,genres
 125922,Gregory Go Boom (2013),Comedy
 125924,The Periwig-Maker (1999),Animation
 125926,Kiwi! (2006),Action|Animation
-125928,Santa's Pocket Watch (1980),(no genres listed)
-125930,Björk at the Royal Opera House (2002),(no genres listed)
+125928,Santa's Pocket Watch (1980),
+125930,Björk at the Royal Opera House (2002),
 125932,The Fox and the Hare (1973),Animation|Children
-125934,Christmas Comes but Once a Year (1936),(no genres listed)
+125934,Christmas Comes but Once a Year (1936),
 125936,Crac (1981),Animation
 125938,Reggie Watts: Why Shit So Crazy? (2010),Comedy
 125940,Syrinx (1966),Animation
-125942,Curb Dance (2010),(no genres listed)
+125942,Curb Dance (2010),
 125944,Desire: The Vampire (1982),Crime|Horror|Thriller
 125946,Manson (1973),Documentary
-125948,Fright to the Finish (1954),(no genres listed)
+125948,Fright to the Finish (1954),
 125950,Guyana Tragedy: The Story of Jim Jones (1980),Drama
 125952,"I Want a Dog for Christmas, Charlie Brown (2003)",Animation|Children|Comedy
 125954,Impure Thoughts (1986),Comedy
-125956,It's a Bird (1930),(no genres listed)
-125958,Stephen Fry In America - New World,(no genres listed)
+125956,It's a Bird (1930),
+125958,Stephen Fry In America - New World,
 125960,The Trip to Squash Land (1967),Animation
 125962,Charlie Brown's Christmas Tales (2002),Animation|Children|Comedy
 125964,Eat (2011),Drama
@@ -26190,57 +26190,57 @@ movie_id,title,genres
 125974,Halloweentown High (2004),Adventure|Children|Comedy|Fantasy
 125976,Nocturna Artificialia (1979),Animation
 125978,Santa Claus (1898),Sci-Fi
-125980,Surprise (1996),(no genres listed)
+125980,Surprise (1996),
 125982,Trick or Treat (1952),Animation
-125984,Vengeance: The Story of Tony Cimo (1986),(no genres listed)
+125984,Vengeance: The Story of Tony Cimo (1986),
 125986,Within the Woods (1978),Horror
 125988,100 Years at the Movies (1994),Documentary
 125990,Apple Jack (2003),Comedy|Drama
 125992,The Butter Battle Book (1989),Animation|Children
-125994,Corn on the Cop (1965),(no genres listed)
+125994,Corn on the Cop (1965),
 125996,The Black Devil (1905),Comedy|Fantasy
 125998,Halloween is Grinch Night (1977),Animation|Children
-126000,Marilyn in Manhattan (1998),(no genres listed)
+126000,Marilyn in Manhattan (1998),
 126002,Rage of Angels (1983),Action|Adventure|Drama|Romance
 126004,Rage of Angels: The Story Continues (1986),Drama
 126006,Rudolph the Red-Nosed Reindeer (1948),Animation|Children|Fantasy
 126008,Signs (2008),Romance
-126010,Queen - Rock Montreal (2007),(no genres listed)
+126010,Queen - Rock Montreal (2007),
 126012,The Fat Albert Halloween Special (1977),Animation
 126014,Season's Greetings (1996),Comedy
 126016,The Dot and the Line : A Romance in Lower Mathematics (1965),Animation|Children|Comedy
 126018,Nantucket Film Festival's Comedy Roundtable (2012),Comedy|Documentary
 126020,Rubber Johnny (2005),Animation|Horror
-126022,Act Da Fool (2010),(no genres listed)
-126024,En rachâchant (1982),(no genres listed)
-126026,The Flower (1971),(no genres listed)
-126028,Boo to You Too! Winnie the Pooh (1996),(no genres listed)
+126022,Act Da Fool (2010),Comedy
+126024,En rachâchant (1982),
+126026,The Flower (1971),
+126028,Boo to You Too! Winnie the Pooh (1996),
 126030,Isabelle au bois dormant (2007),Animation|Comedy
 126032,Betty Boop's Hallowe'en Party (1933),Animation|Comedy|Horror
-126034,Halloween (1931),(no genres listed)
+126034,Halloween (1931),
 126036,Barbie: A Fashion Fairytale (2010),Animation|Children
 126038,The Halloween That Almost Wasn't (1979),Children|Comedy
 126040,The Mystery of the Leaping Fish (1916),Comedy
-126042,The 3 Rs (2011),(no genres listed)
+126042,The 3 Rs (2011),
 126044,Brutal Relax (2010),Action|Comedy
 126046,Franz Kafka's a Country Doctor (2007),Animation|Drama
 126048,Pluto's Christmas Tree (1952),Animation|Comedy
 126050,Stille Nacht I: Dramolet (1988),Animation
-126052,Holiday for Drumsticks (1949),(no genres listed)
+126052,Holiday for Drumsticks (1949),
 126054,The Horseplayer (1990),Drama
 126056,Coven (2000),Horror
 126058,Rehearsals for Extinct Anatomies (1987),Animation
-126060,Suur Tõll (1980),(no genres listed)
-126062,We Can Be Heroes (2005),(no genres listed)
-126064,Bob's Birthday (1994),(no genres listed)
+126060,Suur Tõll (1980),
+126062,We Can Be Heroes (2005),
+126064,Bob's Birthday (1994),
 126066,Broom-Stick Bunny (1956),Animation|Children|Comedy
-126068,Summer Heights High (2007),(no genres listed)
+126068,Summer Heights High (2007),
 126070,Chainsaw Maid (2007),Animation
 126072,The Little Matchgirl (2006),Animation
-126074,Haunted House (1929),(no genres listed)
-126076,How They Get There (1997),(no genres listed)
-126078,Istanbul (1985),(no genres listed)
-126080,"Hen, his wife (1990)",(no genres listed)
+126074,Haunted House (1929),
+126076,How They Get There (1997),
+126078,Istanbul (1985),
+126080,"Hen, his wife (1990)",
 126082,Inside The X-files (1998),Documentary
 126084,The Horribly Slow Murderer with the Extremely Inefficient Weapon (2008),Comedy|Horror
 126086,Norm MacDonald: Me Doing Standup (2011),Comedy
@@ -26249,11 +26249,11 @@ movie_id,title,genres
 126092,The Cat's Out (1931),Animation
 126094,Claymation Comedy of Horrors (1991),Animation
 126096,The Last Farm (2004),Drama
-126098,Snowballs (2011),(no genres listed)
+126098,Snowballs (2011),
 126100,"Danger! 50,000 Zombies (2004)",Comedy|Horror
 126102,Bouncing Babies (1929),Comedy
 126104,Stella: Live in Boston (2009),Comedy
-126106,Beastie Boys: Sabotage (1994),(no genres listed)
+126106,Beastie Boys: Sabotage (1994),
 126108,Diario de un skin (2005),Documentary
 126116,Dolls and Angels (2008),Drama
 126120,All About Anna (2005),Comedy|Drama|Romance
@@ -26261,7 +26261,7 @@ movie_id,title,genres
 126124,Archie To Riverdale and Back Again (1990),Comedy
 126126,Babette Goes to War (1959),Comedy|War
 126128,Belle comme la femme d'un autre (2014),Comedy
-126130,Special Delivery (2002),(no genres listed)
+126130,Special Delivery (2002),
 126132,Mr. Average (2007),Comedy|Romance
 126134,Cutie Honey (2004),Action
 126136,"Delphine 1, Yvan 0 (1996)",Comedy
@@ -26280,29 +26280,29 @@ movie_id,title,genres
 126162,"Le printemps, l'automne et l'amour (1955)",Comedy|Drama
 126164,1001 Nights (1990),Adventure|Comedy|Fantasy
 126166,Lightspeed (2006),Action|Fantasy|Sci-Fi
-126168,Meilleur espoir féminin (2000),(no genres listed)
+126168,Meilleur espoir féminin (2000),
 126170,"Mercredi, folle journée! (2001)",Comedy|Drama
-126172,Mr Reliable (1997),(no genres listed)
+126172,Mr Reliable (1997),
 126174,Ninette (2005),Comedy
-126176,Nom de code : Rose (2012),(no genres listed)
+126176,Nom de code : Rose (2012),
 126178,Opposite Day (2009),Children|Comedy
 126180,Powder Room (2013),Comedy
 126182,Shirin in Love (2014),Comedy|Romance
 126184,The Christmas Wish (1998),Children|Drama|Romance
-126186,The Sex and Violence Family Hour (1983),(no genres listed)
+126186,The Sex and Violence Family Hour (1983),
 126188,All That... for This?! (1993),Comedy
 126190,Who Do I Gotta Kill? (1994),Comedy
 126219,Marihuana (1936),Documentary|Drama
 126233,Seventh Heaven (1993),Comedy|Romance
-126235,La Belle équipe (1936),(no genres listed)
+126235,La Belle équipe (1936),
 126237,Stop Train 349 (1963),Drama
-126239,Fährmann Maria (1936),(no genres listed)
-126243,"Thank You, Jeeves! (1936)",(no genres listed)
-126245,Homework (1989),(no genres listed)
+126239,Fährmann Maria (1936),
+126243,"Thank You, Jeeves! (1936)",
+126245,Homework (1989),
 126247,Internes Can't Take Money (1937),Crime|Drama|Romance
 126249,Green Light (1937),Drama|Romance
 126283,Maid of Salem (1937),Drama
-126286,Double Or Nothing (1937),(no genres listed)
+126286,Double Or Nothing (1937),
 126290,Second Honeymoon (1937),Comedy|Romance
 126296,I Met Him in Paris (1937),Comedy|Romance
 126305,Les disparus de Saint-Agil (1938),Drama|Mystery
@@ -26339,9 +26339,9 @@ movie_id,title,genres
 126510,Paris-Manhattan (2012),Comedy|Romance
 126546,7 Days in Havana (2012),Drama
 126548,The DUFF (2015),Comedy
-126552,Fort McCoy (2014),(no genres listed)
+126552,Fort McCoy (2014),
 126554,Age of Ice (2014),Adventure|Sci-Fi
-126560,Love Steaks (2013),(no genres listed)
+126560,Love Steaks (2013),
 126562,The Remaining (2014),Horror|Thriller
 126571,Prairie Love (2011),Comedy|Drama
 126573,Heathcliff: The Movie (1986),Animation|Comedy
@@ -26352,18 +26352,18 @@ movie_id,title,genres
 126586,The Mark of Cain (2000),Documentary|Drama
 126588,From Zero to Hero (2014),Comedy|Drama|Romance
 126591,The Humanoid (1979),Fantasy|Sci-Fi
-126593,Kocken (2005),(no genres listed)
+126593,Kocken (2005),
 126595,Aurora (2012),Romance|Sci-Fi
 126599,The Little Death (2014),Comedy
 126723,Kenny Begins (2009),Action|Comedy|Sci-Fi
 126725,Bitter Sweetheart (2007),Comedy|Drama
 126727,Sandor slash Ida (2005),Drama|Romance
-126731,Bit by Bit (2002),(no genres listed)
+126731,Bit by Bit (2002),
 126733,Help! I'm A Fish (2001),Adventure|Animation|Comedy
 126735,"Tsatsiki, Morsan och Polisen (1999)",Drama
 126737,Dark Dungeons (2014),Drama|Fantasy
-126739,Bert - Den siste oskulden (1995),(no genres listed)
-126741,En på miljonen (1995),(no genres listed)
+126739,Bert - Den siste oskulden (1995),
+126741,En på miljonen (1995),
 126743,Sunes sommar (1993),Comedy
 126745,Lotta 2: Lotta flyttar hemifrån (1993),Children
 126747,Lotta på Bråkmakargatan (1992),Children
@@ -26380,59 +26380,59 @@ movie_id,title,genres
 126783,Two Years at Sea (2011),Documentary
 126785,A Spell to Ward Off the Darkness (2013),Documentary
 126787,The Last Time I Saw Macao (2012),Documentary|Thriller
-126789,When Evening Falls on Bucharest or Metabolism (2013),(no genres listed)
+126789,When Evening Falls on Bucharest or Metabolism (2013),
 126791,Septien (2011),Comedy|Drama|Mystery
-126793,Two Shots Fired (2014),(no genres listed)
-126795,Finisterrae (2010),(no genres listed)
-126797,The Distance (2014),(no genres listed)
+126793,Two Shots Fired (2014),
+126795,Finisterrae (2010),
+126797,The Distance (2014),
 126807,Weekender (2011),Drama
 126809,Plot of Fear (1976),Crime|Mystery|Thriller
 126815,Anotherworld (2008),Drama|Romance
-126917,Ten Minutes Older (1978),(no genres listed)
+126917,Ten Minutes Older (1978),
 126919,Of Horses and Men (2013),Comedy|Drama|Romance
 126921,The Fox and the Hound 2 (2006),Adventure|Animation|Children|Comedy
 126923,Monsterman (Monsterimies) (2014),Documentary|Drama
 126925,Long Hello and Short Goodbye (1999),Comedy|Thriller
 126927,The Heart of the World (2000),Drama|Fantasy
-126929,Li'l Quinquin,(no genres listed)
+126929,Li'l Quinquin,
 126931,Girl with Hyacinths (1950),Drama|Mystery
 126933,These Amazing Shadows (2011),Documentary
-126935,Garlic Is As Good As Ten Mothers (1980),(no genres listed)
+126935,Garlic Is As Good As Ten Mothers (1980),
 126937,Journey to the Beginning of Time (1955),Adventure|Children|Fantasy
 126939,Spend It All (1972),Documentary
 126941,Joni's Promise (2005),Comedy
 126943,The Man Who Could Cheat Death (1959),Horror|Sci-Fi
-126945,Small Roads (2011),(no genres listed)
+126945,Small Roads (2011),
 126947,Carriage to Vienna (1966),Drama|War
-126949,Strange Voyage (1964),(no genres listed)
+126949,Strange Voyage (1964),
 126951,Ivory Tower (2014),Documentary
 126953,The Fabulous Baron Munchausen (1962),Adventure|Animation|Fantasy
-126955,Light Is Calling (2004),(no genres listed)
+126955,Light Is Calling (2004),
 126957,The Open Road (1926),Documentary
 126959,The Epic of Everest (1924),Documentary
 126961,All In This Tea (2007),Documentary
-126963,The Private Life of a Cat (1944),(no genres listed)
+126963,The Private Life of a Cat (1944),
 126965,Land (2010),Documentary
-126967,Letter from Siberia (1957),(no genres listed)
+126967,Letter from Siberia (1957),
 126969,Babylon XX (1979),Drama
 126971,Carts of Darkness (2008),Documentary
-126973,Soundtracker (2010),(no genres listed)
-126975,Kamome Diner (2006),(no genres listed)
+126973,Soundtracker (2010),
+126975,Kamome Diner (2006),
 126977,Gerhard Richter Painting (2012),Documentary
-126979,Dream Land (2004),(no genres listed)
+126979,Dream Land (2004),
 126981,The Wayward Girl (1959),Drama
 126983,City Zero (1989),Comedy|Drama|Sci-Fi
-126985,Remonstrance (1972),(no genres listed)
+126985,Remonstrance (1972),
 126987,Bells from the Deep (1993),Documentary
-126989,The Gardener (1912),(no genres listed)
+126989,The Gardener (1912),
 126991,The Sea Vultures (1915),Drama
-126993,The Girl from the Marsh Croft (1917),(no genres listed)
+126993,The Girl from the Marsh Croft (1917),
 126997,The Monastery of Sendomir (1920),Drama
-126999,1000 Journals (2007),(no genres listed)
+126999,1000 Journals (2007),
 127001,Pan (1995),Action|Adventure|Drama|Fantasy|Romance
-127003,Documentarian (2013),(no genres listed)
-127005,A Year Along the Abandoned Road,(no genres listed)
-127007,The Shoe (1998),(no genres listed)
+127003,Documentarian (2013),
+127005,A Year Along the Abandoned Road,
+127007,The Shoe (1998),
 127009,Night Editor (1946),Drama
 127011,Under the Flag of the Rising Sun (1972),Drama|Mystery|War
 127013,The Devil Thumbs a Ride (1947),Drama|Film-Noir
@@ -26635,7 +26635,7 @@ movie_id,title,genres
 127877,Kawa (2010),Drama
 127879,Adjust Your Tracking (2013),Documentary
 127881,Addicted to Plastic (2008),Documentary
-127957,Min så kallade pappa (2014),(no genres listed)
+127957,Min så kallade pappa (2014),
 127974,100 Bloody Acres (2012),Comedy|Horror
 127993,Evenings on a Farm near Dikanka (1961),Comedy|Fantasy|Romance
 128085,Light the Fuse... Sartana Is Coming (1970),Western
@@ -26674,23 +26674,23 @@ movie_id,title,genres
 128322,Super Duper Alice Cooper (2014),Documentary
 128324,Lunopolis (2009),Sci-Fi
 128327,The Mayor of Casterbridge (2003),Drama
-128356,Beck - Öga för öga (1998),(no genres listed)
+128356,Beck - Öga för öga (1998),
 128358,Uuno in Spain (1985),Comedy
 128362,Burn Paris Burn (2009),Animation|Fantasy|Mystery
 128366,Patton Oswalt: Tragedy Plus Comedy Equals Time (2014),Comedy
 128369,The Anderssons in Greece: All Inclusive (2012),Children|Comedy
 128379,Emergency Squad (1974),Action|Thriller
 128381,Mark of the Cop (1975),Crime|Drama|Romance
-128383,Mark Shoots First (1975),(no genres listed)
+128383,Mark Shoots First (1975),
 128385,La Legge Violenta Della Squadra Anticrimine (1976),Crime
 128387,The Last Round (1976),Action|Thriller
 128389,The .44 Specialist (1976),Action
 128391,Destruction Force (1977),Crime
-128393,Highway Racer (1977),(no genres listed)
-128395,The Iron Commissioner (1978),(no genres listed)
+128393,Highway Racer (1977),
+128395,The Iron Commissioner (1978),
 128397,Magnum Cop (1978),Thriller
 128399,Un Poliziotto Scomodo (1978),Action|Crime|Thriller
-128401,Hunted City (1979),(no genres listed)
+128401,Hunted City (1979),
 128425,Stray Dogs (2014),Drama
 128427,Super Bitch (1973),Action
 128429,What Have You Done to Solange? (1972),Crime
@@ -26702,12 +26702,12 @@ movie_id,title,genres
 128478,A Christmas Kiss (2011),Romance
 128488,Wild Card (2015),Crime|Drama|Thriller
 128490,Flow (2014),Drama
-128504,Lasa y Zabala (2014),(no genres listed)
+128504,Lasa y Zabala (2014),
 128506,Rent-a-Cat (2012),Comedy|Drama
 128508,Valley Of Flowers (2006),Adventure|Drama|Romance
 128510,Attila Marcel (2013),Comedy|Drama
-128514,We Cause Scenes (2014),(no genres listed)
-128516,Sacred Heart (2005),(no genres listed)
+128514,We Cause Scenes (2014),
+128516,Sacred Heart (2005),
 128518,The Wonders (2014),Drama
 128520,The Wedding Ringer (2015),Comedy
 128530,Marilyn: The Untold Story (1980),Documentary
@@ -26715,7 +26715,7 @@ movie_id,title,genres
 128536,Üvegtigris (2001),Comedy
 128540,The Gruffalo's Child (2011),Adventure|Animation|Children|Fantasy
 128542,Wyrmwood (2015),Action|Horror|Sci-Fi
-128544,Hits (2014),(no genres listed)
+128544,Hits (2014),
 128546,Brothers: The Return (2006),Crime|Drama|Thriller
 128548,Sällskapsresan II - Snowroller (1985),Comedy
 128550,SOS - en segelsällskapsresa (1988),Comedy
@@ -26728,7 +26728,7 @@ movie_id,title,genres
 128564,Jönssonligans största kupp (1995),Comedy|Crime
 128566,Jönssonligan spelar högt (2000),Comedy
 128568,Summer House (2013),Drama
-128570,Alla älskar Alice (2002),(no genres listed)
+128570,Alla älskar Alice (2002),
 128572,Nils Karlsson Pyssling (1990),Children
 128574,Studentfesten (2013),Comedy
 128576,Kvarteret Skatan reser till Laholm (2012),Comedy
@@ -26738,7 +26738,7 @@ movie_id,title,genres
 128584,"Svensson, Svensson - I nöd och lust (2011)",Comedy
 128586,10 000 timmar (2014),Comedy
 128588,Lilla Jönssonligan och Cornflakeskuppen (1996),Children|Comedy
-128590,Lilla Jönssonligan på styva linan (1997),(no genres listed)
+128590,Lilla Jönssonligan på styva linan (1997),
 128592,The Boy Next Door (2015),Thriller
 128594,Boy Meets Girl (2015),Comedy|Drama|Romance
 128596,Let My Puppets Come (1976),Comedy
@@ -26747,13 +26747,13 @@ movie_id,title,genres
 128601,Hearty Paws (2006),Adventure|Drama
 128604,Knight of Cups (2015),Drama
 128608,Diary of a Chambermaid (2015),Drama
-128610,Ixcanul Volcano (2015),(no genres listed)
+128610,Ixcanul Volcano (2015),
 128612,Body/Cialo,Comedy|Drama|Mystery
 128614,Nobody Wants the Night (2015),Drama
-128616,As We Were Dreaming (2015),(no genres listed)
+128616,As We Were Dreaming (2015),
 128618,Cloud 9 (2008),Drama|Romance
 128622,Heavenly Forest (2006),Drama|Romance
-128624,Petting Zoo (2015),(no genres listed)
+128624,Petting Zoo (2015),
 128626,The Golden Cage (2013),Drama
 128628,Ainoat Oikeat (2013),Comedy
 128632,Home Sweet Hell (2015),Comedy|Drama
@@ -26765,13 +26765,13 @@ movie_id,title,genres
 128665,Shepherd (1999),Sci-Fi
 128669,Wild Geese II (1985),Action
 128671,Timbuktu (2014),Drama
-128673,Casting Couch (2013),(no genres listed)
+128673,Casting Couch (2013),
 128675,Hollow Point (1996),Action|Comedy|Thriller
 128677,Zeder (1983),Horror
 128679,The Year Without a Santa Claus (1974),Animation|Children
 128681,From Morn to Midnight (Von morgens bis Mitternacht) (1922),Crime|Drama
 128684,Artifact (2012),Documentary
-128686,Sputnik (2013),(no genres listed)
+128686,Sputnik (2013),
 128688,Kolmistaan (2008),Drama|Romance
 128690,Adult Camp (2015),Comedy
 128693,Expecting a Miracle (2009),Drama
@@ -26782,7 +26782,7 @@ movie_id,title,genres
 128721,Vesna va veloce (1996),Drama
 128723,James Dean (2001),Drama
 128725,Eloise at Christmastime (2003),Children|Comedy|Drama
-128727,Bizarre (2015),(no genres listed)
+128727,Bizarre (2015),
 128734,Polskie gówno,Comedy|Musical
 128736,I'm Here (2010),Drama
 128738,Rigoletto (1993),Drama
@@ -26790,7 +26790,7 @@ movie_id,title,genres
 128768,Angel's Leap (1971),Crime
 128770,Cran d'arrêt (1970),Crime|Mystery|Thriller
 128792,The Joy of Living (1961),Comedy
-128810,Scandali nudi (1968),(no genres listed)
+128810,Scandali nudi (1968),
 128812,Drew: The Man Behind the Poster (2013),Documentary
 128826,Nick the Sting (1976),Action|Crime|Thriller
 128830,Plastic Bag (2009),Drama
@@ -26827,7 +26827,7 @@ movie_id,title,genres
 128910,A One-Way Trip to Antibes (2011),Drama
 128912,Mike Birbiglia: My Girlfriend's Boyfriend (2013),Comedy
 128914,Tom Segura: Completely Normal (2014),Comedy
-128916,The Indifferent Beauty (1957),(no genres listed)
+128916,The Indifferent Beauty (1957),
 128918,Mike Birbiglia: What I Should Have Said Was Nothing (2008),Comedy
 128920,Heads (1994),Comedy|Crime
 128922,Heckler (2007),Comedy|Documentary
@@ -26861,18 +26861,18 @@ movie_id,title,genres
 129032,Sense & Sensibility (2008),Drama|Romance
 129034,Serving Life (2011),Documentary
 129036,People of the Wind (1976),Documentary
-129056,Lost and Found (1979),(no genres listed)
+129056,Lost and Found (1979),
 129064,Joanna (2013),Documentary
 129066,Our Curse (2014),Documentary
 129068,Banklady (2013),Action|Crime|Drama|Romance
-129078,Tokyo Fiancée (2015),(no genres listed)
+129078,Tokyo Fiancée (2015),
 129080,La montaña rusa (2012),Comedy|Romance
-129185,The Testimony (1946),(no genres listed)
-129187,Lost Youth (1948),(no genres listed)
-129189,The Sea That Thinks (2000),(no genres listed)
+129185,The Testimony (1946),
+129187,Lost Youth (1948),
+129189,The Sea That Thinks (2000),
 129191,The Clowns (1970),Comedy|Drama|Fantasy|Sci-Fi
 129201,The Time Being (2012),Mystery
-129227,Out of Nature (2014),(no genres listed)
+129227,Out of Nature (2014),
 129233,Believe Me (2014),Comedy|Drama
 129235,Les Invisibles (2012),Documentary
 129239,The Monkey Hustle (1976),Action
@@ -26951,29 +26951,29 @@ movie_id,title,genres
 129518,Forgive Me (2006),Comedy
 129520,Papa (2005),Comedy|Drama
 129522,Letters from a Killer (1998),Crime|Drama|Mystery|Thriller
-129524,Je m'appelle Elisabeth (2006),(no genres listed)
+129524,Je m'appelle Elisabeth (2006),
 129526,The Color of Milk (2004),Comedy|Drama
 129528,Repatriation (2006),Documentary
-129530,Slingshot Hip Hop (2008),(no genres listed)
+129530,Slingshot Hip Hop (2008),
 129532,Island (2011),Drama|Mystery|Thriller
 129534,Parked (2010),Drama
-129536,Code Name Coq Rouge (1989),(no genres listed)
+129536,Code Name Coq Rouge (1989),
 129555,So Ends Our Night (1941),Drama|War
 129640,66 Scenes From America (1982),Documentary
 129644,Jimi Hendrix: Hear My Train A Comin' (2013),Documentary
 129646,Kill a Rat (1977),Crime|Drama|Mystery
-129651,The Third Reich: The Rise & Fall,(no genres listed)
+129651,The Third Reich: The Rise & Fall,
 129653,Ismael (2013),Drama
 129657,Tracers (2015),Action
 129659,McFarland USA (2015),Drama
-129667,We Always Lie to Strangers (2013),(no genres listed)
+129667,We Always Lie to Strangers (2013),
 129669,Kids for Cash (2014),Documentary|Thriller
 129671,Bomber (2009),Comedy|Drama
 129673,Missionary (2013),Drama|Thriller
 129699,Arnold (1973),Comedy|Horror
 129701,The Robot vs. the Aztec Mummy (1958),Horror|Sci-Fi
 129703,The Forgotten Woman (2008),Documentary
-129705,My Own Man,(no genres listed)
+129705,My Own Man,
 129707,The Lazarus Effect (2015),Horror|Thriller
 129709,The Walking Hills (1949),Western
 129713,Assa (1987),Crime|Drama
@@ -26981,7 +26981,7 @@ movie_id,title,genres
 129717,My Best Friend's Wife (1998),Comedy
 129719,That's Life (1998),Comedy
 129721,Chiedimi se sono felice (2000),Comedy|Drama
-129723,Cose da pazzi (2005),(no genres listed)
+129723,Cose da pazzi (2005),
 129737,Unfinished Business (2015),Comedy
 129739,Bogowie (2014),Drama
 129741,Mutantes (2009),Documentary
@@ -26989,7 +26989,7 @@ movie_id,title,genres
 129751,The Beehive (1982),Drama
 129763,Street People (1976),Action|Thriller
 129767,The Police Serve the Citizens? (1973),Action|Crime
-129769,Covert Action (1978),(no genres listed)
+129769,Covert Action (1978),
 129771,Jacky in the Kingdom of Women (2014),Comedy
 129773,Soulless (2012),Comedy|Drama
 129775,Arc (2006),Drama|Mystery|Thriller
@@ -27008,40 +27008,40 @@ movie_id,title,genres
 129826,LEGO DC Comics Super Heroes: Justice League vs. Bizarro League (2015),Action|Adventure|Animation|Children
 129830,Animals United (2011),Animation|Children|Comedy
 129834,Tom and Jerry: The Lost Dragon (2014),Animation|Children|Comedy
-129838,Capturing Mary (2007),(no genres listed)
+129838,Capturing Mary (2007),
 129841,Floating Skyscrapers (2014),Drama|Romance
 129843,Plastic Paradise: The Great Pacific Garbage Patch (2013),Documentary
 129845,Falcon Rising (2014),Action|Adventure
-129847,Somewhere Under the Broad Sky (1954),(no genres listed)
-129849,Old Man Drinking a Glass of Beer (1898),(no genres listed)
-129851,Dickson Greeting (1891),(no genres listed)
+129847,Somewhere Under the Broad Sky (1954),
+129849,Old Man Drinking a Glass of Beer (1898),
+129851,Dickson Greeting (1891),
 129855,Lights Out (2010),Drama|Mystery|Thriller
 129857,Bright Days Ahead (2013),Drama|Romance
 129859,Mardock Scramble: The Second Combustion (2011),Animation|Sci-Fi
-129871,"My Wife, A Body to Love (1973)",(no genres listed)
+129871,"My Wife, A Body to Love (1973)",
 129873,Gardenia (1979),Crime
-129875,Pigs with a P.38 (1978),(no genres listed)
-129877,"Clap, You're Dead (1974)",(no genres listed)
-129879,Orders Signed in White (1974),(no genres listed)
-129881,Il cappotto di legno (1981),(no genres listed)
+129875,Pigs with a P.38 (1978),
+129877,"Clap, You're Dead (1974)",
+129879,Orders Signed in White (1974),
+129881,Il cappotto di legno (1981),
 129883,Il fiore dai petali d'acciaio (1973),Thriller
-129885,Le ultime ore di una vergine (1972),(no genres listed)
-129887,Moving Alan,(no genres listed)
+129885,Le ultime ore di una vergine (1972),
+129887,Moving Alan,
 129889,Papusza (2013),Drama
 129905,The Floating Castle (2012),Comedy|Drama
 129907,Familiar Ground (2011),Comedy
 129909,Club Sandwich (2013),Comedy
 129911,Playing (2007),Documentary
 129913,Rings (2005),Horror|Thriller
-129915,Butterflies Have No Memories (2009),(no genres listed)
-129917,The Dependent (1969),(no genres listed)
-129919,Nazareno Cruz and the Wolf (1975),(no genres listed)
+129915,Butterflies Have No Memories (2009),
+129917,The Dependent (1969),
+129919,Nazareno Cruz and the Wolf (1975),
 129921,Bestiaire (2012),Documentary
 129923,Carcasses (2009),Documentary
-129925,El Escarabajo de Oro (2014),(no genres listed)
+129925,El Escarabajo de Oro (2014),
 129927,Independencia (2009),Drama
-129929,Autohystoria (2007),(no genres listed)
-129931,La Morte Rouge (2006),(no genres listed)
+129929,Autohystoria (2007),
+129931,La Morte Rouge (2006),
 129933,Sacro GRA (2013),Documentary
 129935,Gimme the Loot (2013),Drama
 129937,Run All Night (2015),Action|Crime|Drama|Mystery|Thriller
@@ -27050,8 +27050,8 @@ movie_id,title,genres
 129951,Rich Hill (2014),Documentary
 129958,Our Vinyl Weighs a Ton: This Is Stones Throw Records (2013),Documentary
 129978,Mission Bloody Mary (1965),Adventure
-129980,Password: Uccidete agente Gordon (1966),(no genres listed)
-129996,One Man Against the Organization (1975),(no genres listed)
+129980,Password: Uccidete agente Gordon (1966),
+129996,One Man Against the Organization (1975),
 130016,The Lodger (1944),Crime|Horror|Mystery|Thriller
 130034,Stand by Me Doraemon (2014),Animation|Children|Drama|Fantasy
 130036,Saints and Soldiers: The Void (2014),Action|Drama|War
@@ -27062,7 +27062,7 @@ movie_id,title,genres
 130054,Pauline détective (2012),Comedy
 130056,Kingdom of Shadows (2015),Documentary
 130058,Des roses en hiver (2014),Drama
-130060,Des fleurs pour Algernon (2006),(no genres listed)
+130060,Des fleurs pour Algernon (2006),
 130062,Darling (2007),Drama
 130064,Memory Lane (2010),Drama
 130066,Camille Rewinds (2012),Comedy|Romance
@@ -27075,20 +27075,20 @@ movie_id,title,genres
 130081,Our Summer in Provence (2014),Comedy|Drama
 130083,Kidnapping Mr. Heineken (2015),Action|Crime|Drama|Thriller
 130087,The Cobbler (2015),Comedy|Drama|Fantasy
-130089,Crazy Beautiful You (2015),(no genres listed)
-130204,Patty Hearst (1988),(no genres listed)
+130089,Crazy Beautiful You (2015),
+130204,Patty Hearst (1988),
 130219,The Dark Knight (2011),Action|Crime|Drama|Thriller
 130290,Hotel (2013),Drama
 130292,Alphabet (2013),Documentary
 130294,Drevo (2014),Drama
-130296,A Fight For (2014),(no genres listed)
-130298,Pot v raj (2014),(no genres listed)
-130324,The Strength of Water (2009),(no genres listed)
+130296,A Fight For (2014),
+130298,Pot v raj (2014),
+130324,The Strength of Water (2009),
 130326,Other Girls (2015),Drama
 130328,A Bright Shining Lie (1998),Drama|War
 130338,Silent Sonata (2011),Drama|Fantasy|War
 130340,Wolfsburg (2003),Drama
-130342,Ice Poison (2014),(no genres listed)
+130342,Ice Poison (2014),
 130344,Coast of Death (2013),Children|Documentary|Drama
 130347,Bill Hicks: Sane Man (1989),Comedy
 130349,The Harry Hill Movie (2013),Comedy
@@ -27098,7 +27098,7 @@ movie_id,title,genres
 130380,Absolute Aggression (2004),Action|Sci-Fi|Thriller
 130382,Mr. Pip (2012),Drama|War
 130384,Mega Piranha (2010),Action|Adventure|Horror|Sci-Fi
-130386,Men in White (1998),(no genres listed)
+130386,Men in White (1998),
 130388,Black Field (2009),Drama|Romance
 130390,Contract Killers (2009),Action|Adventure|Thriller
 130392,A Magnificent Haunting (2012),Drama
@@ -27108,14 +27108,14 @@ movie_id,title,genres
 130400,Through the Forest (2005),Drama
 130402,Cardcaptor Sakura: The Sealed Card (2000),Adventure|Animation|Comedy|Fantasy|Romance
 130404,The Linguists (2008),Documentary
-130408,A Rumor Of War (1980),(no genres listed)
+130408,A Rumor Of War (1980),
 130420,Outrage (1973),Crime|Drama|Thriller
 130424,The Crown Jewels (2011),Drama|Fantasy|Romance
 130442,Patrick (2013),Horror|Sci-Fi|Thriller
 130444,Ruby Red (2013),Adventure|Children|Fantasy|Sci-Fi
-130454,Michael Laudrup - en Fodboldspiller,(no genres listed)
+130454,Michael Laudrup - en Fodboldspiller,
 130458,The Pentagon Papers (2003),Drama|Thriller
-130462,The Boy (2015),(no genres listed)
+130462,The Boy (2015),
 130466,I Hate Christian Laettner (2015),Documentary
 130474,Suite Française (2015),Drama|Romance|War
 130476,The Concert for Bangladesh (1972),Documentary
@@ -27125,8 +27125,8 @@ movie_id,title,genres
 130494,Simon & the Oaks (2011),Drama
 130496,Big Game (2015),Action|Adventure
 130498,La vérité si je mens ! (1997),Comedy
-130500,Laissons Lucie faire ! (2000),(no genres listed)
-130502,Venus & Fleur (2004),(no genres listed)
+130500,Laissons Lucie faire ! (2000),
+130502,Venus & Fleur (2004),
 130504,Fear Over the City (1975),Action|Crime|Drama
 130506,Berserk: The Golden Age Arc 2 - The Battle for Doldrey (2012),Action|Animation|Fantasy
 130508,Berserk: The Golden Age Arc - The Egg of the King (2012),Action|Adventure|Animation|Fantasy|Horror
@@ -27139,7 +27139,7 @@ movie_id,title,genres
 130522,The Brave Little Toaster Goes to Mars (1998),Animation|Children
 130524,Flying Home (2014),Romance
 130526,The Detective 2 (2011),Action
-130532,I giorni contati (1963),(no genres listed)
+130532,I giorni contati (1963),
 130560,21 Hours at Munich (1976),Drama
 130562,One in a Million: The Ron LeFlore Story (1978),Drama
 130578,The Gunman (2015),Action|Thriller
@@ -27156,7 +27156,7 @@ movie_id,title,genres
 130642,Backcountry (2014),Drama|Horror|Thriller
 130644,The Garden of Sinners - Chapter 5: Paradox Paradigm (2008),Animation
 130656,The 21 Carat Snatch (1971),Crime
-130672,Slumber Party '57 (1976),(no genres listed)
+130672,Slumber Party '57 (1976),
 130682,Muck (2015),Horror
 130692,Sam's Song (1969),Drama
 130746,Bolero (1984),Drama|Romance
@@ -27164,21 +27164,21 @@ movie_id,title,genres
 130784,The Whisperer in Darkness (2011),Horror|Mystery|Sci-Fi|Thriller
 130804,The Fourth War (1990),Drama|Thriller
 130828,No Place to Hide (1970),Thriller
-130834,Dancers (1987),(no genres listed)
+130834,Dancers (1987),
 130836,Fifty/Fifty (1992),Action|Comedy|Thriller
 130840,Spring (2015),Horror|Romance|Sci-Fi
 130842,Power/Rangers (2015),Action|Adventure|Sci-Fi
 130848,Not My Type (2014),Comedy|Romance
 130850,Mall (2014),Drama
-130852,Brothers on the Line (2012),(no genres listed)
+130852,Brothers on the Line (2012),
 130856,Severe Clear (2010),Comedy|Documentary
-130878,Doppelgänger Paul (2012),(no genres listed)
+130878,Doppelgänger Paul (2012),
 130894,Petals on the Wind (2014),Drama|Romance|Thriller
 130900,Mr. Troop Mom (2009),Children|Comedy
 130954,Guter Junge (2008),Drama
 130958,Killer Crocodile (1989),Horror
 130960,The Conrad Boys (2006),Drama
-130962,Musikanten (2006),(no genres listed)
+130962,Musikanten (2006),
 130964,The Day I Saw Your Heart (2011),Comedy|Drama
 130970,George Carlin: Life Is Worth Losing (2005),Comedy
 130972,Sune på bilsemester (2013),Children|Comedy
@@ -27195,11 +27195,11 @@ movie_id,title,genres
 131015,Hellgate (2011),Horror|Thriller
 131017,Aziz Ansari: Live at Madison Square Garden (2015),Comedy
 131019,The Intruders (2015),Thriller
-131021,Filmistaan (2014),(no genres listed)
+131021,Filmistaan (2014),
 131023,That Sugar Film (2014),Documentary
 131025,The Brass Legend (1956),Action
 131027,But Forever in My Mind (1999),Comedy|Drama
-131031,La liga no es cosa de hombres (1972),(no genres listed)
+131031,La liga no es cosa de hombres (1972),
 131050,Stargate SG-1 Children of the Gods - Final Cut (2009),Adventure|Sci-Fi|Thriller
 131052,Die Weihnachtsklempner (1986),Comedy
 131054,Dinotopia: Quest for the Ruby Sunstone (2005),Children|Fantasy|Sci-Fi
@@ -27213,9 +27213,9 @@ movie_id,title,genres
 131072,Jesus liebt mich (2012),Comedy
 131074,Mount St. Elias (2009),Documentary
 131076,Süperseks (2004),Comedy
-131078,Benjamin Blümchen - Seine schönsten Abenteuer (2006),(no genres listed)
+131078,Benjamin Blümchen - Seine schönsten Abenteuer (2006),
 131080,Cinderella III: A Twist in Time (2007),Animation|Children|Fantasy|Romance
-131082,Playground (2009),(no genres listed)
+131082,Playground (2009),
 131084,Hui Buh: The Castle Ghost (2006),Adventure|Comedy|Fantasy
 131086,The Little Polar Bear: Lars and the Little Tiger (2002),Animation|Children
 131088,Girls on Top 2 (2004),Comedy
@@ -27228,7 +27228,7 @@ movie_id,title,genres
 131102,Lucky Luke: The Ballad of the Daltons (1978),Animation|Children|Comedy|Western
 131104,The Brain (1969),Comedy|Crime
 131106,Casper's Haunted Christmas (2000),Animation|Children
-131108,The Fearless Four (1997),(no genres listed)
+131108,The Fearless Four (1997),
 131110,A House of Secrets: Exploring 'Dragonwyck' (2008),Documentary
 131112,Night of the Living Dorks (2004),Comedy|Horror
 131114,La Planque (2011),Comedy
@@ -27257,10 +27257,10 @@ movie_id,title,genres
 131160,Oscar and the Lady in Pink (2009),Drama
 131162,Por un puñado de besos (2014),Drama|Romance
 131164,Vietnam in HD (2011),War
-131166,WWII IN HD (2009),(no genres listed)
+131166,WWII IN HD (2009),
 131168,Phoenix (2014),Drama
 131170,Parallels (2015),Sci-Fi
-131172,Closed Curtain (2013),(no genres listed)
+131172,Closed Curtain (2013),
 131174,Gentlemen (2014),Drama|Romance|Thriller
 131176,A Second Chance (2014),Drama
 131180,Dead Rising: Watchtower (2015),Action|Horror|Thriller
@@ -27275,5 +27275,5 @@ movie_id,title,genres
 131254,Kein Bund für's Leben (2007),Comedy
 131256,"Feuer, Eis & Dosenbier (2002)",Comedy
 131258,The Pirates (2014),Adventure
-131260,Rentun Ruusu (2001),(no genres listed)
+131260,Rentun Ruusu (2001),
 131262,Innocence (2014),Adventure|Fantasy|Horror

@@ -1,10 +1,14 @@
 """Integration tests for export API endpoints."""
 
+from datetime import UTC, datetime, timezone
+
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app.routers import export
+from app.schemas.rating import Rating
+from app.schemas.user import UserProfile
 
 
 def mock_get_current_user():
@@ -12,14 +16,9 @@ def mock_get_current_user():
     return {"id": "user123", "username": "testuser", "role": "user"}
 
 
-def mock_get_user_profile(user_id, resources):
-    """Mock for users_service.get_user_profile."""
-    return {"id": user_id, "name": "Test User", "email": "test@example.com"}
-
-
 @pytest.fixture
 def test_app(mocker):
-    """Build a FastAPI app with mocked dependencies."""
+    """Build a FastAPI app with mocked dependencies using real Pydantic models."""
     app = FastAPI()
     app.include_router(export.router, prefix="/export")
 
@@ -28,12 +27,28 @@ def test_app(mocker):
     mock_res = mocker.MagicMock()
     app.dependency_overrides[export.get_resources] = lambda: mock_res
 
-    mocker.patch.object(export.users_service, "get_user_profile", new=mock_get_user_profile)
+    def mock_get_profile(user_id, resources):
+        return UserProfile(
+            id=user_id,
+            username="testuser",
+            email="test@example.com",
+            role="user",
+            created_at=datetime(2025, 1, 1, 12, 0, 0, tzinfo=UTC),
+            total_ratings=5,
+            active_penalties=0,
+        )
+
+    mocker.patch.object(export.users_service, "get_user_profile", side_effect=mock_get_profile)
+
+    ratings_data = [
+        Rating(id=101, user_id="user123", movie_id=1, rating=5.0, timestamp=datetime(2025, 1, 2, tzinfo=UTC)),
+        Rating(id=102, user_id="user123", movie_id=2, rating=3.0, timestamp=datetime(2025, 1, 3, tzinfo=UTC)),
+    ]
 
     mocker.patch.object(
         export.ratings_service,
         "get_user_ratings",
-        return_value=[{"movie_id": 1, "rating": 5}, {"movie_id": 2, "rating": 3}],
+        return_value=ratings_data,
     )
 
     mocker.patch.object(export.watchlist_service, "get_user_watchlist", return_value=[10, 20, 30])
@@ -60,9 +75,7 @@ def empty_test_app(mocker):
     app.dependency_overrides[export.get_resources] = lambda: mock_res
 
     mocker.patch.object(export.users_service, "get_user_profile", return_value=None)
-
     mocker.patch.object(export.ratings_service, "get_user_ratings", return_value=[])
-
     mocker.patch.object(export.watchlist_service, "get_user_watchlist", return_value=[])
 
     mock_reco_list = mocker.MagicMock()
@@ -83,7 +96,12 @@ def service_failure_app(mocker):
     mock_res = mocker.MagicMock()
     app.dependency_overrides[export.get_resources] = lambda: mock_res
 
-    mocker.patch.object(export.users_service, "get_user_profile", new=mock_get_user_profile)
+    def mock_get_profile(user_id, resources):
+        return UserProfile(
+            id=user_id, username="testuser", email="test@example.com", role="user", created_at=datetime.now(UTC)
+        )
+
+    mocker.patch.object(export.users_service, "get_user_profile", side_effect=mock_get_profile)
 
     mocker.patch.object(
         export.ratings_service,
@@ -99,6 +117,7 @@ def test_export_profile(test_app):
     resp = client.get("/export/profile")
     assert resp.status_code == 200
     assert resp.json()["email"] == "test@example.com"
+    assert resp.json()["username"] == "testuser"
 
     assert "attachment" in resp.headers["content-disposition"]
 
@@ -142,7 +161,7 @@ def test_export_all(test_app):
     assert "watchlist" in data
     assert "recommendations" in data
 
-    assert data["profile"]["name"] == "Test User"
+    assert data["profile"]["username"] == "testuser"
     assert len(data["ratings"]) == 2
     assert data["watchlist"] == [10, 20, 30]
 

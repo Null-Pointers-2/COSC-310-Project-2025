@@ -16573,7 +16573,7 @@ movie_id,title,genres
 83763,My Wife's Relations (1922),Comedy
 83765,The Blacksmith (1922),Comedy
 83767,The Naked Edge (1961),Thriller
-83773,Away with Words (San tiao ren) (1999),
+83773,Away with Words (San tiao ren) (1999),Comedy|Drama
 83777,The Strongest Man in the World (1975),Comedy|Fantasy
 83789,Siete minutos (Seven Minutes) (2009),Comedy
 83791,Gung Ho! (Gung Ho!: The Story of Carlson's Makin Island Raiders) (1943),Drama|War
@@ -16588,7 +16588,7 @@ movie_id,title,genres
 83823,Visit to a Small Planet (1960),Comedy|Sci-Fi
 83825,Kismet (1944),Adventure|Fantasy
 83827,Marwencol (2010),Documentary
-83829,Scorpio Rising (1964),
+83829,Scorpio Rising (1964),Musical
 83831,The Story of Dr. Wassell (1944),Action|Adventure|Drama|Romance|War
 83833,Street Angel (1928),Drama
 83835,The Frozen North (1922),Comedy
@@ -16763,7 +16763,7 @@ movie_id,title,genres
 84740,Open House (2010),Crime|Drama|Thriller
 84764,Werewolves on Wheels (1971),Horror
 84766,Fantasma (2006),Drama
-84768,Glitterbug (1994),
+84768,Glitterbug (1994),Musical|Documentary
 84770,Client 9: The Rise and Fall of Eliot Spitzer (2010),Documentary
 84772,Paul (2011),Adventure|Comedy|Sci-Fi
 84775,Submarino (2010),Drama
@@ -17079,7 +17079,7 @@ movie_id,title,genres
 86487,Mildred Pierce (2011),Drama
 86489,Nothing About Robert (Rien sur Robert) (1999),Comedy|Drama
 86491,Stranded: I've Come from a Plane That Crashed on the Mountains (2007),Documentary
-86493,The Age of the Earth (A Idade da Terra) (1980),
+86493,The Age of the Earth (A Idade da Terra) (1980),Drama|Fantasy
 86495,Blind Mountain (Mang shan) (2007),Drama
 86497,15 (2005),Action|Drama
 86500,Service (Serbis) (2008),Drama
@@ -17242,7 +17242,7 @@ movie_id,title,genres
 87055,Tomorrow We Move (Demain on déménage) (2004),Comedy
 87057,Dealer (2004),Drama
 87059,No Rest for the Brave (Pas de repos pour les braves) (2003),Comedy|Drama|Romance
-87061,Trails (Veredas) (1978),
+87061,Trails (Veredas) (1978),Fantasy|Drama
 87063,Bis zum Ellenbogen (2007),Comedy
 87065,8:28 am (8 Uhr 28) (2010),Drama|Romance|Thriller
 87069,Ossos (1997),Drama
@@ -18245,7 +18245,7 @@ movie_id,title,genres
 91235,Living Will... (2010),Comedy
 91241,Singham (2011),Action|Drama|Romance
 91243,Shanghai (2010),Drama|Mystery|Romance
-91246,Milky Way (Tejút) (2007),
+91246,Milky Way (Tejút) (2007),Documentary
 91248,The Silence Before Bach (Die Stille vor Bach) (2007) ,Musical
 91250,Chandni Chowk to China (2009),Action|Comedy
 91253,Stage Struck (1936),Comedy|Musical
@@ -18565,7 +18565,7 @@ movie_id,title,genres
 92422,The Woman in Black (2012),Drama|Horror|Thriller
 92424,Dottie Gets Spanked (1993),Drama
 92427,Woman in Love (Rubbeldiekatz) (2011),Comedy
-92435,The Dancing Hawk (Tanczacy jastrzab) (1978),
+92435,The Dancing Hawk (Tanczacy jastrzab) (1978),Drama
 92437,Toast (2010),Comedy|Drama
 92439,The Art of Getting By (2011),Drama|Romance
 92441,The Human Resources Manager (2010),Drama
@@ -18605,7 +18605,7 @@ movie_id,title,genres
 92635,At Home by Myself... with You (2009),Comedy|Romance
 92637,Pitfall (Otoshiana) (1962),Crime|Drama|Fantasy
 92639,Casual Relations (1973),Drama
-92641,Warsaw Bridge (Pont de Varsòvia) (1990),
+92641,Warsaw Bridge (Pont de Varsòvia) (1990),Drama
 92643,Monsieur Lazhar (2011),Children|Comedy|Drama
 92646,Tin Pan Alley (1940),Drama|Musical|Romance
 92648,BookWars (2000),Comedy|Crime|Documentary
@@ -18983,7 +18983,7 @@ movie_id,title,genres
 94425,Kept Husbands (1931),Comedy|Drama
 94427,Shadow Kill (2002),Drama
 94429,The Swell Season (2011),Documentary|Romance
-94431,"Ella Lola, a la Trilby (1898)",
+94431,"Ella Lola, a la Trilby (1898)",Documentary
 94433,Guilty Hands (1931),Crime|Drama
 94435,The Over-Eater (L'outremangeur) (2003),Crime|Drama
 94439,Jumping the Broom (2011),Comedy
@@ -19014,7 +19014,7 @@ movie_id,title,genres
 94649,The Clown (2011),Comedy|Drama
 94653,Creature (2011),Horror
 94655,Thawing Out (La fonte des neiges) (2009),Comedy|Drama
-94657,"Turkish Dance, Ella Lola (1898)",
+94657,"Turkish Dance, Ella Lola (1898)",Documentary
 94659,Walking with Prehistoric Beasts (2001),Animation|Documentary
 94661,Rocket Singh: Salesman of the Year (2009),Comedy|Drama
 94663,Vicky Donor (2012),Comedy|Romance
@@ -19212,7 +19212,7 @@ movie_id,title,genres
 95531,Koruto wa ore no pasupooto (A Colt Is My Passport) (1967),Action|Crime|Drama
 95533,Coup de grâce (Der Fangschuß) (1976),Drama|War
 95539,Wrong Turn 3: Left for Dead (2009),Horror
-95541,Blacksmith Scene (1893),
+95541,Blacksmith Scene (1893),Documentary
 95543,Ice Age 4: Continental Drift (2012),Adventure|Animation|Comedy
 95558,Beasts of the Southern Wild (2012),Drama|Fantasy
 95560,Dangerous Davies: The Last Detective (1981),Comedy|Crime
@@ -19259,7 +19259,7 @@ movie_id,title,genres
 95744,2 Days in New York (2012),Comedy
 95746,Radio On (1980),Drama
 95748,2010: Moby Dick (2010),Action|Adventure|Thriller
-95750,Promise of the Flesh (Yukcheui yaksok) (1975),
+95750,Promise of the Flesh (Yukcheui yaksok) (1975),Drama
 95752,Terminal USA (1993),Comedy
 95754,From Beginning to End (Do Começo ao Fim) (2009),Drama|Romance
 95756,The Cat in the Hat (1971),Animation|Children
@@ -24800,7 +24800,7 @@ movie_id,title,genres
 117182,Double Tide (2010),Documentary
 117186,Brigham Young (1940),Romance|Western
 117188,Johnny Apollo (1940),Crime|Drama|Film-Noir|Romance
-117192,Doctor Who: The Time of the Doctor (2013),
+117192,Doctor Who: The Time of the Doctor (2013),Science Fiction|Drama
 117194,Dolphin Tale 2 (2014),Children|Drama
 117198,You're Missing the Point (1940),Comedy
 117300,Demoted (2011),Comedy
@@ -26211,7 +26211,7 @@ movie_id,title,genres
 126016,The Dot and the Line : A Romance in Lower Mathematics (1965),Animation|Children|Comedy
 126018,Nantucket Film Festival's Comedy Roundtable (2012),Comedy|Documentary
 126020,Rubber Johnny (2005),Animation|Horror
-126022,Act Da Fool (2010),
+126022,Act Da Fool (2010),Comedy
 126024,En rachâchant (1982),
 126026,The Flower (1971),
 126028,Boo to You Too! Winnie the Pooh (1996),

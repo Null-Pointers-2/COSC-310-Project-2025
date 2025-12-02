@@ -45,20 +45,23 @@ def get_movie_by_id(resources, movie_id: int) -> Movie | None:
     return Movie(**movie_data)
 
 
-def search_movies(resources, query: str, limit: int = 20) -> list[Movie]:
+def search_movies(resources, query: str, page: int = 1, limit: int = 20) -> list[Movie]:
     """Search movies by title."""
-    results = resources.movies_repo.search(query=query, limit=limit)
+    offset = (page - 1) * limit
+    results = resources.movies_repo.search(query=query, limit=limit, offset=offset)
     for m in results:
         m["average_rating"] = resources.movies_repo.get_average_rating(m["movie_id"])
     return [Movie(**m) for m in results]
 
 
-def filter_movies(resources, genre: str | None = None, limit: int = 20) -> list[Movie]:
+def filter_movies(resources, genre: str | None = None, page: int = 1, limit: int = 20) -> list[Movie]:
     """Filter movies by genre."""
-    if genre:
-        results = resources.movies_repo.filter_by_genre(genre=genre, limit=limit)
+    offset = (page - 1) * limit
+
+    if genre and genre != "All":
+        results, _ = resources.movies_repo.filter_by_genre(genre=genre, limit=limit, offset=offset)
     else:
-        results = resources.movies_repo.get_all(limit=limit)
+        results = resources.movies_repo.get_all(limit=limit, offset=offset)
 
     for m in results:
         m["average_rating"] = resources.movies_repo.get_average_rating(m["movie_id"])

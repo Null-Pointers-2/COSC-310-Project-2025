@@ -82,7 +82,7 @@ class MoviesRepository:
         sliced = sorted_df.iloc[offset : offset + limit]
         return cast("list[dict[str, Any]]", sliced.to_dict(orient="records"))
 
-    def search(self, query: str, limit: int = 20) -> list[dict[str, Any]]:
+    def search(self, query: str, limit: int = 20, offset: int = 0) -> list[dict[str, Any]]:
         """Search movies by title using a simple fuzzy approach."""
         if self.movies_df is None or self.movies_df.empty:
             return []
@@ -97,7 +97,7 @@ class MoviesRepository:
             return all(token in title_lower for token in query_tokens)
 
         mask = self.movies_df["title"].apply(fuzzy_match)
-        results = self.movies_df[mask].head(limit)
+        results = self.movies_df[mask].iloc[offset : offset + limit]
 
         return cast("list[dict[str, Any]]", results.to_dict(orient="records"))
 

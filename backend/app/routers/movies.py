@@ -27,22 +27,24 @@ def get_movies(
 def search_movies(
     query: Annotated[str, Query(min_length=1)],
     *,
+    page: Annotated[int, Query(ge=1, description="Page number")] = 1,
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
     resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
     """Search movies by title."""
-    return movies_service.search_movies(resources, query=query, limit=limit)
+    return movies_service.search_movies(resources, query=query, page=page, limit=limit)
 
 
 @router.get("/filter", response_model=list[Movie])
 def filter_movies(
     genre: str | None = None,
     *,
+    page: Annotated[int, Query(ge=1, description="Page number")] = 1,
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
     resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
     """Filter movies by genre."""
-    return movies_service.filter_movies(resources, genre=genre, limit=limit)
+    return movies_service.filter_movies(resources, genre=genre, page=page, limit=limit)
 
 
 @router.get("/genres", response_model=list[str])

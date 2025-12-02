@@ -196,7 +196,7 @@ export default function BrowsePage() {
                   </div>
               )}
               {!hasMore && movies.length > 0 && (
-                  <p className="text-gray-400 text-sm">You've reached the end of the list</p>
+                  <p className="text-gray-400 text-sm">You&apos;ve reached the end of the list</p>
               )}
             </div>
           </>

@@ -2,6 +2,12 @@
 
 import { useState, useEffect } from "react";
 
+interface TMDBMovie {
+  id: number;
+  title: string;
+  poster_path: string | null;
+}
+
 export function useTMDB(title: string, tmdbId?: number | string) {
   const [posterUrl, setPosterUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +47,7 @@ export function useTMDB(title: string, tmdbId?: number | string) {
             
             if (searchRes.ok) {
                 const searchData = await searchRes.json();
-                const bestMatch = searchData.results?.find((m: any) => m.poster_path);
+                const bestMatch = searchData.results?.find((m: TMDBMovie) => m.poster_path);
                 
                 if (bestMatch) {
                     setPosterUrl(`https://image.tmdb.org/t/p/w500${bestMatch.poster_path}`);

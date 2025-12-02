@@ -11,6 +11,8 @@ interface RecommendationItem {
   similarity_score: number;
 }
 
+type RecommendationsResponse = RecommendationItem[] | { recommendations: RecommendationItem[] };
+
 interface GameMovie {
   movie_id: number;
   title: string;
@@ -32,13 +34,13 @@ export default function GamePage() {
   const [round, setRound] = useState(1);
   const [matchGuess, setMatchGuess] = useState<number>(50); 
 
-  useFetch<any>("recommendations/me/refresh?limit=50")
-  
+  useFetch<unknown>("recommendations/me/refresh?limit=50")
+
   const { 
     data: recData, 
     loading: recLoading, 
     error: recError 
-  } = useFetch<any>("/recommendations/me?limit=50");
+  } = useFetch<RecommendationsResponse>("/recommendations/me?limit=50");
 
   const loadRound = useCallback(async (attempts = 0) => {
     if (!recData) return;

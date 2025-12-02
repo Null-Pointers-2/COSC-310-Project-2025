@@ -7,16 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.resources import SingletonResources
-from app.routers import (
-    admin,
-    auth,
-    export,
-    movies,
-    ratings,
-    recommendations,
-    users,
-    watchlist,
-)
+from app.routers import admin, auth, export, movies, ratings, recommendations, users, watchlist, ranking
 
 logger = logging.getLogger(__name__)
 
@@ -105,3 +96,4 @@ app.include_router(recommendations.router, prefix="/recommendations", tags=["Rec
 app.include_router(watchlist.router, prefix="/watchlist", tags=["Watchlist"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
 app.include_router(export.router, prefix="/export", tags=["Export"])
+app.include_router(ranking.router)

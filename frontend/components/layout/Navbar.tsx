@@ -46,6 +46,7 @@ export function Navbar() {
     { name: "Home", href: "/" },
     { name: "Browse Movies", href: "/browse" },
     { name: "My Watchlist", href: "/watchlist" },
+    { name: "Leaderboard", href: "/leaderboard" },
   ];
 
   const isActive = (path: string) => pathname === path;

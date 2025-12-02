@@ -6,14 +6,24 @@ import { useRecommendations } from "@/../hooks/recommendations/useRecommendation
 import { MovieCard } from "@/../components/movies/MovieCard";
 import { useAuth } from "@/../hooks/auth/useAuth";
 import { useFetch } from "@/../hooks/useFetch";
+import { useSearchParams } from "next/navigation";
 
 export default function BrowsePage() {
+  const searchParams = useSearchParams();
+  const genreFromUrl = searchParams.get("genre") || "";
+
   const [searchInput, setSearchInput] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState(genreFromUrl);
   const [page, setPage] = useState(1);
 
   const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (genreFromUrl) {
+      setSelectedGenre(genreFromUrl);
+    }
+  }, [genreFromUrl]);
 
   const observerTarget = useRef(null);
 

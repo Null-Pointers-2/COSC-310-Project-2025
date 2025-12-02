@@ -11,6 +11,7 @@ from app.routers import (
     admin,
     auth,
     export,
+    global_insights,
     movies,
     ratings,
     recommendations,
@@ -105,5 +106,6 @@ app.include_router(ratings.router, prefix="/ratings", tags=["Ratings"])
 app.include_router(recommendations.router, prefix="/recommendations", tags=["Recommendations"])
 app.include_router(watchlist.router, prefix="/watchlist", tags=["Watchlist"])
 app.include_router(user_insights.router, prefix="/insights", tags=["User Insights"])
+app.include_router(global_insights.router, prefix="/global-insights", tags=["Global Insights"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
 app.include_router(export.router, prefix="/export", tags=["Export"])

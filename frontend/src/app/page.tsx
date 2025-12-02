@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useAuth } from "@/../hooks/auth/useAuth";
 import { useFetch } from "@/../hooks/useFetch";
 import { RecommendationList } from "@/../components/recommendations/RecommendationList";
+import { UserInsightsSummary } from "@/../types";
 
 interface UserProfile {
   id: number;
   email: string;
-  full_name?: string; 
+  full_name?: string;
   username?: string;
 }
 
@@ -17,6 +18,10 @@ export default function HomePage() {
 
   const { data: user, loading: userLoading } = useFetch<UserProfile>( // eslint-disable-line
     isAuthenticated ? "/users/me" : null
+  );
+
+  const { data: insights } = useFetch<UserInsightsSummary>(
+    isAuthenticated ? "/insights/me/summary" : null
   );
 
   if (authLoading) {
@@ -32,14 +37,28 @@ export default function HomePage() {
       
       {isAuthenticated ? (
         <div className="space-y-12">
-          
+
           <div className="flex flex-col items-center justify-center py-12 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
             <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-3">
-              Welcome back!
+              Welcome back, {user?.username || user?.email || "Movie Fan"}
             </h1>
-            <div className="inline-flex items-center px-6 py-2 rounded-full bg-indigo-50 text-indigo-700 text-lg font-medium">
-              👋 {user?.username || user?.email || "Movie Fan"}
-            </div>
+
+            {insights && insights.top_3_genres.length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm text-gray-600 mb-3">Your favorite genres:</p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {insights.top_3_genres.map((genre) => (
+                    <Link
+                      key={genre}
+                      href={`/browse?genre=${encodeURIComponent(genre)}`}
+                      className="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-colors text-sm font-medium"
+                    >
+                      {genre}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <section>

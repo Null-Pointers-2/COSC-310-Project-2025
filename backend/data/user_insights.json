@@ -558,5 +558,255 @@
         "total_ratings": 5,
         "average_rating": 4.4,
         "rating_consistency": 0.65
+    },
+    {
+        "user_id": "1b472789-cd30-4264-a814-b79404f9b222",
+        "generated_at": "2025-12-02T18:46:47.560896Z",
+        "top_genre": "Action",
+        "top_3_genres": [
+            "Action",
+            "Crime",
+            "Thriller"
+        ],
+        "genre_insights": [
+            {
+                "genre": "Action",
+                "total_rated": 2,
+                "watchlist_rated": 2,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "genre": "Crime",
+                "total_rated": 2,
+                "watchlist_rated": 2,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "genre": "Thriller",
+                "total_rated": 2,
+                "watchlist_rated": 2,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "genre": "Drama",
+                "total_rated": 1,
+                "watchlist_rated": 1,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 5.0,
+                "preference_score": 73.33
+            },
+            {
+                "genre": "Sci-Fi",
+                "total_rated": 1,
+                "watchlist_rated": 1,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 5.0,
+                "preference_score": 73.33
+            },
+            {
+                "genre": "IMAX",
+                "total_rated": 1,
+                "watchlist_rated": 1,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 5.0,
+                "preference_score": 73.33
+            }
+        ],
+        "top_theme": "original",
+        "top_5_themes": [
+            "original",
+            "great ending",
+            "action",
+            "action packed",
+            "good action"
+        ],
+        "theme_insights": [
+            {
+                "tag": "original",
+                "tag_id": 742,
+                "movies_count": 3,
+                "average_relevance": 0.709,
+                "average_rating": 5.0,
+                "preference_score": 100.0
+            },
+            {
+                "tag": "great ending",
+                "tag_id": 468,
+                "movies_count": 3,
+                "average_relevance": 0.589,
+                "average_rating": 5.0,
+                "preference_score": 100.0
+            },
+            {
+                "tag": "action",
+                "tag_id": 19,
+                "movies_count": 2,
+                "average_relevance": 0.988,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "action packed",
+                "tag_id": 20,
+                "movies_count": 2,
+                "average_relevance": 0.956,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "good action",
+                "tag_id": 447,
+                "movies_count": 2,
+                "average_relevance": 0.937,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "franchise",
+                "tag_id": 406,
+                "movies_count": 2,
+                "average_relevance": 0.882,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "explosions",
+                "tag_id": 369,
+                "movies_count": 2,
+                "average_relevance": 0.826,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "visual",
+                "tag_id": 1090,
+                "movies_count": 2,
+                "average_relevance": 0.812,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "car chase",
+                "tag_id": 183,
+                "movies_count": 2,
+                "average_relevance": 0.802,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "chase",
+                "tag_id": 195,
+                "movies_count": 2,
+                "average_relevance": 0.802,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "fast paced",
+                "tag_id": 382,
+                "movies_count": 2,
+                "average_relevance": 0.791,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "visually appealing",
+                "tag_id": 1091,
+                "movies_count": 2,
+                "average_relevance": 0.788,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "fight scenes",
+                "tag_id": 389,
+                "movies_count": 2,
+                "average_relevance": 0.758,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "cool",
+                "tag_id": 255,
+                "movies_count": 2,
+                "average_relevance": 0.75,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "pg-13",
+                "tag_id": 777,
+                "movies_count": 2,
+                "average_relevance": 0.745,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "special effects",
+                "tag_id": 951,
+                "movies_count": 2,
+                "average_relevance": 0.743,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "exciting",
+                "tag_id": 367,
+                "movies_count": 2,
+                "average_relevance": 0.696,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "good",
+                "tag_id": 445,
+                "movies_count": 2,
+                "average_relevance": 0.685,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "weapons",
+                "tag_id": 1101,
+                "movies_count": 2,
+                "average_relevance": 0.685,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "fun movie",
+                "tag_id": 415,
+                "movies_count": 2,
+                "average_relevance": 0.679,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            }
+        ],
+        "watchlist_metrics": {
+            "total_watchlist_items": 3,
+            "items_rated": 3,
+            "items_not_rated": 0,
+            "completion_rate": 100.0,
+            "average_rating": 5.0,
+            "average_time_to_rate_hours": null,
+            "genres_in_watchlist": [
+                "Action",
+                "Crime",
+                "Drama",
+                "IMAX",
+                "Sci-Fi",
+                "Thriller"
+            ],
+            "most_common_watchlist_genre": "Action"
+        },
+        "total_ratings": 3,
+        "average_rating": 5.0,
+        "rating_consistency": 0.0
     }
 ]

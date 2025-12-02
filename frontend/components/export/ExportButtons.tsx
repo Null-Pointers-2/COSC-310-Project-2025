@@ -21,9 +21,9 @@ export function ExportButtons() {
       setLoading(endpoint);
       setError(null);
 
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"; 
-      
-      const token = localStorage.getItem("token"); 
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+      const token = localStorage.getItem("token");
 
       if (!token) {
         router.push("/auth/login");
@@ -33,7 +33,7 @@ export function ExportButtons() {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${token}`, 
+          "Authorization": `Bearer ${token}`,
         },
       });
 
@@ -58,14 +58,14 @@ export function ExportButtons() {
       }
 
       const blob = await response.blob();
-      
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = filename;
       document.body.appendChild(a);
       a.click();
-      
+
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
@@ -82,7 +82,7 @@ export function ExportButtons() {
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold mb-4 text-gray-800">Data Export</h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {EXPORT_OPTIONS.map((option) => (
           <button
@@ -92,9 +92,9 @@ export function ExportButtons() {
             className={`
               flex items-center justify-center px-4 py-3 rounded-lg border transition-all duration-200
               font-medium text-sm
-              ${loading === option.endpoint 
-                ? "bg-gray-100 text-gray-400 cursor-wait border-gray-200" 
-                : "bg-white hover:bg-indigo-50 hover:border-indigo-300 border-gray-200 text-gray-700 shadow-sm hover:shadow-md active:scale-95 active:bg-indigo-100"}
+              ${loading === option.endpoint
+                ? "bg-gray-100 text-gray-400 cursor-wait border-gray-200"
+                : "bg-white hover:bg-indigo-50 hover:border-indigo-300 border-gray-200 text-gray-700 shadow-sm hover:shadow-md active:scale-95 active:bg-indigo-100 cursor-pointer"}
             `}
           >
             {loading === option.endpoint ? (

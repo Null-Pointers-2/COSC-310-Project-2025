@@ -34,9 +34,9 @@ export default function MovieDetailsPage() {
     );
   }
 
-  const displayYear = movie.year || "N/A"; 
-  const displayRating = movie.average_rating 
-    ? `${movie.average_rating.toFixed(1)} / 5` 
+  const displayYear = movie.year || "N/A";
+  const displayRating = movie.average_rating
+    ? `${movie.average_rating.toFixed(1)} / 5`
     : "Not Rated";
 
   return (
@@ -58,7 +58,7 @@ export default function MovieDetailsPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative -mt-32 md:-mt-48 pb-12">
         <div className="flex flex-col md:flex-row gap-8">
-          
+
           <div className="flex-shrink-0 mx-auto md:mx-0">
             <div className="w-64 md:w-80 rounded-xl shadow-2xl overflow-hidden bg-white border-4 border-white">
               {movie.poster_path ? (
@@ -73,7 +73,7 @@ export default function MovieDetailsPage() {
                 </div>
               )}
             </div>
-            
+
             <div className="mt-6 md:hidden space-y-4">
                <WatchlistButton movieId={movie.movie_id} variant="full" />
                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
@@ -85,7 +85,7 @@ export default function MovieDetailsPage() {
           {/* Details */}
           <div className="flex-1 pt-4 md:pt-16">
             <div className="mb-2 flex flex-wrap items-center gap-3 text-sm font-medium">
-               
+
                <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full">
                  {displayYear}
                </span>
@@ -119,7 +119,7 @@ export default function MovieDetailsPage() {
                 </h3>
                 <WatchlistButton movieId={movie.movie_id} variant="full" />
               </div>
-              
+
               <div className="flex-1 max-w-sm">
                  <h3 className="text-sm font-semibold text-gray-500 mb-3 uppercase tracking-wider">
                   Rate this Movie
@@ -132,7 +132,7 @@ export default function MovieDetailsPage() {
 
         <div className="mt-20">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">You Might Also Like</h2>
-          
+
           {similarLoading ? (
              <div className="flex gap-4 overflow-hidden">
               {[1, 2, 3, 4, 5].map((i) => (
@@ -142,10 +142,10 @@ export default function MovieDetailsPage() {
           ) : similarMovies.length > 0 ? (
             <div className="flex gap-4 overflow-x-auto pb-8 snap-x scrollbar-thin scrollbar-thumb-gray-200">
               {similarMovies.map((item) => (
-                 <RecommendationCardWrapper 
-                    key={item.movie_id} 
+                 <RecommendationCardWrapper
+                    key={item.movie_id}
                     movieId={item.movie_id}
-                    score={item.score || 0}
+                    score={item.similarity_score || item.score || 0}
                  />
               ))}
             </div>

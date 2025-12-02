@@ -43,7 +43,7 @@ export function WatchlistButton({ movieId, onToggle, variant = "full" }: Watchli
   }, [movieId]);
 
   const toggleWatchlist = async (e: React.MouseEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
     e.stopPropagation();
 
     const token = localStorage.getItem("token");
@@ -100,9 +100,9 @@ export function WatchlistButton({ movieId, onToggle, variant = "full" }: Watchli
     return (
       <button
         onClick={toggleWatchlist}
-        className={`p-2 rounded-full backdrop-blur-sm transition-all duration-200 
-          ${isInWatchlist 
-            ? "bg-rose-500/10 text-rose-600 hover:bg-rose-500/20" 
+        className={`p-2 rounded-full backdrop-blur-sm transition-all duration-200 cursor-pointer
+          ${isInWatchlist
+            ? "bg-rose-500/10 text-rose-600 hover:bg-rose-500/20"
             : "bg-black/20 text-white hover:bg-rose-500 hover:text-white"
           }`}
         title={isInWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
@@ -118,9 +118,9 @@ export function WatchlistButton({ movieId, onToggle, variant = "full" }: Watchli
     <button
       onClick={toggleWatchlist}
       className={`
-        flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors
-        ${isInWatchlist 
-          ? "bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100" 
+        flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 cursor-pointer
+        ${isInWatchlist
+          ? "bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100"
           : "bg-gray-900 text-white hover:bg-gray-800"
         }
       `}

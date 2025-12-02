@@ -40,7 +40,7 @@ def export_my_profile(
     if not profile:
         raise HTTPException(status_code=404, detail="Profile not found")
 
-    return as_download(profile, f"user_{user_id}_profile.json")
+    return as_download(profile.model_dump(), f"user_{user_id}_profile.json")
 
 
 @router.get("/ratings")

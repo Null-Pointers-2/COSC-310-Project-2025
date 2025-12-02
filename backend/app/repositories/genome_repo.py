@@ -66,7 +66,7 @@ class GenomeRepository:
         if self.tags_df is None or self.tags_df.empty:
             return []
 
-        return self.tags_df.to_dict(orient="records")  # type: ignore
+        return self.tags_df.to_dict(orient="records")  # type: ignore[return-value]
 
     def get_movie_tags(self, movie_id: int, min_relevance: float = 0.5) -> list[dict[str, Any]]:
         """
@@ -106,7 +106,7 @@ class GenomeRepository:
 
         movie_scores = movie_scores.sort_values("relevance", ascending=False)
 
-        return movie_scores.to_dict(orient="records")  # type: ignore
+        return movie_scores.to_dict(orient="records")  # type: ignore[return-value]
 
     def get_top_tags_for_movies(
         self, movie_ids: list[int], top_n: int = 10, min_relevance: float = 0.5
@@ -149,4 +149,4 @@ class GenomeRepository:
         tag_stats["score"] = tag_stats["avg_relevance"] * tag_stats["movie_count"]
         tag_stats = tag_stats.sort_values("score", ascending=False).head(top_n)
 
-        return tag_stats[["tag_id", "tag", "avg_relevance", "movie_count"]].to_dict(orient="records")  # type: ignore
+        return tag_stats[["tag_id", "tag", "avg_relevance", "movie_count"]].to_dict(orient="records")  # type: ignore[return-value]

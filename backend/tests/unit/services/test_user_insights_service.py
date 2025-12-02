@@ -34,7 +34,7 @@ def test_analyze_genres():
     resources.watchlist_repo.get_by_user.return_value = [{"movie_id": 1}]
     resources.movies_repo.get_by_id.return_value = {"genres": ["Action"]}
 
-    top_genre, top_3, insights = _analyze_genres(resources, "user123")
+    top_genre, top_3, _insights = _analyze_genres(resources, "user123")
 
     assert top_genre == "Action"
     assert "Action" in top_3
@@ -45,7 +45,7 @@ def test_analyze_genres_no_ratings():
     resources.ratings_repo.get_by_user.return_value = []
     resources.watchlist_repo.get_by_user.return_value = []
 
-    top_genre, top_3, insights = _analyze_genres(resources, "user123")
+    top_genre, top_3, _insights = _analyze_genres(resources, "user123")
 
     assert top_genre is None
     assert top_3 == []

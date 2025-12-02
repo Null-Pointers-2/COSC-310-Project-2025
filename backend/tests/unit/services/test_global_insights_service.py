@@ -44,7 +44,7 @@ def test_get_global_genre_leaderboard_general():
     def get_ratings(user_id):
         if user_id == "user1":
             return [{"movie_id": 1, "rating": 5.0}, {"movie_id": 2, "rating": 4.0}]
-        elif user_id == "user2":
+        if user_id == "user2":
             return [{"movie_id": 1, "rating": 4.5}, {"movie_id": 3, "rating": 3.0}]
         return []
 
@@ -91,9 +91,9 @@ def test_get_global_genre_leaderboard_missing_movie_data():
     def get_movie(movie_id):
         if movie_id == 1:
             return None
-        elif movie_id == 2:
+        if movie_id == 2:
             return {"genres": []}
-        elif movie_id == 3:
+        if movie_id == 3:
             return {"genres": ["Action", "", None]}
         return None
 
@@ -115,9 +115,9 @@ def test_get_global_genre_leaderboard_data_retrieval():
     def get_ratings(user_id):
         if user_id == "user1":
             return [{"movie_id": 1, "rating": 5.0}, {"movie_id": 2, "rating": 4.0}]
-        elif user_id == "user2":
+        if user_id == "user2":
             return [{"movie_id": 1, "rating": 4.5}]
-        elif user_id == "user3":
+        if user_id == "user3":
             return [{"movie_id": 3, "rating": 3.0}]
         return []
 

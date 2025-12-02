@@ -14,8 +14,8 @@ router = APIRouter()
 
 @router.get("/me", response_model=UserInsights)
 def get_my_insights(
-    force_refresh: Annotated[bool, Query(description="Force regenerate insights")] = False,
     *,
+    force_refresh: Annotated[bool, Query(description="Force regenerate insights")] = False,
     current_user: Annotated[dict, Depends(get_current_user)],
     resources: Annotated[SingletonResources, Depends(get_resources)],
 ):

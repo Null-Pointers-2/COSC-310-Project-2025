@@ -15,6 +15,9 @@ from app.schemas.user_insights import (
 
 logger = logging.getLogger(__name__)
 
+# Minimum rating threshold for considering movies as "high rated"
+HIGH_RATING_THRESHOLD = 4.0
+
 
 def _calculate_preference_score(count: int, avg_rating: float, total_count: int) -> float:
     """
@@ -112,7 +115,7 @@ def _analyze_themes(resources, user_id: str) -> tuple[str | None, list[str], lis
     """
     # Get highly-rated movies (4.0+)
     all_ratings = resources.ratings_repo.get_by_user(user_id)
-    high_rated_movies = [r for r in all_ratings if float(r["rating"]) >= 4.0]
+    high_rated_movies = [r for r in all_ratings if float(r["rating"]) >= HIGH_RATING_THRESHOLD]
 
     if not high_rated_movies:
         return None, [], []
@@ -200,8 +203,8 @@ def _analyze_watchlist_metrics(resources, user_id: str) -> WatchlistMetrics:
 
             # Calculate time to rate
             try:
-                added_at = datetime.fromisoformat(watchlist_item["added_at"].replace("Z", "+00:00"))
-                rated_at = datetime.fromisoformat(rating["timestamp"].replace("Z", "+00:00"))
+                added_at = datetime.fromisoformat(watchlist_item["added_at"])
+                rated_at = datetime.fromisoformat(rating["timestamp"])
                 delta_hours = (rated_at - added_at).total_seconds() / 3600
                 if delta_hours >= 0:  # Only positive deltas (rated after adding)
                     time_deltas.append(delta_hours)
@@ -248,7 +251,7 @@ def _analyze_watchlist_metrics(resources, user_id: str) -> WatchlistMetrics:
     )
 
 
-def generate_user_insights(resources, user_id: str, force_refresh: bool = False) -> UserInsights | None:
+def generate_user_insights(resources, user_id: str, *, force_refresh: bool = False) -> UserInsights | None:
     """
     Generate comprehensive insights for a user.
 
@@ -263,17 +266,17 @@ def generate_user_insights(resources, user_id: str, force_refresh: bool = False)
     # Check if user exists
     user = resources.users_repo.get_by_id(user_id)
     if not user:
-        logger.warning(f"User {user_id} not found")
+        logger.warning("User %s not found", user_id)
         return None
 
     # Check for cached insights (unless force refresh)
     if not force_refresh:
         cached = resources.user_insights_repo.get_by_user_id(user_id)
         if cached:
-            logger.info(f"Returning cached insights for user {user_id}")
+            logger.info("Returning cached insights for user %s", user_id)
             return UserInsights(**cached)
 
-    logger.info(f"Generating fresh insights for user {user_id}")
+    logger.info("Generating fresh insights for user %s", user_id)
 
     # Get all ratings for overall stats
     all_ratings = resources.ratings_repo.get_by_user(user_id)
@@ -318,7 +321,7 @@ def generate_user_insights(resources, user_id: str, force_refresh: bool = False)
     insights_dict = insights.model_dump(mode="json")
     resources.user_insights_repo.save(insights_dict)
 
-    logger.info(f"Insights generated and cached for user {user_id}")
+    logger.info("Insights generated and cached for user %s", user_id)
     return insights
 
 

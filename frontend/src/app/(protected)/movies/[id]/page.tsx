@@ -52,7 +52,7 @@ export default function MovieDetailsPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
           </>
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900" />
+          <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />
         )}
       </div>
 
@@ -105,7 +105,7 @@ export default function MovieDetailsPage() {
               {movie.title}
             </h1>
 
-            <div className="prose max-w-none text-gray-600 text-lg leading-relaxed mb-8">
+            <div className="prose max-w-none text-gray-600 text-lg leading-relaxed mb-8 mt-12">
               <h3 className="text-gray-900 font-semibold mb-2">Overview</h3>
               <p>
                 {movie.overview || "No description available."}
@@ -145,7 +145,7 @@ export default function MovieDetailsPage() {
                  <RecommendationCardWrapper
                     key={item.movie_id}
                     movieId={item.movie_id}
-                    score={item.similarity_score || item.score || 0}
+                    score={item.score || 0}
                  />
               ))}
             </div>

@@ -2,10 +2,12 @@
 (Unit) and Integration tests for ranking API endpoints.
 """
 
-from unittest.mock import patch, mock_open
 import json
+from datetime import UTC, datetime, timezone
+from unittest.mock import mock_open, patch
 
 import pytest
+
 from app.routers import ranking
 
 MOCK_RATINGS = [
@@ -55,10 +57,9 @@ def test_get_popular_movies_no_file():
 
 def test_get_popular_movies_cached():
     # Manually set cache
-    from datetime import datetime
 
     mock_data = [{"movie_id": 99, "title": "Cached Movie"}]
-    ranking.popular_movies_cache = {"last_updated": datetime.now(), "data": mock_data}
+    ranking.popular_movies_cache = {"last_updated": datetime.now(UTC), "data": mock_data}
 
     # Patch the update frequency for testing purposes
     with patch("app.routers.ranking.UPDATE_FREQUENCY", 24):

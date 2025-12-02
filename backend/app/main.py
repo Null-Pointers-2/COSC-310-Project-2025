@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.resources import SingletonResources
-from app.routers import admin, auth, export, movies, ratings, recommendations, users, watchlist, ranking
+from app.routers import admin, auth, export, movies, ranking, ratings, recommendations, users, watchlist
 
 logger = logging.getLogger(__name__)
 

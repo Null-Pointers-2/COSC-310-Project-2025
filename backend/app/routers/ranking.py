@@ -1,30 +1,36 @@
 """Movie ranking endpoints."""
 
-from fastapi import APIRouter, HTTPException
-from typing import List, Dict
-import json
 import csv
-import os
-from datetime import datetime, timedelta
+import json
+import logging
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
+
+from fastapi import APIRouter, HTTPException
 
 router = APIRouter()
 
+logger = logging.getLogger(__name__)
+
+
 UPDATE_FREQUENCY = 0  # Put as 0 for quicker refresh*
-NOISE_FILTER = 0.5
-DATA_PATH = os.path.join(os.path.dirname(__file__), "../../data/ratings.json")
-METADATA_PATH = os.path.join(os.path.dirname(__file__), "../../data/ml/movies_clean.csv")
+NOISE_FILTER = 0.5 # Strictness value in formula
+MIN_VOTE_COUNT = 5
+
+BASE_DIR = Path(__file__).resolve().parent
+DATA_PATH = BASE_DIR / "../../data/ratings.json"
+METADATA_PATH = BASE_DIR / "../../data/ml/movies_clean.csv"
 
 popular_movies_cache = {"last_updated": None, "data": []}
 
 
-def load_titles_from_csv() -> Dict[int, str]:
-    if not os.path.exists(METADATA_PATH):
-        print(f"Metadata err")
+def load_titles_from_csv() -> dict[int, str]:
+    if not METADATA_PATH.path.exists():
         return {}
 
     titles = {}
     try:
-        with open(METADATA_PATH, mode="r", encoding="utf-8") as f:
+        with METADATA_PATH.open(encoding="utf-8") as f:
             reader = csv.DictReader(f)
 
             for row in reader:
@@ -35,12 +41,14 @@ def load_titles_from_csv() -> Dict[int, str]:
                     continue
 
     except Exception as e:
-        print(f"Metadata err: {e}")
+            logger.exception("Error loading metadata:")
+            raise HTTPException(status_code=500, detail="Metadata err") from e
+
 
     return titles
 
 
-def calculate_weighted_rating(ratings_list: List[dict]) -> List[dict]:
+def calculate_weighted_rating(ratings_list: list[dict]) -> list[dict]:
     if not ratings_list:
         return []
 
@@ -58,18 +66,18 @@ def calculate_weighted_rating(ratings_list: List[dict]) -> List[dict]:
 
     total_rating_sum = sum(r["rating"] for r in ratings_list)
     total_count = len(ratings_list)
-    C = total_rating_sum / total_count if total_count > 0 else 0
+    mean_vote = total_rating_sum / total_count if total_count > 0 else 0
 
     all_counts = sorted([stats["count"] for stats in movie_stats.values()])
-    m = all_counts[int(len(all_counts) * NOISE_FILTER)] if len(all_counts) > 5 else 1
+    m = all_counts[int(len(all_counts) * NOISE_FILTER)] if len(all_counts) > MIN_VOTE_COUNT else 1
 
     weighted_movies = []
     for m_id, stats in movie_stats.items():
         v = stats["count"]
-        R = stats["sum"] / v
+        avg_rating = stats["sum"] / v
 
         if v >= m:
-            score = (v / (v + m) * R) + (m / (v + m) * C)
+            score = (v / (v + m) * avg_rating) + (m / (v + m) * mean_vote)
 
             real_title = csv_titles.get(m_id, f"Movie {m_id}")
 
@@ -78,7 +86,7 @@ def calculate_weighted_rating(ratings_list: List[dict]) -> List[dict]:
                     "movie_id": m_id,
                     "score": round(score, 2),
                     "vote_count": v,
-                    "avg_rating": round(R, 2),
+                    "avg_rating": round(avg_rating, 2),
                     "title": real_title,
                 }
             )
@@ -89,9 +97,8 @@ def calculate_weighted_rating(ratings_list: List[dict]) -> List[dict]:
 
 @router.get("/ranking/popular")
 def get_popular_movies():
-    global popular_movies_cache
 
-    now = datetime.now()
+    now = datetime.now(UTC)
 
     if (
         popular_movies_cache["data"]
@@ -100,11 +107,11 @@ def get_popular_movies():
     ):
         return popular_movies_cache["data"]
 
-    if not os.path.exists(DATA_PATH):
+    if not DATA_PATH.exists():
         return []
 
     try:
-        with open(DATA_PATH, "r") as f:
+        with DATA_PATH.open() as f:
             raw_data = json.load(f)
 
         top_movies = calculate_weighted_rating(raw_data)
@@ -112,8 +119,8 @@ def get_popular_movies():
         popular_movies_cache["data"] = top_movies
         popular_movies_cache["last_updated"] = now
 
-        return top_movies
-
     except Exception as e:
-        print(f"Calculation err: {e}")
-        raise HTTPException(status_code=500, detail="Calculation err")
+            logger.exception("Error calculating stats:")
+            raise HTTPException(status_code=500, detail="Calculation err") from e
+
+    return top_movies

@@ -1,6 +1,6 @@
 """Authentication and authorization service."""
 
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 
 import jwt
 from argon2 import PasswordHasher
@@ -40,12 +40,9 @@ def authenticate_user(username: str, password: str, resources):
     return user
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
+def create_access_token(data: dict) -> str:
     """Create a JWT access token."""
-    to_encode = data.copy()
-    expire = datetime.now(UTC) + expires_delta if expires_delta else datetime.now(UTC) + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    return jwt.encode(data, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
 def get_user_from_token(token: str, resources) -> dict | None:

@@ -1,0 +1,47 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export function useTMDB(title: string, tmdbId?: number | string) {
+  const [posterUrl, setPosterUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPoster = async () => {
+      if (!title && !tmdbId) {
+        setLoading(false);
+        return;
+      }
+      
+      try {
+        setLoading(true);
+        const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
+        if (!apiKey) return;
+
+        let data;
+
+        if (tmdbId) {
+          const res = await fetch(
+            `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${apiKey}`
+          );
+          if (res.ok) {
+            data = await res.json();
+            if (data.poster_path) {
+              setPosterUrl(`https://image.tmdb.org/t/p/w500${data.poster_path}`);
+              return;
+            }
+          }
+        }
+
+      } catch (err) {
+        console.error("TMDB Image Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPoster();
+  }, [title, tmdbId]);
+
+  return { posterUrl, loading };
+}

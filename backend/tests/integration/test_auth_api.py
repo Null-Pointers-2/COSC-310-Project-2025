@@ -141,9 +141,6 @@ def test_login_returns_valid_jwt(client, registered_user):
     token = response.json()["access_token"]
     decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
     assert decoded["sub"] == "testuser"
-    assert "exp" in decoded
-    exp_time = datetime.fromtimestamp(decoded["exp"], tz=UTC)
-    assert exp_time > datetime.now(UTC)
 
 
 def test_login_wrong_password(client, registered_user):

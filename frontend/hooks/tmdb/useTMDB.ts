@@ -38,7 +38,7 @@ export function useTMDB(title: string, tmdbId?: number | string) {
         }
 
         // If ID not available try searching by move name (Secondary option needed for popularity ranking nowd)
-        const cleanTitle = title.replace(/ \(\d{4}\)$/, '').trim();
+        const cleanTitle = title.replace(/ \((?:a\.?k\.?a\.? .*?|\d{4})\)/gi, '').trim();
         
         if (cleanTitle) {
             const searchRes = await fetch(

@@ -39,7 +39,6 @@ class Settings(BaseSettings):
     # Authentication
     SECRET_KEY: str = ""  # Will be set via environment variable
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     # Pagination
     DEFAULT_PAGE_SIZE: int = 30

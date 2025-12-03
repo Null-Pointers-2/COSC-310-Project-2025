@@ -101,18 +101,6 @@ function BrowsePageContent() {
               Search
             </button>
           </div>
-
-          <select
-            value={selectedGenre}
-            onChange={(e) => {
-              setSelectedGenre(e.target.value);
-              setPage(1);
-            }}
-            className="px-4 py-3 rounded-xl border border-gray-200 bg-white focus:border-indigo-500 outline-none cursor-pointer min-w-[150px]"
-          >
-            <option value="">All Genres</option>
-            {genres.map(g => <option key={g} value={g}>{g}</option>)}
-          </select>
         </div>
 
         {genres.length > 0 && (

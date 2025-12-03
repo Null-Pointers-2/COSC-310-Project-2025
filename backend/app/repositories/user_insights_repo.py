@@ -75,6 +75,10 @@ class UserInsightsRepository:
 
         return False
 
+    def clear_for_user(self, user_id: str) -> bool:
+        """Clear cached insights for a user (alias for delete)."""
+        return self.delete(user_id)
+
     def exists(self, user_id: str) -> bool:
         """Check if insights exist for a user."""
         data = self._read()

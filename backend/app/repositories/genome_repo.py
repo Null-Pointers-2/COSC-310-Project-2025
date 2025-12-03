@@ -79,22 +79,11 @@ class GenomeRepository:
         Returns:
             List of dicts with tag_id, tag_name, and relevance
         """
-        if not self.genome_scores_path.exists():
+        if self.scores_df is None or self.scores_df.empty:
             return []
 
-        # Load scores for this specific movie (chunked reading for efficiency)
-        chunks = []
-        for chunk in pd.read_csv(
-            self.genome_scores_path, encoding="utf-8", chunksize=100000, usecols=["movie_id", "tag_id", "relevance"]
-        ):
-            movie_chunk = chunk[chunk["movie_id"] == movie_id]
-            if not movie_chunk.empty:
-                chunks.append(movie_chunk)
-
-        if not chunks:
-            return []
-
-        movie_scores = pd.concat(chunks)
+        # Filter preloaded scores for this movie (FAST - in-memory lookup)
+        movie_scores = self.scores_df[self.scores_df["movie_id"] == movie_id].copy()
         movie_scores = movie_scores[movie_scores["relevance"] >= min_relevance]
 
         if movie_scores.empty:

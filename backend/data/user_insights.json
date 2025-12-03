@@ -808,5 +808,286 @@
         "total_ratings": 3,
         "average_rating": 5.0,
         "rating_consistency": 0.0
+    },
+    {
+        "user_id": "0e54cb2a-9a6a-4ceb-8978-ac8a298f21c3",
+        "generated_at": "2025-12-03T04:25:29.726251Z",
+        "top_genre": "Comedy",
+        "top_3_genres": [
+            "Comedy",
+            "Adventure",
+            "Children"
+        ],
+        "genre_insights": [
+            {
+                "genre": "Comedy",
+                "total_rated": 6,
+                "watchlist_rated": 0,
+                "average_rating": 4.58,
+                "watchlist_average_rating": 0.0,
+                "preference_score": 88.73
+            },
+            {
+                "genre": "Adventure",
+                "total_rated": 5,
+                "watchlist_rated": 0,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 0.0,
+                "preference_score": 88.57
+            },
+            {
+                "genre": "Children",
+                "total_rated": 5,
+                "watchlist_rated": 0,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 0.0,
+                "preference_score": 88.57
+            },
+            {
+                "genre": "Animation",
+                "total_rated": 4,
+                "watchlist_rated": 0,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 0.0,
+                "preference_score": 82.86
+            },
+            {
+                "genre": "Fantasy",
+                "total_rated": 3,
+                "watchlist_rated": 0,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 0.0,
+                "preference_score": 77.14
+            },
+            {
+                "genre": "Action",
+                "total_rated": 2,
+                "watchlist_rated": 0,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 0.0,
+                "preference_score": 71.43
+            },
+            {
+                "genre": "Crime",
+                "total_rated": 1,
+                "watchlist_rated": 0,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 0.0,
+                "preference_score": 65.71
+            },
+            {
+                "genre": "Thriller",
+                "total_rated": 1,
+                "watchlist_rated": 0,
+                "average_rating": 5.0,
+                "watchlist_average_rating": 0.0,
+                "preference_score": 65.71
+            },
+            {
+                "genre": "Romance",
+                "total_rated": 1,
+                "watchlist_rated": 0,
+                "average_rating": 2.5,
+                "watchlist_average_rating": 0.0,
+                "preference_score": 32.38
+            }
+        ],
+        "top_theme": "original",
+        "top_5_themes": [
+            "original",
+            "good",
+            "great",
+            "kids",
+            "kids and family"
+        ],
+        "theme_insights": [
+            {
+                "tag": "original",
+                "tag_id": 742,
+                "movies_count": 6,
+                "average_relevance": 0.775,
+                "average_rating": 5.0,
+                "preference_score": 100.0
+            },
+            {
+                "tag": "good",
+                "tag_id": 445,
+                "movies_count": 6,
+                "average_relevance": 0.775,
+                "average_rating": 5.0,
+                "preference_score": 100.0
+            },
+            {
+                "tag": "great",
+                "tag_id": 464,
+                "movies_count": 6,
+                "average_relevance": 0.714,
+                "average_rating": 5.0,
+                "preference_score": 100.0
+            },
+            {
+                "tag": "kids",
+                "tag_id": 588,
+                "movies_count": 5,
+                "average_relevance": 0.892,
+                "average_rating": 5.0,
+                "preference_score": 93.33
+            },
+            {
+                "tag": "kids and family",
+                "tag_id": 589,
+                "movies_count": 5,
+                "average_relevance": 0.845,
+                "average_rating": 5.0,
+                "preference_score": 93.33
+            },
+            {
+                "tag": "friendship",
+                "tag_id": 412,
+                "movies_count": 5,
+                "average_relevance": 0.835,
+                "average_rating": 5.0,
+                "preference_score": 93.33
+            },
+            {
+                "tag": "children",
+                "tag_id": 204,
+                "movies_count": 5,
+                "average_relevance": 0.816,
+                "average_rating": 5.0,
+                "preference_score": 93.33
+            },
+            {
+                "tag": "fun",
+                "tag_id": 414,
+                "movies_count": 5,
+                "average_relevance": 0.811,
+                "average_rating": 5.0,
+                "preference_score": 93.33
+            },
+            {
+                "tag": "fun movie",
+                "tag_id": 415,
+                "movies_count": 5,
+                "average_relevance": 0.76,
+                "average_rating": 5.0,
+                "preference_score": 93.33
+            },
+            {
+                "tag": "clever",
+                "tag_id": 220,
+                "movies_count": 5,
+                "average_relevance": 0.691,
+                "average_rating": 5.0,
+                "preference_score": 93.33
+            },
+            {
+                "tag": "great movie",
+                "tag_id": 469,
+                "movies_count": 5,
+                "average_relevance": 0.677,
+                "average_rating": 5.0,
+                "preference_score": 93.33
+            },
+            {
+                "tag": "animation",
+                "tag_id": 64,
+                "movies_count": 4,
+                "average_relevance": 0.988,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "cartoon",
+                "tag_id": 186,
+                "movies_count": 4,
+                "average_relevance": 0.968,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "computer animation",
+                "tag_id": 244,
+                "movies_count": 4,
+                "average_relevance": 0.957,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "animated",
+                "tag_id": 63,
+                "movies_count": 4,
+                "average_relevance": 0.942,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "family",
+                "tag_id": 374,
+                "movies_count": 4,
+                "average_relevance": 0.829,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "animals",
+                "tag_id": 62,
+                "movies_count": 4,
+                "average_relevance": 0.819,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "cute",
+                "tag_id": 278,
+                "movies_count": 4,
+                "average_relevance": 0.792,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "adventure",
+                "tag_id": 29,
+                "movies_count": 4,
+                "average_relevance": 0.79,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            },
+            {
+                "tag": "comedy",
+                "tag_id": 230,
+                "movies_count": 4,
+                "average_relevance": 0.753,
+                "average_rating": 5.0,
+                "preference_score": 86.67
+            }
+        ],
+        "watchlist_metrics": {
+            "total_watchlist_items": 6,
+            "items_rated": 0,
+            "items_not_rated": 6,
+            "completion_rate": 0.0,
+            "average_rating": null,
+            "average_time_to_rate_hours": null,
+            "genres_in_watchlist": [
+                "Action",
+                "Adventure",
+                "Animation",
+                "Children",
+                "Comedy",
+                "Drama",
+                "Fantasy",
+                "IMAX",
+                "Musical",
+                "Romance",
+                "Sci-Fi",
+                "Thriller",
+                "War"
+            ],
+            "most_common_watchlist_genre": "Children"
+        },
+        "total_ratings": 7,
+        "average_rating": 4.64,
+        "rating_consistency": 0.94
     }
 ]

@@ -35,7 +35,10 @@ export function useFetch<T>(endpoint: string | null) {
         headers["Authorization"] = `Bearer ${token}`;
       }
 
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, { headers });
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        headers,
+        credentials: 'include'
+      });
 
       if (response.status === 401) {
         throw new Error("Unauthorized");

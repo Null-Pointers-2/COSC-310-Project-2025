@@ -52,7 +52,7 @@ def test_get_insights_success(mock_resources, mock_user, sample_insights):
         "app.routers.user_insights.user_insights_service.generate_user_insights",
         return_value=sample_insights,
     ):
-        result = user_insights.get_my_insights(force_refresh=False, current_user=mock_user, resources=mock_resources)
+        result = user_insights.get_my_insights(current_user=mock_user, resources=mock_resources)
 
         assert result.user_id == "user123"
         assert result.top_genre == "Action"
@@ -62,7 +62,7 @@ def test_get_insights_success(mock_resources, mock_user, sample_insights):
 def test_get_insights_not_found(mock_resources, mock_user):
     with patch("app.routers.user_insights.user_insights_service.generate_user_insights", return_value=None):
         with pytest.raises(HTTPException) as exc:
-            user_insights.get_my_insights(force_refresh=False, current_user=mock_user, resources=mock_resources)
+            user_insights.get_my_insights(current_user=mock_user, resources=mock_resources)
 
         assert exc.value.status_code == 404
 

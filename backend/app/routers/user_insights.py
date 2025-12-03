@@ -1,8 +1,9 @@
 """User insights endpoints."""
 
+import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.core.dependencies import get_current_user, get_resources
 from app.core.resources import SingletonResources
@@ -10,12 +11,12 @@ from app.schemas.user_insights import UserInsights, UserInsightsSummary
 from app.services import user_insights_service
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 @router.get("/me", response_model=UserInsights)
 def get_my_insights(
     *,
-    force_refresh: Annotated[bool, Query(description="Force regenerate insights")] = False,
     current_user: Annotated[dict, Depends(get_current_user)],
     resources: Annotated[SingletonResources, Depends(get_resources)],
 ):
@@ -27,15 +28,18 @@ def get_my_insights(
     - Favorite themes from genome tag analysis
     - Watchlist completion metrics
 
-    Results are cached. Use force_refresh=true to regenerate.
+    Fresh insights are generated on every request.
     """
-    insights = user_insights_service.generate_user_insights(
-        resources, user_id=current_user["id"], force_refresh=force_refresh
-    )
+    logger.info("[INSIGHTS] Starting insights generation for user %s", current_user["id"])
+
+    insights = user_insights_service.generate_user_insights(resources, user_id=current_user["id"])
+
+    logger.info("[INSIGHTS] Insights generated: %s", insights is not None)
 
     if not insights:
         raise HTTPException(status_code=404, detail="Could not generate insights")
 
+    logger.info("[INSIGHTS] Returning insights")
     return insights
 
 

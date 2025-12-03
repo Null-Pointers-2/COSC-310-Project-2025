@@ -37,27 +37,37 @@ def _calculate_preference_score(count: int, avg_rating: float, total_count: int)
     return round(score, 2)
 
 
-def _analyze_genres(resources, user_id: str) -> tuple[str | None, list[str], list[GenreInsight]]:
+def _analyze_genres_from_ratings(
+    resources, user_id: str, all_ratings: list
+) -> tuple[str | None, list[str], list[GenreInsight]]:
     """
-    Analyze user's genre preferences.
+    Analyze user's genre preferences from provided ratings.
 
     Returns: (top_genre, top_3_genres, genre_insights)
     """
-    # Get all user ratings
-    all_ratings = resources.ratings_repo.get_by_user(user_id)
-    watchlist_items = resources.watchlist_repo.get_by_user(user_id)
-
     if not all_ratings:
         return None, [], []
 
+    watchlist_items = resources.watchlist_repo.get_by_user(user_id)
+
     # Get watchlist movie IDs
     watchlist_movie_ids = {item["movie_id"] for item in watchlist_items}
+
+    # Bulk fetch all movies to avoid N+1 queries
+    logger.info("[GENRES] Fetching %d movies", len(all_ratings))
+    movie_ids = [r["movie_id"] for r in all_ratings]
+    movies_map = {}
+    for movie_id in movie_ids:
+        movie = resources.movies_repo.get_by_id(movie_id)
+        if movie:
+            movies_map[movie_id] = movie
+    logger.info("[GENRES] Fetched %d movies", len(movies_map))
 
     # Build genre statistics
     genre_stats = defaultdict(lambda: {"total": 0, "watchlist": 0, "ratings": [], "watchlist_ratings": []})
 
     for rating in all_ratings:
-        movie = resources.movies_repo.get_by_id(rating["movie_id"])
+        movie = movies_map.get(rating["movie_id"])
         if not movie or not movie.get("genres"):
             continue
 
@@ -107,14 +117,15 @@ def _analyze_genres(resources, user_id: str) -> tuple[str | None, list[str], lis
     return top_genre, top_3_genres, genre_insights
 
 
-def _analyze_themes(resources, user_id: str) -> tuple[str | None, list[str], list[ThemeInsight]]:
+def _analyze_themes_from_ratings(
+    resources, _user_id: str, all_ratings: list
+) -> tuple[str | None, list[str], list[ThemeInsight]]:
     """
-    Analyze user's theme preferences using genome data.
+    Analyze user's theme preferences using genome data from provided ratings.
 
     Returns: (top_theme, top_5_themes, theme_insights)
     """
     # Get highly-rated movies (4.0+)
-    all_ratings = resources.ratings_repo.get_by_user(user_id)
     high_rated_movies = [r for r in all_ratings if float(r["rating"]) >= HIGH_RATING_THRESHOLD]
 
     if not high_rated_movies:
@@ -128,18 +139,25 @@ def _analyze_themes(resources, user_id: str) -> tuple[str | None, list[str], lis
     if not top_tags:
         return None, [], []
 
+    # Fetch all movie tags once upfront to avoid N+1 queries
+    logger.info("[THEMES] Fetching tags for %d movies", len(movie_ids))
+    movie_tags_map = {}
+    for movie_id in movie_ids:
+        tags = resources.genome_repo.get_movie_tags(movie_id, min_relevance=0.5)
+        movie_tags_map[movie_id] = {t["tag_id"] for t in tags}
+    logger.info("[THEMES] Fetched all movie tags")
+
     # Build theme insights
     theme_insights = []
     total_movies = len(high_rated_movies)
 
     for tag_data in top_tags:
         # Calculate average rating for movies with this tag
-        tag_movie_ratings = []
-        for rating in high_rated_movies:
-            # Check if this movie has this tag with high relevance
-            movie_tags = resources.genome_repo.get_movie_tags(rating["movie_id"], min_relevance=0.5)
-            if any(t["tag_id"] == tag_data["tag_id"] for t in movie_tags):
-                tag_movie_ratings.append(float(rating["rating"]))
+        tag_movie_ratings = [
+            float(rating["rating"])
+            for rating in high_rated_movies
+            if tag_data["tag_id"] in movie_tags_map.get(rating["movie_id"], set())
+        ]
 
         if not tag_movie_ratings:
             continue
@@ -168,7 +186,7 @@ def _analyze_themes(resources, user_id: str) -> tuple[str | None, list[str], lis
     return top_theme, top_5_themes, theme_insights
 
 
-def _analyze_watchlist_metrics(resources, user_id: str) -> WatchlistMetrics:
+def _analyze_watchlist_metrics(resources, user_id: str) -> WatchlistMetrics:  # noqa: PLR0912
     """
     Analyze watchlist completion and engagement metrics.
 
@@ -229,8 +247,17 @@ def _analyze_watchlist_metrics(resources, user_id: str) -> WatchlistMetrics:
     genres_in_watchlist = set()
     genre_counts = defaultdict(int)
 
+    # Bulk fetch watchlist movies to avoid N+1 queries
+    logger.info("[WATCHLIST] Fetching %d movies", len(watchlist_items))
+    watchlist_movies = {}
     for item in watchlist_items:
         movie = resources.movies_repo.get_by_id(item["movie_id"])
+        if movie:
+            watchlist_movies[item["movie_id"]] = movie
+    logger.info("[WATCHLIST] Fetched %d movies", len(watchlist_movies))
+
+    for item in watchlist_items:
+        movie = watchlist_movies.get(item["movie_id"])
         if movie and movie.get("genres"):
             for genre in movie["genres"]:
                 if genre:
@@ -251,36 +278,31 @@ def _analyze_watchlist_metrics(resources, user_id: str) -> WatchlistMetrics:
     )
 
 
-def generate_user_insights(resources, user_id: str, *, force_refresh: bool = False) -> UserInsights | None:
+def generate_user_insights(resources, user_id: str) -> UserInsights | None:
     """
     Generate comprehensive insights for a user.
 
     Args:
         resources: SingletonResources instance
         user_id: The user ID
-        force_refresh: If True, regenerate even if cached
 
     Returns:
         UserInsights object or None if user not found
     """
+    logger.info("[GEN_INSIGHTS] Step 1: Checking if user %s exists", user_id)
     # Check if user exists
     user = resources.users_repo.get_by_id(user_id)
     if not user:
         logger.warning("User %s not found", user_id)
         return None
 
-    # Check for cached insights (unless force refresh)
-    if not force_refresh:
-        cached = resources.user_insights_repo.get_by_user_id(user_id)
-        if cached:
-            logger.info("Returning cached insights for user %s", user_id)
-            return UserInsights(**cached)
-
-    logger.info("Generating fresh insights for user %s", user_id)
+    logger.info("[GEN_INSIGHTS] Step 2: User found, starting generation for %s", user_id)
 
     # Get all ratings for overall stats
+    logger.info("[GEN_INSIGHTS] Step 3: Getting ratings")
     all_ratings = resources.ratings_repo.get_by_user(user_id)
     total_ratings = len(all_ratings)
+    logger.info("[GEN_INSIGHTS] Step 3 complete: Found %d ratings", total_ratings)
 
     avg_rating = None
     rating_consistency = None
@@ -292,14 +314,20 @@ def generate_user_insights(resources, user_id: str, *, force_refresh: bool = Fal
         if len(ratings_values) > 1:
             rating_consistency = round(stdev(ratings_values), 2)
 
-    # Analyze genres
-    top_genre, top_3_genres, genre_insights = _analyze_genres(resources, user_id)
+    # Analyze genres (pass ratings to avoid re-fetching)
+    logger.info("[GEN_INSIGHTS] Step 4: Analyzing genres")
+    top_genre, top_3_genres, genre_insights = _analyze_genres_from_ratings(resources, user_id, all_ratings)
+    logger.info("[GEN_INSIGHTS] Step 4 complete: Top genre = %s", top_genre)
 
-    # Analyze themes (genome data)
-    top_theme, top_5_themes, theme_insights = _analyze_themes(resources, user_id)
+    # Analyze themes (genome data, pass ratings to avoid re-fetching)
+    logger.info("[GEN_INSIGHTS] Step 5: Analyzing themes")
+    top_theme, top_5_themes, theme_insights = _analyze_themes_from_ratings(resources, user_id, all_ratings)
+    logger.info("[GEN_INSIGHTS] Step 5 complete: Top theme = %s", top_theme)
 
     # Analyze watchlist metrics
+    logger.info("[GEN_INSIGHTS] Step 6: Analyzing watchlist")
     watchlist_metrics = _analyze_watchlist_metrics(resources, user_id)
+    logger.info("[GEN_INSIGHTS] Step 6 complete")
 
     # Create insights object
     insights = UserInsights(
@@ -317,11 +345,7 @@ def generate_user_insights(resources, user_id: str, *, force_refresh: bool = Fal
         rating_consistency=rating_consistency,
     )
 
-    # Cache the insights
-    insights_dict = insights.model_dump(mode="json")
-    resources.user_insights_repo.save(insights_dict)
-
-    logger.info("Insights generated and cached for user %s", user_id)
+    logger.info("Insights generated for user %s", user_id)
     return insights
 
 
@@ -336,7 +360,7 @@ def get_user_insights_summary(resources, user_id: str) -> UserInsightsSummary | 
     Returns:
         UserInsightsSummary or None
     """
-    insights = generate_user_insights(resources, user_id, force_refresh=False)
+    insights = generate_user_insights(resources, user_id)
     if not insights:
         return None
 

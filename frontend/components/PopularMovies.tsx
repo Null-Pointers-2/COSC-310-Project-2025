@@ -46,7 +46,7 @@ export function PopularMovies() {
         <h2 className="text-xl font-bold text-gray-900">Popular Now</h2>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 px-2">
-        {movies.map((movie, index) => (
+        {movies.map((movie) => (
           <div key={movie.movie_id} className="relative group w-full">
               <MovieCard
                 title={movie.title}

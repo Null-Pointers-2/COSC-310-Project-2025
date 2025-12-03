@@ -55,7 +55,7 @@ export function RatingForm({ movieId, onRateSuccess }: RatingFormProps) {
 
     checkExistingRating();
 
-  }, [movieId, isAuthenticated]);
+  }, [movieId, isAuthenticated, authFetch]);
 
   const saveRating = async (newRating: number) => {
     setIsSubmitting(true);
@@ -204,7 +204,6 @@ export function RatingForm({ movieId, onRateSuccess }: RatingFormProps) {
                 </svg>
                 )}
 
-                {/* Touch/Click Targets */}
                 <div className="absolute inset-0 flex">
                   <div
                     className="w-1/2 h-full z-10"

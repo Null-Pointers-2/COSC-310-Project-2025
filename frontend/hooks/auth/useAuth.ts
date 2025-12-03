@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 export function useAuth() {
@@ -22,43 +22,46 @@ export function useAuth() {
     setLoading(false);
   }, [pathname]);
 
-  const login = (newToken: string) => {
+  const login = useCallback((newToken: string) => {
     localStorage.setItem("token", newToken);
     setToken(newToken);
     setIsAuthenticated(true);
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     setToken(null);
     setIsAuthenticated(false);
     router.push("/login");
-    router.refresh(); 
-  };
+    router.refresh();
+  }, [router]);
 
-  const authFetch = async (endpoint: string, options: RequestInit = {}) => {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    
-    const currentToken = token || localStorage.getItem("token");
+  const authFetch = useCallback(
+    async (endpoint: string, options: RequestInit = {}) => {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-    const headers = {
-      "Content-Type": "application/json",
-      ...options.headers,
-      "Authorization": currentToken ? `Bearer ${currentToken}` : "",
-    };
+      const currentToken = token || localStorage.getItem("token");
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      headers,
-    });
+      const headers = {
+        "Content-Type": "application/json",
+        ...options.headers,
+        Authorization: currentToken ? `Bearer ${currentToken}` : "",
+      };
 
-    if (response.status === 401) {
-      logout();
-      throw new Error("Session expired");
-    }
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers,
+      });
 
-    return response;
-  };
+      if (response.status === 401) {
+        logout();
+        throw new Error("Session expired");
+      }
+
+      return response;
+    },
+    [token, logout]
+  );
 
   return { token, isAuthenticated, loading, login, logout, authFetch };
 }

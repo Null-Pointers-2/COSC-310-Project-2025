@@ -35,7 +35,7 @@ export default function HomePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      
+
       {isAuthenticated ? (
         <div className="space-y-12">
 
@@ -63,11 +63,11 @@ export default function HomePage() {
           </div>
 
           <section>
-             <RecommendationList />
+             <PopularMovies />
           </section>
 
           <section>
-             <PopularMovies />
+             <RecommendationList />
           </section>
 
         </div>
@@ -80,15 +80,15 @@ export default function HomePage() {
           <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
             {"Discover new films, rate what you've seen, and get personalized recommendations based on your unique taste."}
           </p>
-          
+
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link 
+            <Link
               href="/register"
               className="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-all shadow-sm hover:shadow-md"
             >
               Get Started
             </Link>
-            <Link 
+            <Link
               href="/login"
               className="px-8 py-3 bg-white text-gray-700 font-semibold rounded-lg border border-gray-300 hover:bg-gray-50 transition-all"
             >

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useAuth } from "@/../hooks/auth/useAuth";
 import { useFetch } from "@/../hooks/useFetch";
 import { RecommendationList } from "@/../components/recommendations/RecommendationList";
+import { PopularMovies } from "@/../components/PopularMovies";
 
 interface UserProfile {
   id: number;
@@ -45,6 +46,11 @@ export default function HomePage() {
           <section>
              <RecommendationList />
           </section>
+
+          <section>
+             <PopularMovies />
+          </section>
+
         </div>
 
       ) : (
@@ -70,7 +76,6 @@ export default function HomePage() {
               Log in
             </Link>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20 text-left">
             <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mb-4">

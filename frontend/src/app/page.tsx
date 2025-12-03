@@ -9,7 +9,7 @@ import { PopularMovies } from "@/../components/PopularMovies";
 interface UserProfile {
   id: number;
   email: string;
-  full_name?: string; 
+  full_name?: string;
   username?: string;
 }
 
@@ -30,25 +30,32 @@ export default function HomePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      
+
       {isAuthenticated ? (
         <div className="space-y-12">
-          
-          <div className="flex flex-col items-center justify-center py-12 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
-            <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-3">
-              Welcome back!
+
+          <div className="relative overflow-hidden flex flex-col items-center justify-center py-16 rounded-3xl text-center shadow-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800">
+            <div className="absolute top-0 left-0 w-full h-full bg-white/5 opacity-30 pointer-events-none" />
+
+            <h1 className="relative text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-6 drop-shadow-sm">
+              Welcome Back!
             </h1>
-            <div className="inline-flex items-center px-6 py-2 rounded-full bg-indigo-50 text-indigo-700 text-lg font-medium">
-              👋 {user?.username || user?.email || "Movie Fan"}
-            </div>
+
+            <Link
+              href="/profile"
+              className="relative inline-flex items-center px-6 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-lg font-medium shadow-sm hover:bg-white/20 transition-colors"
+            >
+              <span className="mr-2">👋</span>
+              {user?.username || user?.email || "Movie Fan"}
+            </Link>
           </div>
 
           <section>
-             <RecommendationList />
+             <PopularMovies />
           </section>
 
           <section>
-             <PopularMovies />
+             <RecommendationList />
           </section>
 
         </div>
@@ -61,15 +68,15 @@ export default function HomePage() {
           <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
             {"Discover new films, rate what you've seen, and get personalized recommendations based on your unique taste."}
           </p>
-          
+
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link 
+            <Link
               href="/register"
               className="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-all shadow-sm hover:shadow-md"
             >
               Get Started
             </Link>
-            <Link 
+            <Link
               href="/login"
               className="px-8 py-3 bg-white text-gray-700 font-semibold rounded-lg border border-gray-300 hover:bg-gray-50 transition-all"
             >

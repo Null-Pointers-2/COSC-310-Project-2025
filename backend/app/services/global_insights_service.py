@@ -73,9 +73,7 @@ def get_global_genre_leaderboard(resources) -> GlobalGenreLeaderboard:
         avg_rating = mean(stats["ratings"]) if stats["ratings"] else 0.0
         user_count = len(stats["user_ids"])
 
-        popularity_score = _calculate_popularity_score(
-            total_ratings, avg_rating, total_platform_ratings
-        )
+        popularity_score = _calculate_popularity_score(total_ratings, avg_rating, total_platform_ratings)
 
         genre_leaderboard.append(
             GlobalGenreStats(

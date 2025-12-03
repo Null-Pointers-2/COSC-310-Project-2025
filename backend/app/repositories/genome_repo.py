@@ -133,11 +133,7 @@ class GenomeRepository:
             return []
 
         # Aggregate by tag_id
-        tag_stats = (
-            scores.groupby("tag_id")
-            .agg({"relevance": ["mean", "count"], "movie_id": "nunique"})
-            .reset_index()
-        )
+        tag_stats = scores.groupby("tag_id").agg({"relevance": ["mean", "count"], "movie_id": "nunique"}).reset_index()
 
         tag_stats.columns = ["tag_id", "avg_relevance", "total_count", "movie_count"]
 

@@ -51,6 +51,7 @@ def update_my_profile(
     """Update current user's profile."""
     user_id = current_user["id"]
     updated_user = users_service.update_user(user_id=user_id, update_data=update_data, resources=resources)
+
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found for update")
     return updated_user

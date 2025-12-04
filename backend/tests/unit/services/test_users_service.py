@@ -15,6 +15,8 @@ def mock_resources():
     resources.ratings_repo = Mock()
     resources.penalties_repo = Mock()
     resources.recommendations_repo = Mock()
+    resources.password_hasher = Mock()
+    resources.password_hasher.hash.return_value = "hashed_secret"
     return resources
 
 
@@ -118,6 +120,11 @@ def test_dashboard_not_found(mock_resources):
 
 
 def test_update_with_data(mock_resources, sample_user):
+    mock_resources.users_repo.get_by_id.return_value = sample_user
+
+    mock_resources.users_repo.get_by_email.return_value = None
+    mock_resources.users_repo.get_by_username.return_value = None
+
     updated_user = {**sample_user, "email": "new@email.com"}
     mock_resources.users_repo.update.return_value = updated_user
 

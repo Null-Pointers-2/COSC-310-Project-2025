@@ -5,10 +5,12 @@ from typing import Optional
 from argon2 import PasswordHasher
 
 from app.ml.recommender import MovieRecommender
+from app.repositories.genome_repo import GenomeRepository
 from app.repositories.movies_repo import MoviesRepository
 from app.repositories.penalties_repo import PenaltiesRepository
 from app.repositories.ratings_repo import RatingsRepository
 from app.repositories.recommendations_repo import RecommendationsRepository
+from app.repositories.user_insights_repo import UserInsightsRepository
 from app.repositories.users_repo import UsersRepository
 from app.repositories.watchlist_repo import WatchlistRepository
 
@@ -44,6 +46,8 @@ class SingletonResources:
             self.watchlist_repo = WatchlistRepository()
             self.recommendations_repo = RecommendationsRepository()
             self.penalties_repo = PenaltiesRepository()
+            self.genome_repo = GenomeRepository()
+            self.user_insights_repo = UserInsightsRepository()
 
             self.password_hasher = PasswordHasher()
 

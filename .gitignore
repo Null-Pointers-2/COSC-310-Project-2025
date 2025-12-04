@@ -54,3 +54,6 @@ yarn-error.log*
 
 # Docker
 *.log
+
+# Generated data files
+backend/data/user_insights.json

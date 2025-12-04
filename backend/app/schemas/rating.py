@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class RatingBase(BaseModel):
@@ -25,9 +25,8 @@ class RatingUpdate(BaseModel):
 class Rating(RatingBase):
     """Complete rating schema."""
 
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     user_id: str
     timestamp: datetime
-
-    class Config:
-        from_attributes = True

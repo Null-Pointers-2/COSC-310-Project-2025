@@ -15,6 +15,7 @@ from app.main import app
 from app.repositories.penalties_repo import PenaltiesRepository
 from app.repositories.ratings_repo import RatingsRepository
 from app.repositories.recommendations_repo import RecommendationsRepository
+from app.repositories.user_insights_repo import UserInsightsRepository
 from app.repositories.users_repo import UsersRepository
 from app.repositories.watchlist_repo import WatchlistRepository
 
@@ -33,6 +34,7 @@ def test_repositories(test_data_dir):
     recommendations_file = test_data_dir / "recommendations.json"
     penalties_file = test_data_dir / "penalties.json"
     watchlist_file = test_data_dir / "watchlist.json"
+    user_insights_file = test_data_dir / "user_insights.json"
 
     return {
         "users_repo": UsersRepository(users_file=str(users_file)),
@@ -40,6 +42,7 @@ def test_repositories(test_data_dir):
         "recommendations_repo": RecommendationsRepository(recommendations_file=str(recommendations_file)),
         "penalties_repo": PenaltiesRepository(penalties_file=str(penalties_file)),
         "watchlist_repo": WatchlistRepository(watchlist_file=str(watchlist_file)),
+        "user_insights_repo": UserInsightsRepository(insights_file=str(user_insights_file)),
     }
 
 
@@ -81,6 +84,7 @@ def clean_test_data(test_repositories):
         test_repositories["recommendations_repo"].save_data({})
         test_repositories["penalties_repo"].save_data([])
         test_repositories["watchlist_repo"].save_data({})
+        test_repositories["user_insights_repo"].save_data([])
 
     cleanup()
     yield test_repositories

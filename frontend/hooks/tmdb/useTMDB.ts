@@ -2,12 +2,6 @@
 
 import { useState, useEffect } from "react";
 
-interface TMDBMovie {
-  id: number;
-  title: string;
-  poster_path: string | null;
-}
-
 export function useTMDB(title: string, tmdbId?: number | string) {
   const [posterUrl, setPosterUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -24,35 +18,19 @@ export function useTMDB(title: string, tmdbId?: number | string) {
         const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
         if (!apiKey) return;
 
+        let data;
+
         if (tmdbId) {
           const res = await fetch(
             `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${apiKey}`
           );
           if (res.ok) {
-            const data = await res.json();
+            data = await res.json();
             if (data.poster_path) {
               setPosterUrl(`https://image.tmdb.org/t/p/w500${data.poster_path}`);
-              return; 
+              return;
             }
           }
-        }
-
-        // If ID not available try searching by move name (Secondary option needed for popularity ranking nowd)
-        const cleanTitle = title.replace(/ \(\d{4}\)$/, '').trim();
-        
-        if (cleanTitle) {
-            const searchRes = await fetch(
-                `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(cleanTitle)}`
-            );
-            
-            if (searchRes.ok) {
-                const searchData = await searchRes.json();
-                const bestMatch = searchData.results?.find((m: TMDBMovie) => m.poster_path);
-                
-                if (bestMatch) {
-                    setPosterUrl(`https://image.tmdb.org/t/p/w500${bestMatch.poster_path}`);
-                }
-            }
         }
 
       } catch (err) {
@@ -66,5 +44,4 @@ export function useTMDB(title: string, tmdbId?: number | string) {
   }, [title, tmdbId]);
 
   return { posterUrl, loading };
-
 }

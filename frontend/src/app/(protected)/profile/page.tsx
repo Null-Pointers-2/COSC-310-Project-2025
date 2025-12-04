@@ -23,8 +23,14 @@ interface DashboardData {
   };
 }
 
+interface ProfileUpdatePayload {
+  username?: string;
+  email?: string;
+  password?: string;
+}
+
 export default function DashboardPage() {
-  const { isAuthenticated, loading: authLoading, logout, login, authFetch } = useAuth();
+  const { isAuthenticated, loading: authLoading, login, authFetch } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -75,7 +81,7 @@ export default function DashboardPage() {
     setEditStatus({ type: null, message: "" });
 
     try {
-      const payload: any = {};
+      const payload: ProfileUpdatePayload = {};
       const currentUsername = dashboardData?.user.username;
 
       if (formData.username !== currentUsername) payload.username = formData.username;
@@ -99,7 +105,7 @@ export default function DashboardPage() {
         let errorMsg = data.detail || data.message || "Failed to update profile.";
         if (Array.isArray(errorMsg)) {
           errorMsg = errorMsg
-            .map((err: any) => err.msg || JSON.stringify(err))
+            .map((err: { msg?: string }) => err.msg || JSON.stringify(err))
             .join(", ");
         }
         throw new Error(errorMsg);
@@ -116,8 +122,11 @@ export default function DashboardPage() {
         reload();
       }, 1000);
 
-    } catch (err: any) {
-      const errorMsg = err.message || "Failed to update profile.";
+    } catch (err: unknown) {
+      let errorMsg = "Failed to update profile.";
+      if (err instanceof Error) {
+        errorMsg = err.message;
+      }
       setEditStatus({ type: 'error', message: errorMsg });
     } finally {
       setIsSaving(false);

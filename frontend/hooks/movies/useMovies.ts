@@ -28,6 +28,9 @@ export function useMovies({ query, genre, page = 1 }: UseMoviesOptions = {}) {
   }, [query, genre]);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     const fetchMovies = async () => {
       if (!hasMore && page > 1) return;
 
@@ -48,14 +51,14 @@ export function useMovies({ query, genre, page = 1 }: UseMoviesOptions = {}) {
         }
 
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-        const response = await fetch(`${apiUrl}/movies?${params.toString()}`);
+
+        const response = await fetch(`${apiUrl}/movies?${params.toString()}`, { signal });
 
         if (!response.ok) {
           throw new Error("Failed to fetch movies");
         }
 
         const data = await response.json();
-
         const newMovies = data.movies || [];
 
         if (newMovies.length < 20) {
@@ -77,14 +80,24 @@ export function useMovies({ query, genre, page = 1 }: UseMoviesOptions = {}) {
         });
 
       } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+            return;
+        }
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
-        setLoading(false);
+        if (!signal.aborted) {
+            setLoading(false);
+        }
       }
     };
 
     fetchMovies();
-  }, [page, query, genre]);
+
+    return () => {
+        controller.abort();
+    };
+
+  }, [page, query, genre, hasMore]);
 
   return {
     movies,

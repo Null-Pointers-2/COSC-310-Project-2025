@@ -6,7 +6,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { UserInsightsCard } from "@/../components/insights/UserInsightsCard";
 import { useState, useEffect } from "react";
-import { updateMe } from "@/api/users";
+
+// define interface for UserUpdate response
+interface UpdateResponse {
+  username: string;
+  email: string;
+  access_token?: string;
+}
 
 interface DashboardData {
   user: {
@@ -25,7 +31,8 @@ interface DashboardData {
 }
 
 export default function DashboardPage() {
-  const { isAuthenticated, loading: authLoading, logout } = useAuth();
+  // Destructure authFetch and login from useAuth
+  const { isAuthenticated, loading: authLoading, logout, login, authFetch } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -89,26 +96,39 @@ export default function DashboardPage() {
         return;
       }
 
-      await updateMe(payload);
+      // Use authFetch instead of updateMe
+      const response = await authFetch("/users/me", {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        // Handle Pydantic validation errors (array of objects)
+        let errorMsg = data.detail || data.message || "Failed to update profile.";
+        if (Array.isArray(errorMsg)) {
+          errorMsg = errorMsg
+            .map((err: any) => err.msg || JSON.stringify(err))
+            .join(", ");
+        }
+        throw new Error(errorMsg);
+      }
 
       setEditStatus({ type: 'success', message: "Profile updated successfully!" });
 
-      // If username changed, the token is now invalid -> Force Logout
-      if (payload.username && payload.username !== currentUsername) {
-        setEditStatus({ type: 'success', message: "Username changed. Redirecting to login..." });
-        setTimeout(() => {
-           logout();
-           // router.push("/login") will be handled by the useEffect above
-        }, 1500);
-      } else {
-        setTimeout(() => {
-          setIsEditing(false);
-          reload();
-        }, 1000);
+      // If the backend returned a new token (due to username change), update it
+      if (data.access_token) {
+        login(data.access_token);
       }
 
+      setTimeout(() => {
+        setIsEditing(false);
+        reload();
+      }, 1000);
+
     } catch (err: any) {
-      const errorMsg = err.response?.data?.detail || err.message || "Failed to update profile.";
+      const errorMsg = err.message || "Failed to update profile.";
       setEditStatus({ type: 'error', message: errorMsg });
     } finally {
       setIsSaving(false);

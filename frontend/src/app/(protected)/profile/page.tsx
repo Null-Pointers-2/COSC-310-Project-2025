@@ -7,13 +7,6 @@ import Link from "next/link";
 import { UserInsightsCard } from "@/../components/insights/UserInsightsCard";
 import { useState, useEffect } from "react";
 
-// define interface for UserUpdate response
-interface UpdateResponse {
-  username: string;
-  email: string;
-  access_token?: string;
-}
-
 interface DashboardData {
   user: {
     id: number;
@@ -31,7 +24,6 @@ interface DashboardData {
 }
 
 export default function DashboardPage() {
-  // Destructure authFetch and login from useAuth
   const { isAuthenticated, loading: authLoading, logout, login, authFetch } = useAuth();
   const router = useRouter();
 
@@ -96,7 +88,6 @@ export default function DashboardPage() {
         return;
       }
 
-      // Use authFetch instead of updateMe
       const response = await authFetch("/users/me", {
         method: "PUT",
         body: JSON.stringify(payload),
@@ -105,7 +96,6 @@ export default function DashboardPage() {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        // Handle Pydantic validation errors (array of objects)
         let errorMsg = data.detail || data.message || "Failed to update profile.";
         if (Array.isArray(errorMsg)) {
           errorMsg = errorMsg
@@ -117,7 +107,6 @@ export default function DashboardPage() {
 
       setEditStatus({ type: 'success', message: "Profile updated successfully!" });
 
-      // If the backend returned a new token (due to username change), update it
       if (data.access_token) {
         login(data.access_token);
       }

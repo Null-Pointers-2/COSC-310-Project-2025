@@ -20,8 +20,8 @@ def _calculate_popularity_score(total_ratings: int, avg_rating: float, total_pla
     if total_platform_ratings == 0:
         return 0.0
 
-    frequency_weight = min(total_ratings / max(total_platform_ratings, 1), 1.0)  # 0-1
-    rating_weight = (avg_rating - 0.5) / 4.5  # Normalize 0.5-5.0 to 0-1
+    frequency_weight = min(total_ratings / max(total_platform_ratings, 1), 1.0)
+    rating_weight = (avg_rating - 0.5) / 4.5
 
     score = (frequency_weight * 40) + (rating_weight * 60)
     return round(score, 2)
@@ -37,11 +37,9 @@ def get_global_genre_leaderboard(resources) -> GlobalGenreLeaderboard:
     Returns:
         GlobalGenreLeaderboard with ranked genres
     """
-    # Get all users and ratings
     all_users = resources.users_repo.get_all()
     user_ids = [user["id"] for user in all_users]
 
-    # Build genre statistics across all users
     genre_stats = defaultdict(lambda: {"ratings": [], "user_ids": set()})
 
     total_platform_ratings = 0
@@ -57,15 +55,13 @@ def get_global_genre_leaderboard(resources) -> GlobalGenreLeaderboard:
             rating_value = float(rating["rating"])
             total_platform_ratings += 1
 
-            # Process each genre for this movie
             for genre in movie["genres"]:
-                if not genre:  # Skip empty genres
+                if not genre:
                     continue
 
                 genre_stats[genre]["ratings"].append(rating_value)
                 genre_stats[genre]["user_ids"].add(user_id)
 
-    # Convert to GlobalGenreStats objects
     genre_leaderboard = []
 
     for genre, stats in genre_stats.items():
@@ -85,7 +81,6 @@ def get_global_genre_leaderboard(resources) -> GlobalGenreLeaderboard:
             )
         )
 
-    # Sort by popularity score
     genre_leaderboard.sort(key=lambda x: x.popularity_score, reverse=True)
 
     return GlobalGenreLeaderboard(

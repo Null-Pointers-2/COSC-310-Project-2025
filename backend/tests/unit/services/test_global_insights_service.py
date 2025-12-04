@@ -8,7 +8,6 @@ from app.services.global_insights_service import (
 )
 
 
-# Tests for _calculate_popularity_score
 def test_calculate_popularity_score_general():
     """Test general case popularity score calculation."""
     score = _calculate_popularity_score(total_ratings=50, avg_rating=4.0, total_platform_ratings=100)
@@ -35,7 +34,6 @@ def test_calculate_popularity_score_data_retrieval():
     assert 63 <= score2 <= 65
 
 
-# Tests for get_global_genre_leaderboard
 def test_get_global_genre_leaderboard_general():
     """Test general case with multiple users and genres."""
     resources = Mock()

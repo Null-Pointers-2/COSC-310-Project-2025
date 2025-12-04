@@ -7,10 +7,10 @@ class GlobalGenreStats(BaseModel):
     """Statistics for a genre across all users."""
 
     genre: str
-    total_ratings: int  # Total number of ratings for this genre
-    average_rating: float  # Average rating across all users
-    user_count: int  # Number of unique users who rated this genre
-    popularity_score: float  # Weighted score combining frequency and rating
+    total_ratings: int
+    average_rating: float
+    user_count: int
+    popularity_score: float
 
 
 class GlobalGenreLeaderboard(BaseModel):

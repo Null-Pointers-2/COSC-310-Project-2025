@@ -26,14 +26,11 @@ class GenomeRepository:
 
     def _load_data(self):
         """Load genome data into pandas DataFrames."""
-        # Load tags (small file - ~1k rows)
         if self.genome_tags_path.exists():
             self.tags_df = pd.read_csv(self.genome_tags_path, encoding="utf-8")
         else:
             self.tags_df = pd.DataFrame(columns=["tag_id", "tag"])
 
-        # Load all scores into memory for fast lookups (~500MB RAM)
-        # This matches what the ML recommender does for performance
         if self.genome_scores_path.exists():
             self.scores_df = pd.read_csv(self.genome_scores_path, encoding="utf-8")
         else:
@@ -66,7 +63,7 @@ class GenomeRepository:
         if self.tags_df is None or self.tags_df.empty:
             return []
 
-        return self.tags_df.to_dict(orient="records")  # type: ignore[return-value]
+        return self.tags_df.to_dict(orient="records")
 
     def get_movie_tags(self, movie_id: int, min_relevance: float = 0.5) -> list[dict[str, Any]]:
         """
@@ -82,20 +79,18 @@ class GenomeRepository:
         if self.scores_df is None or self.scores_df.empty:
             return []
 
-        # Filter preloaded scores for this movie (FAST - in-memory lookup)
         movie_scores = self.scores_df[self.scores_df["movie_id"] == movie_id].copy()
         movie_scores = movie_scores[movie_scores["relevance"] >= min_relevance]
 
         if movie_scores.empty:
             return []
 
-        # Join with tag names
         if self.tags_df is not None:
             movie_scores = movie_scores.merge(self.tags_df, on="tag_id", how="left")
 
         movie_scores = movie_scores.sort_values("relevance", ascending=False)
 
-        return movie_scores.to_dict(orient="records")  # type: ignore[return-value]
+        return movie_scores.to_dict(orient="records")
 
     def get_top_tags_for_movies(
         self, movie_ids: list[int], top_n: int = 10, min_relevance: float = 0.5
@@ -114,24 +109,20 @@ class GenomeRepository:
         if self.scores_df is None or self.scores_df.empty or not movie_ids:
             return []
 
-        # Filter preloaded scores for these movies (FAST - in-memory lookup)
         scores = self.scores_df[self.scores_df["movie_id"].isin(movie_ids)].copy()
         scores = scores[scores["relevance"] >= min_relevance]
 
         if scores.empty:
             return []
 
-        # Aggregate by tag_id
         tag_stats = scores.groupby("tag_id").agg({"relevance": ["mean", "count"], "movie_id": "nunique"}).reset_index()
 
         tag_stats.columns = ["tag_id", "avg_relevance", "total_count", "movie_count"]
 
-        # Join with tag names
         if self.tags_df is not None:
             tag_stats = tag_stats.merge(self.tags_df, on="tag_id", how="left")
 
-        # Sort by average relevance and movie count
         tag_stats["score"] = tag_stats["avg_relevance"] * tag_stats["movie_count"]
         tag_stats = tag_stats.sort_values("score", ascending=False).head(top_n)
 
-        return tag_stats[["tag_id", "tag", "avg_relevance", "movie_count"]].to_dict(orient="records")  # type: ignore[return-value]
+        return tag_stats[["tag_id", "tag", "avg_relevance", "movie_count"]].to_dict(orient="records")

@@ -39,20 +39,30 @@ export default function HomePage() {
       {isAuthenticated ? (
         <div className="space-y-12">
 
-          <div className="flex flex-col items-center justify-center py-12 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
-            <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-3">
-              Welcome back, {user?.username || user?.email || "Movie Fan"}
+          <div className="relative overflow-hidden flex flex-col items-center justify-center py-16 rounded-3xl text-center shadow-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800">
+            <div className="absolute top-0 left-0 w-full h-full bg-white/5 opacity-30 pointer-events-none" />
+
+            <h1 className="relative text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-6 drop-shadow-sm">
+              Welcome Back!
             </h1>
 
+            <Link
+              href="/profile"
+              className="relative inline-flex items-center px-6 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-lg font-medium shadow-sm hover:bg-white/20 transition-colors mb-6"
+            >
+              <span className="mr-2">👋</span>
+              {user?.username || user?.email || "Movie Fan"}
+            </Link>
+
             {insights && insights.top_3_genres.length > 0 && (
-              <div className="mt-4">
-                <p className="text-sm text-gray-600 mb-3">Your favorite genres:</p>
+              <div className="relative mt-2">
+                <p className="text-sm text-white/80 mb-3">Your favorite genres:</p>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {insights.top_3_genres.map((genre) => (
                     <Link
                       key={genre}
                       href={`/browse?genre=${encodeURIComponent(genre)}`}
-                      className="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-colors text-sm font-medium"
+                      className="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg hover:bg-white/20 transition-colors text-sm font-medium"
                     >
                       {genre}
                     </Link>

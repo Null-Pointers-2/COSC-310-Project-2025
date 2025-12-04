@@ -52,10 +52,8 @@ class UserInsightsRepository:
         data = self._read()
         user_id = insights_data["user_id"]
 
-        # Remove existing insights for this user
         data = [item for item in data if item["user_id"] != user_id]
 
-        # Add timestamp if not present
         if "generated_at" not in insights_data:
             insights_data["generated_at"] = datetime.now(UTC).isoformat()
 

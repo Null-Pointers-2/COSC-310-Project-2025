@@ -4,6 +4,7 @@ import { useFetch } from "@/../hooks/useFetch";
 import { useAuth } from "@/../hooks/auth/useAuth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { UserInsightsCard } from "@/../components/insights/UserInsightsCard";
 
 interface DashboardData {
   user: {
@@ -159,6 +160,8 @@ export default function DashboardPage() {
             </button>
           </div>
         </div>
+
+        <UserInsightsCard />
 
       </div>
     </div>

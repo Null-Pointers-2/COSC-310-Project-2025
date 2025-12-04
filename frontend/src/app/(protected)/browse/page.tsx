@@ -1,19 +1,29 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useMovies } from "@/../hooks/movies/useMovies";
 import { useRecommendations } from "@/../hooks/recommendations/useRecommendations";
 import { MovieCard } from "@/../components/movies/MovieCard";
 import { useAuth } from "@/../hooks/auth/useAuth";
 import { useFetch } from "@/../hooks/useFetch";
+import { useSearchParams } from "next/navigation";
 
-export default function BrowsePage() {
+function BrowsePageContent() {
+  const searchParams = useSearchParams();
+  const genreFromUrl = searchParams.get("genre") || "";
+
   const [searchInput, setSearchInput] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState(genreFromUrl);
   const [page, setPage] = useState(1);
 
   const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (genreFromUrl) {
+      setSelectedGenre(genreFromUrl);
+    }
+  }, [genreFromUrl]);
 
   const observerTarget = useRef(null);
 
@@ -205,5 +215,19 @@ export default function BrowsePage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function BrowsePage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="w-8 h-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin"></div>
+        </div>
+      </div>
+    }>
+      <BrowsePageContent />
+    </Suspense>
   );
 }

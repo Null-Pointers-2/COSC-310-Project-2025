@@ -1,0 +1,325 @@
+"""User insights service with analytics algorithms."""
+
+from collections import defaultdict
+from datetime import UTC, datetime
+from statistics import mean, stdev
+
+from app.schemas.user_insights import (
+    GenreInsight,
+    ThemeInsight,
+    UserInsights,
+    UserInsightsSummary,
+    WatchlistMetrics,
+)
+
+HIGH_RATING_THRESHOLD = 4.0
+
+
+def _calculate_preference_score(count: int, avg_rating: float, total_count: int) -> float:
+    """
+    Calculate preference score (0-100) based on frequency and rating.
+
+    Formula: (frequency_weight * 40) + (rating_weight * 60)
+    - Frequency: How often this appears (0-40 points)
+    - Rating: How highly rated (0-60 points)
+    """
+    if total_count == 0:
+        return 0.0
+
+    frequency_weight = min(count / max(total_count, 1), 1.0)  # 0-1
+    rating_weight = (avg_rating - 0.5) / 4.5  # Normalize 0.5-5.0 to 0-1
+
+    score = (frequency_weight * 40) + (rating_weight * 60)
+    return round(score, 2)
+
+
+def _analyze_genres_from_ratings(
+    resources, user_id: str, all_ratings: list
+) -> tuple[str | None, list[str], list[GenreInsight]]:
+    """
+    Analyze user's genre preferences from provided ratings.
+
+    Returns: (top_genre, top_3_genres, genre_insights)
+    """
+    if not all_ratings:
+        return None, [], []
+
+    watchlist_items = resources.watchlist_repo.get_by_user(user_id)
+
+    watchlist_movie_ids = {item["movie_id"] for item in watchlist_items}
+
+    movie_ids = [r["movie_id"] for r in all_ratings]
+    movies_map = {}
+    for movie_id in movie_ids:
+        movie = resources.movies_repo.get_by_id(movie_id)
+        if movie:
+            movies_map[movie_id] = movie
+
+    genre_stats = defaultdict(lambda: {"total": 0, "watchlist": 0, "ratings": [], "watchlist_ratings": []})
+
+    for rating in all_ratings:
+        movie = movies_map.get(rating["movie_id"])
+        if not movie or not movie.get("genres"):
+            continue
+
+        is_watchlist = rating["movie_id"] in watchlist_movie_ids
+        rating_value = float(rating["rating"])
+
+        for genre in movie["genres"]:
+            if not genre:
+                continue
+
+            genre_stats[genre]["total"] += 1
+            genre_stats[genre]["ratings"].append(rating_value)
+
+            if is_watchlist:
+                genre_stats[genre]["watchlist"] += 1
+                genre_stats[genre]["watchlist_ratings"].append(rating_value)
+
+    genre_insights = []
+    total_ratings = len(all_ratings)
+
+    for genre, stats in genre_stats.items():
+        avg_rating = mean(stats["ratings"]) if stats["ratings"] else 0.0
+        watchlist_avg_rating = mean(stats["watchlist_ratings"]) if stats["watchlist_ratings"] else 0.0
+
+        preference_score = _calculate_preference_score(stats["total"], avg_rating, total_ratings)
+
+        genre_insights.append(
+            GenreInsight(
+                genre=genre,
+                total_rated=stats["total"],
+                watchlist_rated=stats["watchlist"],
+                average_rating=round(avg_rating, 2),
+                watchlist_average_rating=round(watchlist_avg_rating, 2),
+                preference_score=preference_score,
+            )
+        )
+
+    genre_insights.sort(key=lambda x: x.preference_score, reverse=True)
+
+    top_genre = genre_insights[0].genre if genre_insights else None
+    top_3_genres = [g.genre for g in genre_insights[:3]]
+
+    return top_genre, top_3_genres, genre_insights
+
+
+def _analyze_themes_from_ratings(
+    resources, _user_id: str, all_ratings: list
+) -> tuple[str | None, list[str], list[ThemeInsight]]:
+    """
+    Analyze user's theme preferences using genome data from provided ratings.
+
+    Returns: (top_theme, top_5_themes, theme_insights)
+    """
+    high_rated_movies = [r for r in all_ratings if float(r["rating"]) >= HIGH_RATING_THRESHOLD]
+
+    if not high_rated_movies:
+        return None, [], []
+
+    movie_ids = [r["movie_id"] for r in high_rated_movies]
+
+    top_tags = resources.genome_repo.get_top_tags_for_movies(movie_ids, top_n=20, min_relevance=0.5)
+
+    if not top_tags:
+        return None, [], []
+
+    movie_tags_map = {}
+    for movie_id in movie_ids:
+        tags = resources.genome_repo.get_movie_tags(movie_id, min_relevance=0.5)
+        movie_tags_map[movie_id] = {t["tag_id"] for t in tags}
+
+    theme_insights = []
+    total_movies = len(high_rated_movies)
+
+    for tag_data in top_tags:
+        tag_movie_ratings = [
+            float(rating["rating"])
+            for rating in high_rated_movies
+            if tag_data["tag_id"] in movie_tags_map.get(rating["movie_id"], set())
+        ]
+
+        if not tag_movie_ratings:
+            continue
+
+        avg_rating = mean(tag_movie_ratings)
+        preference_score = _calculate_preference_score(len(tag_movie_ratings), avg_rating, total_movies)
+
+        theme_insights.append(
+            ThemeInsight(
+                tag=tag_data["tag"],
+                tag_id=tag_data["tag_id"],
+                movies_count=tag_data["movie_count"],
+                average_relevance=round(tag_data["avg_relevance"], 3),
+                average_rating=round(avg_rating, 2),
+                preference_score=preference_score,
+            )
+        )
+
+    theme_insights.sort(key=lambda x: x.preference_score, reverse=True)
+
+    top_theme = theme_insights[0].tag if theme_insights else None
+    top_5_themes = [t.tag for t in theme_insights[:5]]
+
+    return top_theme, top_5_themes, theme_insights
+
+
+def _analyze_watchlist_metrics(resources, user_id: str) -> WatchlistMetrics:  # noqa: PLR0912
+    """
+    Analyze watchlist completion and engagement metrics.
+
+    Returns: WatchlistMetrics
+    """
+    watchlist_items = resources.watchlist_repo.get_by_user(user_id)
+    all_ratings = resources.ratings_repo.get_by_user(user_id)
+
+    total_watchlist = len(watchlist_items)
+
+    if total_watchlist == 0:
+        return WatchlistMetrics(
+            total_watchlist_items=0,
+            items_rated=0,
+            items_not_rated=0,
+            completion_rate=0.0,
+            average_rating=None,
+            average_time_to_rate_hours=None,
+            genres_in_watchlist=[],
+            most_common_watchlist_genre=None,
+        )
+
+    watchlist_movie_ids = {item["movie_id"]: item for item in watchlist_items}
+    rated_watchlist_items = []
+    time_deltas = []
+
+    for rating in all_ratings:
+        if rating["movie_id"] in watchlist_movie_ids:
+            watchlist_item = watchlist_movie_ids[rating["movie_id"]]
+            rated_watchlist_items.append(rating)
+
+            try:
+                added_at = datetime.fromisoformat(watchlist_item["added_at"])
+                rated_at = datetime.fromisoformat(rating["timestamp"])
+                delta_hours = (rated_at - added_at).total_seconds() / 3600
+                if delta_hours >= 0:
+                    time_deltas.append(delta_hours)
+            except (ValueError, KeyError):
+                pass
+
+    items_rated = len(rated_watchlist_items)
+    items_not_rated = total_watchlist - items_rated
+    completion_rate = (items_rated / total_watchlist) * 100 if total_watchlist > 0 else 0.0
+
+    avg_rating = None
+    if rated_watchlist_items:
+        avg_rating = round(mean(float(r["rating"]) for r in rated_watchlist_items), 2)
+
+    avg_time = None
+    if time_deltas:
+        avg_time = round(mean(time_deltas), 2)
+
+    genres_in_watchlist = set()
+    genre_counts = defaultdict(int)
+
+    watchlist_movies = {}
+    for item in watchlist_items:
+        movie = resources.movies_repo.get_by_id(item["movie_id"])
+        if movie:
+            watchlist_movies[item["movie_id"]] = movie
+
+    for item in watchlist_items:
+        movie = watchlist_movies.get(item["movie_id"])
+        if movie and movie.get("genres"):
+            for genre in movie["genres"]:
+                if genre:
+                    genres_in_watchlist.add(genre)
+                    genre_counts[genre] += 1
+
+    most_common_genre = max(genre_counts.items(), key=lambda x: x[1])[0] if genre_counts else None
+
+    return WatchlistMetrics(
+        total_watchlist_items=total_watchlist,
+        items_rated=items_rated,
+        items_not_rated=items_not_rated,
+        completion_rate=round(completion_rate, 2),
+        average_rating=avg_rating,
+        average_time_to_rate_hours=avg_time,
+        genres_in_watchlist=sorted(genres_in_watchlist),
+        most_common_watchlist_genre=most_common_genre,
+    )
+
+
+def generate_user_insights(resources, user_id: str) -> UserInsights | None:
+    """
+    Generate comprehensive insights for a user.
+
+    Args:
+        resources: SingletonResources instance
+        user_id: The user ID
+
+    Returns:
+        UserInsights object or None if user not found
+    """
+    user = resources.users_repo.get_by_id(user_id)
+    if not user:
+        return None
+
+    all_ratings = resources.ratings_repo.get_by_user(user_id)
+    total_ratings = len(all_ratings)
+
+    avg_rating = None
+    rating_consistency = None
+
+    if all_ratings:
+        ratings_values = [float(r["rating"]) for r in all_ratings]
+        avg_rating = round(mean(ratings_values), 2)
+
+        if len(ratings_values) > 1:
+            rating_consistency = round(stdev(ratings_values), 2)
+
+    top_genre, top_3_genres, genre_insights = _analyze_genres_from_ratings(resources, user_id, all_ratings)
+
+    top_theme, top_5_themes, theme_insights = _analyze_themes_from_ratings(resources, user_id, all_ratings)
+
+    watchlist_metrics = _analyze_watchlist_metrics(resources, user_id)
+
+    return UserInsights(
+        user_id=user_id,
+        generated_at=datetime.now(UTC),
+        top_genre=top_genre,
+        top_3_genres=top_3_genres,
+        genre_insights=genre_insights,
+        top_theme=top_theme,
+        top_5_themes=top_5_themes,
+        theme_insights=theme_insights,
+        watchlist_metrics=watchlist_metrics,
+        total_ratings=total_ratings,
+        average_rating=avg_rating,
+        rating_consistency=rating_consistency,
+    )
+
+
+def get_user_insights_summary(resources, user_id: str) -> UserInsightsSummary | None:
+    """
+    Get simplified insights summary for a user.
+
+    Args:
+        resources: SingletonResources instance
+        user_id: The user ID
+
+    Returns:
+        UserInsightsSummary or None
+    """
+    insights = generate_user_insights(resources, user_id)
+    if not insights:
+        return None
+
+    return UserInsightsSummary(
+        user_id=insights.user_id,
+        top_genre=insights.top_genre,
+        top_3_genres=insights.top_3_genres,
+        top_theme=insights.top_theme,
+        top_5_themes=insights.top_5_themes,
+        watchlist_completion_rate=insights.watchlist_metrics.completion_rate,
+        total_ratings=insights.total_ratings,
+        generated_at=insights.generated_at,
+    )

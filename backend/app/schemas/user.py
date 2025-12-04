@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class UserBase(BaseModel):
@@ -34,12 +34,11 @@ class UserUpdate(BaseModel):
 class User(UserBase):
     """Complete user schema (without password)."""
 
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     role: str  # "admin" or "user"
     created_at: datetime
-
-    class Config:
-        from_attributes = True
 
 
 class UserProfile(User):

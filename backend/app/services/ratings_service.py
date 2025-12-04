@@ -63,4 +63,5 @@ def delete_rating(resources, rating_id: int, user_id: str, *, is_admin: bool = F
         return False
 
     resources.ratings_repo.delete(rating_id)
+
     return True

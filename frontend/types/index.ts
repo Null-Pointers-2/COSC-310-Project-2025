@@ -5,3 +5,4 @@ export * from "./auth";
 export * from "./recommendation";
 export * from "./watchlist";
 export * from "./penalty";
+export * from "./insights";

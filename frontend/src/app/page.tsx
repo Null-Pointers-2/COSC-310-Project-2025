@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useAuth } from "@/../hooks/auth/useAuth";
 import { useFetch } from "@/../hooks/useFetch";
 import { RecommendationList } from "@/../components/recommendations/RecommendationList";
+import { UserInsightsSummary } from "@/../types";
 import { PopularMovies } from "@/../components/PopularMovies";
 
 interface UserProfile {
@@ -18,6 +19,10 @@ export default function HomePage() {
 
   const { data: user, loading: userLoading } = useFetch<UserProfile>( // eslint-disable-line
     isAuthenticated ? "/users/me" : null
+  );
+
+  const { data: insights } = useFetch<UserInsightsSummary>(
+    isAuthenticated ? "/insights/me/summary" : null
   );
 
   if (authLoading) {
@@ -43,11 +48,28 @@ export default function HomePage() {
 
             <Link
               href="/profile"
-              className="relative inline-flex items-center px-6 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-lg font-medium shadow-sm hover:bg-white/20 transition-colors"
+              className="relative inline-flex items-center px-6 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-lg font-medium shadow-sm hover:bg-white/20 transition-colors mb-6"
             >
               <span className="mr-2">👋</span>
               {user?.username || user?.email || "Movie Fan"}
             </Link>
+
+            {insights && insights.top_3_genres.length > 0 && (
+              <div className="relative mt-2">
+                <p className="text-sm text-white/80 mb-3">Your favorite genres:</p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {insights.top_3_genres.map((genre) => (
+                    <Link
+                      key={genre}
+                      href={`/browse?genre=${encodeURIComponent(genre)}`}
+                      className="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg hover:bg-white/20 transition-colors text-sm font-medium"
+                    >
+                      {genre}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <section>

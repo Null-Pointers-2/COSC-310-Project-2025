@@ -95,7 +95,7 @@ export function RatingForm({ movieId, onRateSuccess }: RatingFormProps) {
       if (onRateSuccess) {
         onRateSuccess(rating);
       }
-      
+
       router.refresh();
 
     } catch (err) {

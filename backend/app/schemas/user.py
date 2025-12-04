@@ -28,7 +28,9 @@ class UserLogin(BaseModel):
 class UserUpdate(BaseModel):
     """Schema for updating user profile."""
 
+    username: str | None = Field(None, min_length=3, max_length=50)
     email: EmailStr | None = None
+    password: str | None = Field(None, min_length=8)
 
 
 class User(UserBase):

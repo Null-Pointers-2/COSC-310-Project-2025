@@ -66,10 +66,33 @@ def get_user_dashboard(user_id: str, resources) -> UserDashboard | None:
 
 def update_user(user_id: str, update_data: UserUpdate, resources) -> dict | None:
     """Update user information."""
+    current_user = resources.users_repo.get_by_id(user_id)
+    if not current_user:
+        return None
+
     update_dict = update_data.model_dump(exclude_unset=True)
 
     if not update_dict:
-        return get_user_by_id(user_id, resources)
+        return current_user
+
+    if (
+        "username" in update_dict
+        and update_dict["username"] != current_user["username"]
+        and resources.users_repo.get_by_username(update_dict["username"])
+    ):
+        raise ValueError("Username already taken")
+
+    if (
+        "email" in update_dict
+        and update_dict["email"] != current_user["email"]
+        and resources.users_repo.get_by_email(update_dict["email"])
+    ):
+        raise ValueError("Email already taken")
+
+    if "password" in update_dict:
+        hashed = resources.password_hasher.hash(update_dict["password"])
+        update_dict["hashed_password"] = hashed
+        del update_dict["password"]
 
     return resources.users_repo.update(user_id, update_dict)
 

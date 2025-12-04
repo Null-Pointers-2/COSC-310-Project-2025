@@ -10,7 +10,7 @@ export function Navbar() {
   const [isAdmin, setIsAdmin] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  
+
   const { isAuthenticated, authFetch } = useAuth();
 
   useEffect(() => {
@@ -56,14 +56,14 @@ export function Navbar() {
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          
+
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="text-2xl font-bold text-indigo-600">
                 BestMovies
               </Link>
             </div>
-            
+
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {navLinks.map((link) => (
                 <Link
@@ -78,7 +78,7 @@ export function Navbar() {
                   {link.name}
                 </Link>
               ))}
-              
+
               {isAdmin && (
                 <Link
                   href="/admin"
@@ -105,7 +105,7 @@ export function Navbar() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                  className="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer"
                 >
                   Log out
                 </button>
@@ -165,7 +165,7 @@ export function Navbar() {
                 {link.name}
               </Link>
             ))}
-            
+
             {isAdmin && (
               <Link
                 href="/admin"
@@ -180,7 +180,7 @@ export function Navbar() {
               </Link>
             )}
           </div>
-          
+
           <div className="pt-4 pb-4 border-t border-gray-200">
             {isAuthenticated ? (
               <div className="space-y-1 px-4">
@@ -193,7 +193,7 @@ export function Navbar() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="block w-full text-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-red-600 bg-red-50 hover:bg-red-100"
+                  className="block w-full text-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-red-600 bg-red-50 hover:bg-red-100 cursor-pointer"
                 >
                   Log out
                 </button>

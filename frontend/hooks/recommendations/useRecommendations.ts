@@ -7,6 +7,7 @@ import { useAuth } from "@/../hooks/auth/useAuth";
 export interface RecommendationItem {
   movie_id: number;
   title: string;
+  similarity_score: number;
   score?: number;
 }
 
@@ -19,11 +20,11 @@ export function useRecommendations() {
   const { authFetch } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
 
-  const { 
-    data, 
-    loading, 
-    error, 
-    reload 
+  const {
+    data,
+    loading,
+    error,
+    reload
   } = useFetch<RecommendationResponse>("/recommendations/me");
 
   const refreshRecommendations = async () => {
@@ -32,9 +33,9 @@ export function useRecommendations() {
       const res = await authFetch("/recommendations/me/refresh", {
         method: "POST",
       });
-      
+
       if (!res.ok) throw new Error("Failed to refresh recommendations");
-      
+
       reload();
     } catch (err) {
       console.error(err);
@@ -54,7 +55,7 @@ export function useRecommendations() {
 
 export function useSimilarMovies(movieId?: number | string) {
   const endpoint = movieId ? `/recommendations/similar/${movieId}` : null;
-  
+
   const { data, loading, error } = useFetch<RecommendationItem[]>(endpoint);
 
   return {

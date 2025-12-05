@@ -101,8 +101,13 @@ export default function GamePage() {
 
   const handleRatingGuess = (selectedId: number) => {
     if (!movieA || !movieB) return;
-    const winnerId = movieA.average_rating >= movieB.average_rating ? movieA.movie_id : movieB.movie_id;
-    if (selectedId === winnerId) setScore(s => s + 1);
+    
+    const selectedMovie = selectedId === movieA.movie_id ? movieA : movieB;
+    const otherMovie = selectedId === movieA.movie_id ? movieB : movieA;
+    if (selectedMovie.average_rating >= otherMovie.average_rating) {
+      setScore(s => s + 1);
+    }
+    
     setGameState("rating_reveal");
   };
 

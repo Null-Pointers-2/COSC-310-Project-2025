@@ -94,6 +94,23 @@ Once installed, pre-commit will automatically run before every git commit, to en
 ```bash
 pre-commit install
 ```
+
+### 9. Designating Admin Users
+Admin users can be designated by modifying a user's role attribute from "user" to "admin" in backend/data/users.csv
+
+For example, change a user from:
+```
+id,username,email,hashed_password,role,created_at
+testuserID,testname,test@email.com,"testpassword",user,2025-11-18T16:46:43
+```
+To:
+```
+id,username,email,hashed_password,role,created_at
+testuserID,testname,test@email.com,"testpassword",admin,2025-11-18T16:46:43
+```
+
+Once a user is given admin permissions, they will have access to the admin panel where they can view several system metrics, as well as the ability to administer, and resolve penalties to users.
+
 ---
 
 ## Running the Backend Server
